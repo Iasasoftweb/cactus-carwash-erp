@@ -1,0 +1,26 @@
+{
+  "name": "@cactus/database",
+  "version": "1.9.1",
+  "private": true,
+  "type": "commonjs",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "dev": "tsc --watch -p tsconfig.json",
+    "build": "tsc -p tsconfig.json",
+    "prisma:generate": "prisma generate",
+    "prisma:migrate": "prisma migrate dev --name initial",
+    "prisma:seed": "tsx prisma/seed.ts",
+    "lint": "eslint src prisma --ext .ts",
+    "typecheck": "tsc --noEmit -p tsconfig.json"
+  },
+  "dependencies": {
+    "@nestjs/common": "^11.0.0",
+    "@prisma/client": "6.19.0"
+  },
+  "devDependencies": {
+    "prisma": "6.19.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.8.0"
+  }
+}

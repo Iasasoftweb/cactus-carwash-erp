@@ -1,0 +1,117 @@
+:root {
+  --cactus-primary: #1f5c3f;
+  --cactus-primary-soft: #eaf3ed;
+  --cactus-surface: #ffffff;
+  --cactus-border: #dfe6e1;
+  --cactus-text: #17211a;
+  --cactus-success: #237a4b;
+  --cactus-warning: #d39a2f;
+  --cactus-danger: #b94a48;
+  --cactus-info: #3d6fa8;
+}
+
+.cui-button {
+  min-height: 48px;
+  border: 0;
+  border-radius: 12px;
+  padding: 0 18px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font: inherit;
+  font-weight: 800;
+  cursor: pointer;
+}
+.cui-button--primary { background: var(--cactus-primary); color: #fff; }
+.cui-button--secondary { background: #edf2ee; color: #274534; }
+.cui-button--success { background: var(--cactus-success); color: #fff; }
+.cui-button--warning { background: var(--cactus-warning); color: #2d2413; }
+.cui-button--danger { background: var(--cactus-danger); color: #fff; }
+.cui-button--ghost { background: transparent; color: var(--cactus-primary); }
+
+.cui-badge,
+.cui-money-badge,
+.cui-status {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 800;
+}
+.cui-badge { padding: 5px 8px; background: #eef2ef; color: #58665d; }
+.cui-badge--primary { background: var(--cactus-primary-soft); color: var(--cactus-primary); }
+.cui-money-badge { padding: 7px 10px; background: var(--cactus-primary); color: white; }
+
+.cui-card {
+  background: var(--cactus-surface);
+  border: 1px solid var(--cactus-border);
+  border-radius: 18px;
+  box-shadow: 0 8px 22px rgba(31,92,63,.05);
+}
+
+.cui-field { display: grid; gap: 8px; font-weight: 700; color: #34453a; }
+.cui-input, .cui-select {
+  width: 100%;
+  min-height: 50px;
+  border: 1px solid #cfd9d2;
+  border-radius: 12px;
+  padding: 0 14px;
+  background: white;
+  color: var(--cactus-text);
+  font: inherit;
+}
+
+.cui-service-card {
+  min-height: 205px;
+  padding: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  background: var(--cactus-surface);
+  color: var(--cactus-text);
+  border: 1px solid var(--cactus-border);
+  border-radius: 18px;
+  text-align: left;
+  box-shadow: 0 8px 22px rgba(31,92,63,.05);
+  transition: transform 160ms ease, box-shadow 160ms ease, border-color 160ms ease;
+}
+.cui-service-card:hover {
+  transform: translateY(-3px);
+  border-color: #9fb9a8;
+  box-shadow: 0 14px 30px rgba(31,92,63,.10);
+}
+.cui-service-card--selected {
+  border-color: var(--cactus-primary);
+  box-shadow: 0 0 0 3px rgba(31,92,63,.12);
+}
+.cui-service-card__media {
+  min-height: 116px;
+  position: relative;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(145deg, #eef4ef, #f9fbf9);
+  border-bottom: 1px solid #e4e9e5;
+}
+.cui-service-card__icon { color: var(--cactus-primary); }
+.cui-service-card__media .cui-money-badge {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+}
+.cui-service-card__check {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: var(--cactus-primary);
+  color: white;
+}
+.cui-service-card__body { padding: 15px; display: grid; gap: 12px; }
+.cui-service-card__body strong { font-size: 15px; line-height: 1.3; }
+.cui-service-card__meta { display: flex; gap: 8px; flex-wrap: wrap; }

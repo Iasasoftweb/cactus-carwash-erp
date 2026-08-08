@@ -1,0 +1,14 @@
+{
+  "name": "@cactus/shared",
+  "version": "1.9.1",
+  "private": true,
+  "type": "module",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "scripts": {
+    "typecheck": "tsc --noEmit -p tsconfig.json"
+  },
+  "devDependencies": {
+    "typescript": "^5.8.0"
+  }
+}

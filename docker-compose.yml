@@ -1,0 +1,22 @@
+services:
+  mysql:
+    image: mysql:8.4
+    container_name: cactus_mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: cactus_carwash
+      MYSQL_USER: cactus
+      MYSQL_PASSWORD: cactus_dev
+      MYSQL_ROOT_PASSWORD: root_dev
+    ports:
+      - "3308:3306"
+    volumes:
+      - cactus_mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot_dev"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  cactus_mysql_data:
