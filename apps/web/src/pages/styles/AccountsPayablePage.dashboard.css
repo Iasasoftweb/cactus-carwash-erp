@@ -1,0 +1,278 @@
+/* CACTUS ERP — ACCOUNTS PAYABLE / DASHBOARD ENTERPRISE V2 */
+.accounts-payable-v2.maintenance-page{
+  --ap-bg:#f4f7f9;--ap-surface:#fff;--ap-soft:#f8fafb;--ap-border:#dce4e9;
+  --ap-border-strong:#c8d4dc;--ap-text:#17232d;--ap-muted:#667785;
+  --ap-green:#1f5c3f;--ap-green-soft:#eaf5ee;--ap-blue:#496b84;--ap-blue-soft:#eaf1f6;
+  --ap-hover:#eef4f8;--ap-hover-strong:#e4edf4;--ap-hover-border:#b9ccd9;--ap-hover-text:#304b61;
+  --ap-amber:#8a651c;--ap-amber-soft:#fff4d9;--ap-red:#a33e3e;--ap-red-soft:#fde9e9;
+  --ap-shadow:0 1px 2px rgba(18,38,50,.04);
+  width:100%;max-width:1480px;min-height:100vh;margin:0 auto;padding:22px;background:var(--ap-bg);color:var(--ap-text)
+}
+.accounts-payable-v2.maintenance-page *{box-sizing:border-box}
+
+/* Header */
+.accounts-payable-v2.maintenance-page .module-header.maintenance-header{
+  display:flex;align-items:center;justify-content:space-between;gap:18px;padding:18px 20px;
+  border:1px solid var(--ap-border);border-radius:16px;background:#fff!important;box-shadow:var(--ap-shadow)
+}
+.accounts-payable-v2.maintenance-page .maintenance-header__content{min-width:0;display:flex;align-items:center;gap:13px}
+.accounts-payable-v2.maintenance-page .maintenance-header__icon{
+  width:46px;height:46px;flex:0 0 46px;display:grid;place-items:center;border-radius:12px;
+  background:var(--ap-blue-soft)!important;color:var(--ap-blue)!important
+}
+.accounts-payable-v2.maintenance-page .maintenance-header__text h1{margin:0;font-size:clamp(1.55rem,2vw,2rem);line-height:1.1;color:var(--ap-text)}
+.accounts-payable-v2.maintenance-page .maintenance-header__text p{margin:5px 0 0;color:var(--ap-muted);font-size:.88rem}
+.accounts-payable-v2.maintenance-page .ap-maintenance-header-actions,
+.accounts-payable-v2.maintenance-page .ap-maintenance-commandbar__actions{display:flex;align-items:center;justify-content:flex-end;flex-wrap:wrap;gap:8px}
+.accounts-payable-v2.maintenance-page .ap-maintenance-point{display:grid;gap:5px;min-width:190px;color:#526777;font-size:.74rem;font-weight:800}
+
+/* Controls */
+.accounts-payable-v2.maintenance-page .ap-maintenance-point select,
+.accounts-payable-v2.maintenance-page .accounts-payable-v2__toolbar select,
+.accounts-payable-v2.maintenance-page .accounts-payable-v2__report-filters input,
+.accounts-payable-v2.maintenance-page .accounts-payable-v2__report-filters select,
+.accounts-payable-v2.maintenance-page .accounts-payable-v2__form input,
+.accounts-payable-v2.maintenance-page .accounts-payable-v2__form select,
+.accounts-payable-v2.maintenance-page .accounts-payable-v2__form textarea{
+  width:100%;min-width:0;min-height:41px;border:1px solid var(--ap-border-strong);border-radius:9px;
+  padding:8px 10px;background:#fff!important;color:var(--ap-text);font:inherit;outline:none
+}
+.accounts-payable-v2.maintenance-page select:focus,
+.accounts-payable-v2.maintenance-page input:focus,
+.accounts-payable-v2.maintenance-page textarea:focus{border-color:#91aabd!important;box-shadow:0 0 0 3px rgba(73,107,132,.1)!important}
+
+.accounts-payable-v2.maintenance-page button{
+  min-height:40px;padding:9px 12px;border:1px solid var(--ap-border-strong)!important;border-radius:10px;
+  background:#fff!important;color:#344c5e!important;font:inherit;font-size:.84rem;font-weight:800;cursor:pointer;filter:none!important;box-shadow:none
+}
+.accounts-payable-v2.maintenance-page button svg{vertical-align:middle;margin-right:6px}
+.accounts-payable-v2.maintenance-page button:disabled{opacity:.55;cursor:not-allowed}
+.accounts-payable-v2.maintenance-page .ap-maintenance-commandbar__actions>button:first-child,
+.accounts-payable-v2.maintenance-page .accounts-payable-v2__report-actions>button:first-child,
+.accounts-payable-v2.maintenance-page .maintenance-modal__footer>button[type="submit"]{
+  border-color:var(--ap-green)!important;background:var(--ap-green)!important;color:#fff!important
+}
+
+/* Alerts */
+.accounts-payable-v2.maintenance-page .maintenance-alert{margin-top:12px;padding:11px 13px;border-radius:10px;font-size:.82rem}
+.accounts-payable-v2.maintenance-page .maintenance-alert--error{border:1px solid #efc8c8;background:var(--ap-red-soft);color:var(--ap-red)}
+.accounts-payable-v2.maintenance-page .maintenance-alert--success{border:1px solid #c9dfd1;background:var(--ap-green-soft);color:#2f6b4d}
+
+/* Command bar */
+.accounts-payable-v2.maintenance-page .ap-maintenance-commandbar{
+  display:flex;align-items:center;justify-content:space-between;gap:14px;margin-top:14px;padding:14px 16px;
+  border:1px solid #9fc9b4;border-radius:14px;background:#fff!important;
+  box-shadow:inset 3px 0 0 #5b9576,var(--ap-shadow)
+}
+.accounts-payable-v2.maintenance-page .eyebrow{margin:0 0 3px;color:#6f7f91;font-size:.64rem;font-weight:900;letter-spacing:.13em}
+.accounts-payable-v2.maintenance-page .ap-maintenance-commandbar h2{margin:0;font-size:1rem;color:var(--ap-text)}
+
+/* KPI summary */
+.accounts-payable-v2.maintenance-page .accounts-payable-v2__summary{
+  display:grid!important;grid-template-columns:repeat(6,minmax(0,1fr))!important;gap:10px!important;margin-top:14px
+}
+.accounts-payable-v2.maintenance-page .accounts-payable-v2__summary>*{
+  min-width:0;min-height:116px;display:grid!important;align-content:start;gap:6px;padding:14px!important;
+  border:1px solid var(--ap-border)!important;border-radius:12px!important;background:#fff!important;color:var(--ap-text)!important;
+  text-align:left;box-shadow:var(--ap-shadow)!important
+}
+.accounts-payable-v2.maintenance-page .accounts-payable-v2__summary>*::after{content:none!important}
+.accounts-payable-v2.maintenance-page .accounts-payable-v2__summary svg{color:var(--ap-blue)!important}
+.accounts-payable-v2.maintenance-page .accounts-payable-v2__summary span{color:var(--ap-muted)!important;font-size:.74rem}
+.accounts-payable-v2.maintenance-page .accounts-payable-v2__summary strong{color:var(--ap-text)!important;font-size:1.02rem!important}
+.accounts-payable-v2.maintenance-page .accounts-payable-v2__summary small{color:#8793a0!important;font-size:.68rem}
+.accounts-payable-v2.maintenance-page .accounts-payable-v2__summary>*:nth-child(1){border-color:#9bb8cd!important;box-shadow:inset 3px 0 0 #6f94ad,var(--ap-shadow)!important}
+.accounts-payable-v2.maintenance-page .accounts-payable-v2__summary>*:nth-child(2){border-color:#9fc9b4!important;box-shadow:inset 3px 0 0 #5b9576,var(--ap-shadow)!important}
+.accounts-payable-v2.maintenance-page .accounts-payable-v2__summary>*:nth-child(3){border-color:#e0a1a1!important;box-shadow:inset 3px 0 0 #c76565,var(--ap-shadow)!important}
+.accounts-payable-v2.maintenance-page .accounts-payable-v2__summary>*:nth-child(4){border-color:#e4bf83!important;box-shadow:inset 3px 0 0 #d69a3d,var(--ap-shadow)!important}
+.accounts-payable-v2.maintenance-page .accounts-payable-v2__summary>*:nth-child(5){border-color:#9fc9b4!important;box-shadow:inset 3px 0 0 #5b9576,var(--ap-shadow)!important}
+.accounts-payable-v2.maintenance-page .accounts-payable-v2__summary>*:nth-child(6){border-color:#aab8c3!important;box-shadow:inset 3px 0 0 #718696,var(--ap-shadow)!important}
+
+/* Panels */
+.accounts-payable-v2.maintenance-page .accounts-payable-v2__dashboard-grid{
+  display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:12px!important;margin-top:14px
+}
+.accounts-payable-v2.maintenance-page .accounts-payable-v2__panel{
+  min-width:0;padding:16px;border:1px solid var(--ap-border)!important;border-radius:14px!important;background:#fff!important;box-shadow:var(--ap-shadow)!important
+}
+.accounts-payable-v2.maintenance-page .accounts-payable-v2__dashboard-grid>.accounts-payable-v2__panel:first-child{border-color:#9bb8cd!important;box-shadow:inset 3px 0 0 #6f94ad,var(--ap-shadow)!important}
+.accounts-payable-v2.maintenance-page .accounts-payable-v2__dashboard-grid>.accounts-payable-v2__panel:last-child{border-color:#e4bf83!important;box-shadow:inset 3px 0 0 #d69a3d,var(--ap-shadow)!important}
+.accounts-payable-v2.maintenance-page .accounts-payable-v2__panel-title{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:13px}
+.accounts-payable-v2.maintenance-page .accounts-payable-v2__panel-title span{display:block;margin-bottom:2px;color:#6f7f91!important;font-size:.64rem;font-weight:900;letter-spacing:.12em}
+.accounts-payable-v2.maintenance-page .accounts-payable-v2__panel-title h2{margin:0;color:var(--ap-text);font-size:1rem}
+.accounts-payable-v2.maintenance-page .accounts-payable-v2__panel-title svg{color:var(--ap-blue)}
+
+/* Aging */
+.accounts-payable-v2.maintenance-page .accounts-payable-v2__aging{display:grid;gap:10px}
+.accounts-payable-v2.maintenance-page .accounts-payable-v2__aging article{display:grid;gap:7px;padding:9px 0;border-bottom:1px solid #edf1f3}
+.accounts-payable-v2.maintenance-page .accounts-payable-v2__aging article:last-child{border-bottom:0}
+.accounts-payable-v2.maintenance-page .accounts-payable-v2__aging article>div:first-child{display:flex;justify-content:space-between;gap:12px}
+.accounts-payable-v2.maintenance-page .accounts-payable-v2__aging span{color:var(--ap-muted);font-size:.75rem}
+.accounts-payable-v2.maintenance-page .accounts-payable-v2__aging strong{color:var(--ap-text);font-size:.78rem}
+.accounts-payable-v2.maintenance-page .accounts-payable-v2__aging-track{height:7px;overflow:hidden;border-radius:999px;background:#edf2f5!important}
+.accounts-payable-v2.maintenance-page .accounts-payable-v2__aging-track>span{display:block;height:100%;border-radius:inherit;background:#7f9caf!important}
+
+/* Supplier debt */
+.accounts-payable-v2.maintenance-page .accounts-payable-v2__supplier-debt{display:grid;gap:7px}
+.accounts-payable-v2.maintenance-page .accounts-payable-v2__supplier-debt button{
+  width:100%;display:flex;align-items:center;justify-content:space-between;gap:14px;padding:10px 11px;
+  border:1px solid var(--ap-border)!important;border-radius:10px;background:#fff!important;text-align:left
+}
+.accounts-payable-v2.maintenance-page .accounts-payable-v2__supplier-debt button>div{min-width:0;display:grid;gap:3px}
+.accounts-payable-v2.maintenance-page .accounts-payable-v2__supplier-debt button>div:last-child{justify-items:end;text-align:right}
+.accounts-payable-v2.maintenance-page .accounts-payable-v2__supplier-debt strong{color:var(--ap-text);font-size:.78rem}
+.accounts-payable-v2.maintenance-page .accounts-payable-v2__supplier-debt small{color:var(--ap-muted);font-size:.68rem}
+
+/* Active view */
+.accounts-payable-v2.maintenance-page .accounts-payable-v2__active-view{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:12px;padding:11px 13px;
+  border:1px solid #c8d8e4;border-radius:11px;background:#f4f8fb!important
+}
+.accounts-payable-v2.maintenance-page .accounts-payable-v2__active-view>div{display:flex;gap:6px;color:var(--ap-muted);font-size:.74rem}
+.accounts-payable-v2.maintenance-page .accounts-payable-v2__active-view strong{color:var(--ap-text)}
+
+/* Report */
+.accounts-payable-v2.maintenance-page .accounts-payable-v2__report{margin-top:14px;border-color:#9fc9b4!important;box-shadow:inset 3px 0 0 #5b9576,var(--ap-shadow)!important}
+.accounts-payable-v2.maintenance-page .accounts-payable-v2__report-filters{
+  display:grid!important;grid-template-columns:minmax(140px,.8fr) minmax(140px,.8fr) minmax(190px,1.1fr) minmax(0,1.7fr)!important;gap:10px;align-items:end
+}
+.accounts-payable-v2.maintenance-page .accounts-payable-v2__report-filters label{min-width:0;display:grid;gap:5px;color:#526777;font-size:.74rem;font-weight:800}
+.accounts-payable-v2.maintenance-page .accounts-payable-v2__report-actions{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:7px}
+.accounts-payable-v2.maintenance-page .accounts-payable-v2__report-kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px;margin-top:14px}
+.accounts-payable-v2.maintenance-page .accounts-payable-v2__report-kpis article{
+  min-width:0;display:grid;gap:5px;padding:12px;border:1px solid var(--ap-border);border-radius:10px;background:#fff!important
+}
+.accounts-payable-v2.maintenance-page .accounts-payable-v2__report-kpis article:nth-child(1){border-left:3px solid #6f94ad}
+.accounts-payable-v2.maintenance-page .accounts-payable-v2__report-kpis article:nth-child(2){border-left:3px solid #5b9576}
+.accounts-payable-v2.maintenance-page .accounts-payable-v2__report-kpis article:nth-child(3){border-left:3px solid #d69a3d}
+.accounts-payable-v2.maintenance-page .accounts-payable-v2__report-kpi--danger{border-color:#e0a1a1!important;border-left:3px solid #c76565!important}
+.accounts-payable-v2.maintenance-page .accounts-payable-v2__report-kpis span,
+.accounts-payable-v2.maintenance-page .accounts-payable-v2__report-kpis small{color:var(--ap-muted);font-size:.69rem}
+.accounts-payable-v2.maintenance-page .accounts-payable-v2__report-kpis strong{color:var(--ap-text);font-size:.9rem}
+.accounts-payable-v2.maintenance-page .accounts-payable-v2__report-grid{display:grid;grid-template-columns:minmax(240px,.8fr) minmax(0,1.4fr);gap:12px;margin-top:14px}
+.accounts-payable-v2.maintenance-page .accounts-payable-v2__report-grid>div{min-width:0;padding:13px;border:1px solid var(--ap-border);border-radius:10px;background:var(--ap-soft)!important}
+.accounts-payable-v2.maintenance-page .accounts-payable-v2__report-grid h3{margin:0 0 10px;color:var(--ap-text);font-size:.84rem}
+.accounts-payable-v2.maintenance-page .accounts-payable-v2__report-aging{display:grid}
+.accounts-payable-v2.maintenance-page .accounts-payable-v2__report-aging>div{display:flex;justify-content:space-between;gap:12px;padding:8px 0;border-bottom:1px solid #e8edf0}
+.accounts-payable-v2.maintenance-page .accounts-payable-v2__report-aging>div:last-child{border-bottom:0}
+.accounts-payable-v2.maintenance-page .accounts-payable-v2__report-aging span{color:var(--ap-muted);font-size:.72rem}
+.accounts-payable-v2.maintenance-page .accounts-payable-v2__report-aging strong{color:var(--ap-text);font-size:.74rem}
+.accounts-payable-v2.maintenance-page .accounts-payable-v2__report-table-wrap{overflow:auto;border:1px solid var(--ap-border);border-radius:9px;background:#fff}
+.accounts-payable-v2.maintenance-page .accounts-payable-v2__report-table{width:100%;border-collapse:collapse;background:#fff}
+.accounts-payable-v2.maintenance-page .accounts-payable-v2__report-table th{padding:9px 10px;border-bottom:1px solid var(--ap-border);background:#f5f8fa!important;color:#536779;font-size:.68rem;font-weight:900;text-align:right;white-space:nowrap}
+.accounts-payable-v2.maintenance-page .accounts-payable-v2__report-table td{padding:9px 10px;border-bottom:1px solid #edf1f3;color:#425769;font-size:.71rem;text-align:right;white-space:nowrap}
+.accounts-payable-v2.maintenance-page .accounts-payable-v2__report-table th:first-child,
+.accounts-payable-v2.maintenance-page .accounts-payable-v2__report-table td:first-child{text-align:left}
+.accounts-payable-v2.maintenance-page .accounts-payable-v2__report-table td:first-child{display:grid;gap:2px}
+.accounts-payable-v2.maintenance-page .accounts-payable-v2__report-table tbody tr:hover td{background:var(--ap-hover)!important}
+.accounts-payable-v2.maintenance-page .accounts-payable-v2__report-placeholder{margin-top:14px;padding:24px 16px;border:1px dashed var(--ap-border-strong);border-radius:10px;background:var(--ap-soft)!important;color:var(--ap-muted);font-size:.75rem;text-align:center}
+
+/* Invoices */
+.accounts-payable-v2.maintenance-page .accounts-payable-v2__invoices{margin-top:14px;border-color:#9bb8cd!important;box-shadow:inset 3px 0 0 #6f94ad,var(--ap-shadow)!important}
+.accounts-payable-v2.maintenance-page .accounts-payable-v2__toolbar{
+  display:grid!important;grid-template-columns:minmax(260px,1fr) minmax(150px,210px) minmax(180px,240px)!important;gap:8px!important;margin-top:10px
+}
+.accounts-payable-v2.maintenance-page .accounts-payable-v2__search{min-width:0;display:flex;align-items:center;gap:8px;min-height:41px;padding:0 10px;border:1px solid var(--ap-border-strong);border-radius:9px;background:#fff;color:var(--ap-muted)}
+.accounts-payable-v2.maintenance-page .accounts-payable-v2__search:focus-within{border-color:#91aabd;box-shadow:0 0 0 3px rgba(73,107,132,.1)}
+.accounts-payable-v2.maintenance-page .accounts-payable-v2__search input{width:100%;min-width:0;border:0!important;outline:0;background:transparent!important;color:var(--ap-text);font:inherit}
+.accounts-payable-v2.maintenance-page .accounts-payable-v2__invoice-list{display:grid;gap:8px;margin-top:12px}
+.accounts-payable-v2.maintenance-page .accounts-payable-v2__invoice-card{
+  width:100%;min-width:0;display:grid!important;grid-template-columns:minmax(0,1.3fr) minmax(160px,.7fr) minmax(160px,.75fr)!important;
+  gap:14px;align-items:center;padding:12px 13px;border:1px solid var(--ap-border)!important;border-radius:10px;background:#fff!important;color:var(--ap-text)!important;text-align:left
+}
+.accounts-payable-v2.maintenance-page .accounts-payable-v2__invoice-card>div{min-width:0;display:grid;gap:3px}
+.accounts-payable-v2.maintenance-page .accounts-payable-v2__invoice-card>div:nth-child(2),
+.accounts-payable-v2.maintenance-page .accounts-payable-v2__invoice-card>div:nth-child(3){justify-items:end;text-align:right}
+.accounts-payable-v2.maintenance-page .accounts-payable-v2__invoice-card span,
+.accounts-payable-v2.maintenance-page .accounts-payable-v2__invoice-card small{color:var(--ap-muted);font-size:.69rem}
+.accounts-payable-v2.maintenance-page .accounts-payable-v2__invoice-card strong{min-width:0;color:var(--ap-text);font-size:.79rem;overflow-wrap:break-word}
+.accounts-payable-v2.maintenance-page .accounts-payable-v2__invoice-card.selected{border-color:#91aabd!important;background:var(--ap-blue-soft)!important;box-shadow:inset 3px 0 0 #6f8fa6!important}
+.accounts-payable-v2.maintenance-page .accounts-payable-v2__invoice-card--overdue{border-color:#e1aaaa!important;box-shadow:inset 3px 0 0 #c76565!important}
+.accounts-payable-v2.maintenance-page .accounts-payable-v2__due-date--overdue{color:var(--ap-red)!important;font-weight:800}
+.accounts-payable-v2.maintenance-page .accounts-payable-v2__status{width:fit-content;display:inline-flex;align-items:center;min-height:24px;padding:4px 8px;border-radius:999px;font-size:.67rem;font-weight:900}
+.accounts-payable-v2.maintenance-page .accounts-payable-v2__status--pending{background:var(--ap-amber-soft)!important;color:var(--ap-amber)!important}
+.accounts-payable-v2.maintenance-page .accounts-payable-v2__status--partially_paid{background:var(--ap-blue-soft)!important;color:var(--ap-blue)!important}
+.accounts-payable-v2.maintenance-page .accounts-payable-v2__status--paid{background:var(--ap-green-soft)!important;color:#2f6b4d!important}
+.accounts-payable-v2.maintenance-page .accounts-payable-v2__status--cancelled{background:var(--ap-red-soft)!important;color:var(--ap-red)!important}
+.accounts-payable-v2.maintenance-page .accounts-payable-v2__empty{padding:24px 16px;border:1px dashed var(--ap-border-strong);border-radius:10px;background:#fff;color:var(--ap-muted);text-align:center;font-size:.75rem}
+
+/* Modals */
+.accounts-payable-v2.maintenance-page .maintenance-modal-backdrop{position:fixed;inset:0;z-index:100;display:grid;place-items:center;padding:18px;background:rgba(15,23,42,.42);backdrop-filter:blur(3px)}
+.accounts-payable-v2.maintenance-page .maintenance-modal.ap-maintenance-modal{width:min(760px,100%);max-height:calc(100vh - 36px);overflow-y:auto;border:1px solid var(--ap-border);border-radius:16px;background:#fff!important;box-shadow:0 24px 64px rgba(15,23,42,.18)}
+.accounts-payable-v2.maintenance-page .ap-maintenance-modal--payment{width:min(620px,100%)}
+.accounts-payable-v2.maintenance-page .maintenance-modal__header{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;padding:17px 18px;border-bottom:1px solid var(--ap-border);background:#fff!important}
+.accounts-payable-v2.maintenance-page .maintenance-modal__header h2{margin:0;color:var(--ap-text);font-size:1.05rem}
+.accounts-payable-v2.maintenance-page .maintenance-modal__header p{margin:4px 0 0;color:var(--ap-muted);font-size:.76rem}
+.accounts-payable-v2.maintenance-page .maintenance-modal__close{width:34px;min-height:34px;display:grid;place-items:center;padding:0}
+.accounts-payable-v2.maintenance-page .maintenance-modal__body{padding:16px 18px}
+.accounts-payable-v2.maintenance-page .ap-maintenance-modal .accounts-payable-v2__form{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:11px!important}
+.accounts-payable-v2.maintenance-page .ap-maintenance-modal .accounts-payable-v2__form>label{min-width:0;display:grid;gap:6px;color:#526777;font-size:.75rem;font-weight:800}
+.accounts-payable-v2.maintenance-page .ap-maintenance-modal .accounts-payable-v2__form-row{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:10px!important;grid-column:1/-1}
+.accounts-payable-v2.maintenance-page .ap-maintenance-modal .accounts-payable-v2__form textarea{min-height:84px;resize:vertical}
+.accounts-payable-v2.maintenance-page .accounts-payable-v2__selected-invoice{grid-column:1/-1;display:grid;gap:4px;padding:11px 12px;border:1px solid #c8d8e4;border-radius:10px;background:#f4f8fb!important;color:var(--ap-muted);font-size:.73rem}
+.accounts-payable-v2.maintenance-page .accounts-payable-v2__selected-invoice strong{color:var(--ap-text)}
+.accounts-payable-v2.maintenance-page .maintenance-modal__footer{display:flex;justify-content:flex-end;gap:8px;padding:13px 18px 17px;border-top:1px solid var(--ap-border);background:#fff!important}
+
+/* Hover policy: never green */
+.accounts-payable-v2.maintenance-page.accounts-payable-v2.maintenance-page button:hover:not(:disabled),
+.accounts-payable-v2.maintenance-page.accounts-payable-v2.maintenance-page button:focus-visible:not(:disabled){
+  background:var(--ap-hover)!important;background-color:var(--ap-hover)!important;border-color:var(--ap-hover-border)!important;color:var(--ap-hover-text)!important;filter:none!important
+}
+.accounts-payable-v2.maintenance-page.accounts-payable-v2.maintenance-page .ap-maintenance-commandbar__actions>button:first-child:hover:not(:disabled),
+.accounts-payable-v2.maintenance-page.accounts-payable-v2.maintenance-page .accounts-payable-v2__report-actions>button:first-child:hover:not(:disabled),
+.accounts-payable-v2.maintenance-page.accounts-payable-v2.maintenance-page .maintenance-modal__footer>button[type="submit"]:hover:not(:disabled){
+  background:var(--ap-hover-strong)!important;background-color:var(--ap-hover-strong)!important;border-color:var(--ap-hover-border)!important;color:var(--ap-hover-text)!important
+}
+.accounts-payable-v2.maintenance-page.accounts-payable-v2.maintenance-page .accounts-payable-v2__kpi:hover:not(:disabled),
+.accounts-payable-v2.maintenance-page.accounts-payable-v2.maintenance-page .accounts-payable-v2__supplier-debt button:hover:not(:disabled),
+.accounts-payable-v2.maintenance-page.accounts-payable-v2.maintenance-page .accounts-payable-v2__invoice-card:hover:not(:disabled){
+  background:var(--ap-hover)!important;background-color:var(--ap-hover)!important;border-color:var(--ap-hover-border)!important;color:var(--ap-hover-text)!important;transform:translateY(-1px)
+}
+.accounts-payable-v2.maintenance-page.accounts-payable-v2.maintenance-page .accounts-payable-v2__invoice-card.selected:hover:not(:disabled){background:#dde8f0!important;background-color:#dde8f0!important;border-color:#91aabd!important}
+.accounts-payable-v2.maintenance-page.accounts-payable-v2.maintenance-page .accounts-payable-v2__invoice-card--overdue:hover:not(:disabled){background:#fff5f5!important;background-color:#fff5f5!important;border-color:#d99a9a!important}
+
+/* Responsive */
+@media(max-width:1240px){
+  .accounts-payable-v2.maintenance-page .accounts-payable-v2__summary{grid-template-columns:repeat(3,minmax(0,1fr))!important}
+  .accounts-payable-v2.maintenance-page .accounts-payable-v2__report-filters{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+  .accounts-payable-v2.maintenance-page .accounts-payable-v2__report-actions{grid-column:1/-1;justify-content:flex-start}
+}
+@media(max-width:980px){
+  .accounts-payable-v2.maintenance-page{padding:14px}
+  .accounts-payable-v2.maintenance-page .module-header.maintenance-header,
+  .accounts-payable-v2.maintenance-page .ap-maintenance-commandbar{align-items:flex-start;flex-direction:column}
+  .accounts-payable-v2.maintenance-page .ap-maintenance-header-actions,
+  .accounts-payable-v2.maintenance-page .ap-maintenance-commandbar__actions{width:100%;justify-content:flex-start}
+  .accounts-payable-v2.maintenance-page .accounts-payable-v2__dashboard-grid,
+  .accounts-payable-v2.maintenance-page .accounts-payable-v2__report-grid{grid-template-columns:1fr!important}
+  .accounts-payable-v2.maintenance-page .accounts-payable-v2__toolbar{grid-template-columns:1fr 1fr!important}
+  .accounts-payable-v2.maintenance-page .accounts-payable-v2__search{grid-column:1/-1}
+  .accounts-payable-v2.maintenance-page .accounts-payable-v2__invoice-card{grid-template-columns:minmax(0,1fr) minmax(150px,.7fr)!important}
+  .accounts-payable-v2.maintenance-page .accounts-payable-v2__invoice-card>div:nth-child(3){grid-column:1/-1;justify-items:start;text-align:left;padding-top:7px;border-top:1px solid #edf1f3}
+}
+@media(max-width:680px){
+  .accounts-payable-v2.maintenance-page{padding:10px}
+  .accounts-payable-v2.maintenance-page .accounts-payable-v2__summary,
+  .accounts-payable-v2.maintenance-page .accounts-payable-v2__toolbar,
+  .accounts-payable-v2.maintenance-page .accounts-payable-v2__report-filters,
+  .accounts-payable-v2.maintenance-page .accounts-payable-v2__report-kpis,
+  .accounts-payable-v2.maintenance-page .accounts-payable-v2__invoice-card,
+  .accounts-payable-v2.maintenance-page .ap-maintenance-modal .accounts-payable-v2__form,
+  .accounts-payable-v2.maintenance-page .ap-maintenance-modal .accounts-payable-v2__form-row{grid-template-columns:1fr!important}
+  .accounts-payable-v2.maintenance-page .accounts-payable-v2__search,
+  .accounts-payable-v2.maintenance-page .accounts-payable-v2__report-actions,
+  .accounts-payable-v2.maintenance-page .accounts-payable-v2__invoice-card>div:nth-child(3){grid-column:auto}
+  .accounts-payable-v2.maintenance-page .ap-maintenance-header-actions,
+  .accounts-payable-v2.maintenance-page .ap-maintenance-commandbar__actions,
+  .accounts-payable-v2.maintenance-page .accounts-payable-v2__report-actions,
+  .accounts-payable-v2.maintenance-page .maintenance-modal__footer{display:grid;grid-template-columns:1fr;width:100%}
+  .accounts-payable-v2.maintenance-page .ap-maintenance-header-actions button,
+  .accounts-payable-v2.maintenance-page .ap-maintenance-header-actions .ap-maintenance-point,
+  .accounts-payable-v2.maintenance-page .ap-maintenance-commandbar__actions button,
+  .accounts-payable-v2.maintenance-page .accounts-payable-v2__report-actions button,
+  .accounts-payable-v2.maintenance-page .maintenance-modal__footer button{width:100%;min-width:0}
+  .accounts-payable-v2.maintenance-page .accounts-payable-v2__supplier-debt button{align-items:flex-start;flex-direction:column}
+  .accounts-payable-v2.maintenance-page .accounts-payable-v2__supplier-debt button>div:last-child,
+  .accounts-payable-v2.maintenance-page .accounts-payable-v2__invoice-card>div:nth-child(2),
+  .accounts-payable-v2.maintenance-page .accounts-payable-v2__invoice-card>div:nth-child(3){justify-items:start;text-align:left}
+}

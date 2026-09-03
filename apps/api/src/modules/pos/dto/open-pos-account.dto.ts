@@ -1,4 +1,11 @@
-import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import {
+  IsIn,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+} from 'class-validator';
+
+const SALE_MODES = ['DINE_IN', 'TAKEAWAY', 'DIRECT'] as const;
 
 export class OpenPosAccountDto {
   @IsString()
@@ -13,6 +20,10 @@ export class OpenPosAccountDto {
   @IsString()
   orderId?: string;
 
+  @IsOptional()
+  @IsString()
+  customerId?: string;
+
   @IsString()
   @IsNotEmpty()
   customerAlias!: string;
@@ -20,4 +31,8 @@ export class OpenPosAccountDto {
   @IsOptional()
   @IsString()
   tableReference?: string;
+
+  @IsOptional()
+  @IsIn(SALE_MODES)
+  saleMode?: (typeof SALE_MODES)[number];
 }

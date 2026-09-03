@@ -1,0 +1,467 @@
+/* ==========================================================
+   CACTUS ERP — EXPENSES / DASHBOARD ENTERPRISE V2
+   Scope: .module-page.maintenance-page
+   ========================================================== */
+
+/* Local scope via unique structure on ExpensesPage */
+.module-page.maintenance-page {
+  --ex-bg:#f4f7f9;
+  --ex-surface:#fff;
+  --ex-surface-soft:#f8fafb;
+  --ex-border:#dce4e9;
+  --ex-border-strong:#c8d4dc;
+  --ex-text:#17232d;
+  --ex-muted:#667785;
+  --ex-green:#1f5c3f;
+  --ex-green-soft:#eaf5ee;
+  --ex-blue:#496b84;
+  --ex-blue-soft:#eaf1f6;
+  --ex-hover:#eef4f8;
+  --ex-hover-strong:#e4edf4;
+  --ex-hover-border:#b9ccd9;
+  --ex-hover-text:#304b61;
+  --ex-amber:#8a651c;
+  --ex-amber-soft:#fff4d9;
+  --ex-red:#a33e3e;
+  --ex-red-soft:#fde9e9;
+  --ex-shadow:0 1px 2px rgba(18,38,50,.04);
+
+  min-height:100vh;
+  padding:22px;
+  background:var(--ex-bg);
+  color:var(--ex-text);
+}
+
+.module-page.maintenance-page *{box-sizing:border-box}
+
+/* Header */
+.module-page.maintenance-page .module-header.maintenance-header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:18px;
+  padding:18px 20px;
+  border:1px solid var(--ex-border);
+  border-radius:16px;
+  background:#fff!important;
+  box-shadow:var(--ex-shadow)
+}
+.module-page.maintenance-page .maintenance-header__content{
+  min-width:0;
+  display:flex;
+  align-items:center;
+  gap:13px
+}
+.module-page.maintenance-page .maintenance-header__icon{
+  width:46px;
+  height:46px;
+  flex:0 0 46px;
+  display:grid;
+  place-items:center;
+  border-radius:12px;
+  background:var(--ex-blue-soft)!important;
+  color:var(--ex-blue)!important
+}
+.module-page.maintenance-page .maintenance-header__text h1{
+  margin:0;
+  color:var(--ex-text);
+  font-size:clamp(1.5rem,2vw,1.95rem);
+  line-height:1.1
+}
+.module-page.maintenance-page .maintenance-header__text p{
+  margin:5px 0 0;
+  color:var(--ex-muted);
+  font-size:.86rem
+}
+
+/* Buttons */
+.module-page.maintenance-page button{
+  min-height:40px;
+  padding:9px 12px;
+  border:1px solid var(--ex-border-strong)!important;
+  border-radius:10px;
+  background:#fff!important;
+  color:#344c5e!important;
+  font:inherit;
+  font-size:.84rem;
+  font-weight:800;
+  cursor:pointer;
+  filter:none!important;
+  box-shadow:none
+}
+.module-page.maintenance-page button svg{
+  vertical-align:middle;
+  margin-right:6px
+}
+.module-page.maintenance-page button:disabled{
+  opacity:.55;
+  cursor:not-allowed
+}
+
+/* Primary buttons */
+.module-page.maintenance-page
+.maintenance-toolbar__actions > button,
+.module-page.maintenance-page
+.maintenance-modal__footer > button[type="submit"]{
+  border-color:var(--ex-green)!important;
+  background:var(--ex-green)!important;
+  color:#fff!important
+}
+
+/* Alerts */
+.module-page.maintenance-page .maintenance-alert{
+  margin-top:12px;
+  padding:11px 13px;
+  border-radius:10px;
+  font-size:.82rem
+}
+.module-page.maintenance-page .maintenance-alert--error{
+  border:1px solid #efc8c8;
+  background:var(--ex-red-soft);
+  color:var(--ex-red)
+}
+.module-page.maintenance-page .maintenance-alert--success{
+  border:1px solid #c9dfd1;
+  background:var(--ex-green-soft);
+  color:#2f6b4d
+}
+
+/* Main card */
+.module-page.maintenance-page .settings-card.maintenance-card{
+  margin-top:16px;
+  padding:16px;
+  border:1px solid #9bb8cd!important;
+  border-radius:14px;
+  background:#fff!important;
+  box-shadow:
+    inset 3px 0 0 #6f94ad,
+    var(--ex-shadow)!important
+}
+
+/* Toolbar */
+.module-page.maintenance-page .maintenance-toolbar{
+  display:flex;
+  align-items:flex-end;
+  justify-content:space-between;
+  gap:16px;
+  padding-bottom:14px;
+  border-bottom:1px solid #edf1f3
+}
+.module-page.maintenance-page .maintenance-toolbar__heading{
+  display:flex;
+  align-items:center;
+  gap:12px
+}
+.module-page.maintenance-page .eyebrow{
+  margin:0 0 3px;
+  color:#6f7f91;
+  font-size:.62rem;
+  font-weight:900;
+  letter-spacing:.13em
+}
+.module-page.maintenance-page .maintenance-toolbar__heading h2{
+  margin:0;
+  color:var(--ex-text);
+  font-size:1rem
+}
+.module-page.maintenance-page .maintenance-count{
+  display:inline-flex;
+  align-items:center;
+  min-height:28px;
+  padding:0 9px;
+  border:1px solid #d5e0e9;
+  border-radius:999px;
+  background:#f1f5f8;
+  color:#5d6d7f;
+  font-size:.72rem;
+  font-weight:900
+}
+.module-page.maintenance-page .maintenance-toolbar__actions{
+  display:flex;
+  align-items:center;
+  justify-content:flex-end;
+  gap:8px
+}
+.module-page.maintenance-page .maintenance-search{
+  min-width:250px
+}
+.module-page.maintenance-page .maintenance-search input{
+  width:100%;
+  min-height:40px;
+  border:1px solid var(--ex-border-strong);
+  border-radius:9px;
+  padding:8px 10px;
+  background:#fff;
+  color:var(--ex-text);
+  font:inherit;
+  outline:none
+}
+.module-page.maintenance-page .maintenance-search input:focus{
+  border-color:#91aabd;
+  box-shadow:0 0 0 3px rgba(73,107,132,.1)
+}
+
+/* Table */
+.module-page.maintenance-page .maintenance-table-wrap{
+  margin-top:14px;
+  overflow:auto;
+  border:1px solid var(--ex-border);
+  border-radius:11px
+}
+.module-page.maintenance-page .maintenance-table{
+  width:100%;
+  border-collapse:collapse;
+  background:#fff
+}
+.module-page.maintenance-page .maintenance-table th{
+  padding:10px 12px;
+  border-bottom:1px solid var(--ex-border);
+  background:#f7f9fb;
+  color:#536779;
+  font-size:.72rem;
+  font-weight:900;
+  text-align:left;
+  white-space:nowrap
+}
+.module-page.maintenance-page .maintenance-table td{
+  padding:11px 12px;
+  border-bottom:1px solid #edf1f3;
+  color:#425769;
+  font-size:.78rem;
+  vertical-align:middle
+}
+.module-page.maintenance-page .maintenance-table tbody tr:last-child td{
+  border-bottom:0
+}
+.module-page.maintenance-page .maintenance-table tbody tr:hover td{
+  background:var(--ex-hover)!important
+}
+.module-page.maintenance-page .maintenance-table td strong{
+  color:var(--ex-text)
+}
+
+/* Badges */
+.module-page.maintenance-page .maintenance-badge{
+  display:inline-flex;
+  align-items:center;
+  min-height:24px;
+  padding:4px 8px;
+  border-radius:999px;
+  font-size:.68rem;
+  font-weight:900
+}
+.module-page.maintenance-page .maintenance-badge--neutral{
+  background:#edf2f5!important;
+  color:#536a7b!important
+}
+.module-page.maintenance-page .maintenance-badge--warning{
+  background:var(--ex-amber-soft)!important;
+  color:var(--ex-amber)!important
+}
+.module-page.maintenance-page .maintenance-badge--success{
+  background:var(--ex-green-soft)!important;
+  color:#2f6b4d!important
+}
+
+/* Row action */
+.module-page.maintenance-page .maintenance-row-actions{
+  display:flex;
+  justify-content:flex-end
+}
+.module-page.maintenance-page .maintenance-icon-button{
+  width:34px;
+  min-height:34px;
+  display:grid;
+  place-items:center;
+  padding:0;
+  border-radius:9px
+}
+.module-page.maintenance-page .maintenance-icon-button svg{
+  margin:0
+}
+
+/* Pagination */
+.module-page.maintenance-page .maintenance-pagination{
+  display:flex;
+  align-items:center;
+  justify-content:flex-end;
+  gap:10px;
+  margin-top:14px
+}
+.module-page.maintenance-page .maintenance-pagination span{
+  color:var(--ex-muted);
+  font-size:.75rem
+}
+
+/* Empty */
+.module-page.maintenance-page .operations-empty{
+  margin-top:14px;
+  padding:34px 18px;
+  border:1px dashed var(--ex-border-strong);
+  border-radius:11px;
+  background:#fff;
+  color:var(--ex-muted);
+  text-align:center
+}
+
+/* Modal */
+.module-page.maintenance-page .maintenance-modal-backdrop{
+  position:fixed;
+  inset:0;
+  z-index:100;
+  display:grid;
+  place-items:center;
+  padding:18px;
+  background:rgba(15,23,42,.42);
+  backdrop-filter:blur(3px)
+}
+.module-page.maintenance-page .maintenance-modal.expenses-maintenance-modal{
+  width:min(720px,100%);
+  max-height:calc(100vh - 36px);
+  overflow-y:auto;
+  border:1px solid var(--ex-border);
+  border-radius:16px;
+  background:#fff!important;
+  box-shadow:0 24px 64px rgba(15,23,42,.18)
+}
+.module-page.maintenance-page .maintenance-modal__header{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:14px;
+  padding:17px 18px;
+  border-bottom:1px solid var(--ex-border);
+  background:#fff!important
+}
+.module-page.maintenance-page .maintenance-modal__header h2{
+  margin:0;
+  color:var(--ex-text);
+  font-size:1.05rem
+}
+.module-page.maintenance-page .maintenance-modal__header p{
+  margin:4px 0 0;
+  color:var(--ex-muted);
+  font-size:.76rem
+}
+.module-page.maintenance-page .maintenance-modal__close{
+  width:34px;
+  min-height:34px;
+  display:grid;
+  place-items:center;
+  padding:0
+}
+.module-page.maintenance-page .maintenance-modal__body{
+  padding:16px 18px
+}
+.module-page.maintenance-page .maintenance-form-grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:11px
+}
+.module-page.maintenance-page .maintenance-form-grid label,
+.module-page.maintenance-page .maintenance-field{
+  min-width:0;
+  display:grid;
+  gap:6px;
+  color:#526777;
+  font-size:.75rem;
+  font-weight:800
+}
+.module-page.maintenance-page .maintenance-form-grid input,
+.module-page.maintenance-page .maintenance-form-grid select,
+.module-page.maintenance-page .maintenance-field input{
+  width:100%;
+  min-width:0;
+  min-height:42px;
+  border:1px solid var(--ex-border-strong);
+  border-radius:9px;
+  padding:8px 10px;
+  background:#fff!important;
+  color:var(--ex-text);
+  font:inherit;
+  outline:none
+}
+.module-page.maintenance-page .maintenance-form-grid input:focus,
+.module-page.maintenance-page .maintenance-form-grid select:focus,
+.module-page.maintenance-page .maintenance-field input:focus{
+  border-color:#91aabd;
+  box-shadow:0 0 0 3px rgba(73,107,132,.1)
+}
+.module-page.maintenance-page .maintenance-field{
+  margin-top:11px
+}
+.module-page.maintenance-page .maintenance-modal__footer{
+  display:flex;
+  justify-content:flex-end;
+  gap:8px;
+  padding:13px 18px 17px;
+  border-top:1px solid var(--ex-border);
+  background:#fff!important
+}
+
+/* Hover policy — never green */
+.module-page.maintenance-page.module-page.maintenance-page
+button:hover:not(:disabled),
+.module-page.maintenance-page.module-page.maintenance-page
+button:focus-visible:not(:disabled){
+  background:var(--ex-hover)!important;
+  background-color:var(--ex-hover)!important;
+  border-color:var(--ex-hover-border)!important;
+  color:var(--ex-hover-text)!important;
+  filter:none!important
+}
+.module-page.maintenance-page.module-page.maintenance-page
+.maintenance-toolbar__actions > button:hover:not(:disabled),
+.module-page.maintenance-page.module-page.maintenance-page
+.maintenance-modal__footer > button[type="submit"]:hover:not(:disabled){
+  background:var(--ex-hover-strong)!important;
+  background-color:var(--ex-hover-strong)!important;
+  border-color:var(--ex-hover-border)!important;
+  color:var(--ex-hover-text)!important
+}
+
+/* Responsive */
+@media(max-width:900px){
+  .module-page.maintenance-page{padding:14px}
+  .module-page.maintenance-page .module-header.maintenance-header{
+    align-items:flex-start;
+    flex-direction:column
+  }
+  .module-page.maintenance-page .maintenance-toolbar{
+    align-items:flex-start;
+    flex-direction:column
+  }
+  .module-page.maintenance-page .maintenance-toolbar__actions{
+    width:100%;
+    justify-content:flex-start
+  }
+  .module-page.maintenance-page .maintenance-search{
+    flex:1;
+    min-width:0
+  }
+}
+@media(max-width:640px){
+  .module-page.maintenance-page{padding:10px}
+  .module-page.maintenance-page .maintenance-toolbar__actions{
+    display:grid;
+    grid-template-columns:1fr;
+    width:100%
+  }
+  .module-page.maintenance-page .maintenance-toolbar__actions button,
+  .module-page.maintenance-page .maintenance-search{
+    width:100%
+  }
+  .module-page.maintenance-page .maintenance-form-grid{
+    grid-template-columns:1fr
+  }
+  .module-page.maintenance-page .maintenance-modal__footer{
+    display:grid;
+    grid-template-columns:1fr
+  }
+  .module-page.maintenance-page .maintenance-modal__footer button{
+    width:100%
+  }
+  .module-page.maintenance-page .maintenance-pagination{
+    justify-content:space-between
+  }
+}

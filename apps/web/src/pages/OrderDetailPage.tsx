@@ -7,7 +7,9 @@ import {
   ClipboardCheck,
   Clock3,
   FileText,
+  House,
   MessageSquareText,
+  RefreshCw,
   Plus,
   Printer,
   UserRound,
@@ -22,6 +24,7 @@ import type {
   OrderNoteResponse,
 } from '@cactus/shared';
 import { api, OrderDetail } from '../lib/api';
+import './styles/OrderDetailPage.dashboard.css';
 
 const statusLabels: Record<string, string> = {
   RECEIVED: 'Recibida',
@@ -251,34 +254,31 @@ export function OrderDetailPage() {
   }
 
   return (
-    <main className="order-center">
-      <header className="order-center__header">
-        <div>
-          <button
-            type="button"
-            className="back-to-hold-button"
-            onClick={() => navigate('/orders/hold')}
-          >
-            ← Volver a Órdenes en HOLD
-          </button>
+    <main className="order-center maintenance-page order-detail-maintenance">
+      <header className="order-center__header maintenance-header">
+        <div className="maintenance-header__content">
+          <div className="maintenance-header__icon">
+            <Car size={22} strokeWidth={1.8} />
+          </div>
 
-          <div className="order-title-row">
-            <div>
-              <span className="order-number">{order.orderNumber}</span>
+          <div className="maintenance-header__text">
+            <div className="order-detail-maintenance__title-line">
               <h1>{order.vehicle.description}</h1>
-              <p>
-                {order.vehicle.vehicleType}
-                {order.vehicle.plate
-                  ? ` · ${order.vehicle.plate}`
-                  : ' · Sin placa'}
-              </p>
+              <span
+                className={`hold-status hold-status--${order.operationalStatus.toLowerCase()}`}
+              >
+                {statusLabels[order.operationalStatus]}
+              </span>
             </div>
 
-            <span
-              className={`hold-status hold-status--${order.operationalStatus.toLowerCase()}`}
-            >
-              {statusLabels[order.operationalStatus]}
-            </span>
+            <p>
+              {order.orderNumber}
+              {' · '}
+              {order.vehicle.vehicleType}
+              {order.vehicle.plate
+                ? ` · ${order.vehicle.plate}`
+                : ' · Sin placa'}
+            </p>
           </div>
         </div>
 
@@ -286,18 +286,40 @@ export function OrderDetailPage() {
           <button
             type="button"
             className="secondary-button"
+            onClick={() => navigate('/orders/hold')}
+          >
+            ← Órdenes HOLD
+          </button>
+
+         
+
+          <button
+            type="button"
+            className="secondary-button"
+            onClick={loadOrder}
+            disabled={loading || working || addingService}
+          >
+            <RefreshCw size={15} />
+            Actualizar
+          </button>
+
+          <button
+            type="button"
+            className="secondary-button"
             onClick={() => navigate(`/orders/${order.id}/tickets`)}
           >
-            <Printer size={17} />
+            <Printer size={15} />
             Reimprimir tickets
           </button>
 
-          {nextStatus[order.operationalStatus] && order.operationalStatus !== 'READY_FOR_DELIVERY' ? (
+          {nextStatus[order.operationalStatus] &&
+          order.operationalStatus !== 'READY_FOR_DELIVERY' ? (
             <button
               type="button"
               onClick={advanceStatus}
               disabled={working}
             >
+              <CheckCircle2 size={15} />
               {working
                 ? 'Actualizando...'
                 : nextActionLabel[order.operationalStatus]}

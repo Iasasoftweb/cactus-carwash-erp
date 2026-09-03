@@ -1,4 +1,5 @@
 import { Type } from 'class-transformer';
+
 import {
   ArrayMinSize,
   IsArray,
@@ -25,6 +26,10 @@ export class CreateOrderItemDto {
 }
 
 export class CreateOrderDto {
+  @IsString()
+  @IsNotEmpty()
+  pointOfSaleId!: string;
+
   @IsString()
   @IsNotEmpty()
   customerAlias!: string;

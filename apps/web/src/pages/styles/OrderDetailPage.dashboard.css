@@ -1,0 +1,1447 @@
+/* ==========================================================
+   CACTUS ERP — ORDER DETAIL / DASHBOARD ENTERPRISE V2
+   Scope: .order-detail-maintenance
+
+   Policy:
+   - White / neutral cards
+   - No green cards
+   - No green hover
+   - Green only for primary action at rest
+   - Pastel blue-gray for hover / selection
+   ========================================================== */
+
+.order-detail-maintenance {
+  --od-bg: #f4f7f9;
+  --od-surface: #ffffff;
+  --od-surface-soft: #f8fafb;
+  --od-border: #dce4e9;
+  --od-border-strong: #c8d4dc;
+  --od-text: #17232d;
+  --od-muted: #667785;
+  --od-green: #1f5c3f;
+  --od-green-soft: #eaf5ee;
+  --od-hover: #eef4f8;
+  --od-hover-strong: #e4edf4;
+  --od-hover-border: #b9ccd9;
+  --od-hover-text: #304b61;
+  --od-blue: #496b84;
+  --od-blue-soft: #eaf1f6;
+  --od-amber: #8a651c;
+  --od-amber-soft: #fff4d9;
+  --od-red: #a33e3e;
+  --od-red-soft: #fde9e9;
+
+  min-height: 100vh;
+  padding: 22px;
+  background: var(--od-bg);
+  color: var(--od-text);
+}
+
+.order-detail-maintenance *,
+.order-detail-maintenance *::before,
+.order-detail-maintenance *::after {
+  box-sizing: border-box;
+}
+
+/* ----------------------------------------------------------
+   Header
+   ---------------------------------------------------------- */
+
+.order-detail-maintenance .order-center__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 18px 20px;
+  border: 1px solid var(--od-border);
+  border-radius: 16px;
+  background: #fff !important;
+  box-shadow: 0 1px 2px rgba(18, 38, 50, .04);
+}
+
+.order-detail-maintenance .maintenance-header__content {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 13px;
+}
+
+.order-detail-maintenance .maintenance-header__icon {
+  width: 46px;
+  height: 46px;
+  flex: 0 0 46px;
+  display: grid;
+  place-items: center;
+  border-radius: 12px;
+  background: var(--od-blue-soft) !important;
+  color: var(--od-blue) !important;
+}
+
+.order-detail-maintenance__title-line {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 9px;
+}
+
+.order-detail-maintenance__title-line h1 {
+  margin: 0;
+  color: var(--od-text);
+  font-size: clamp(1.45rem, 2vw, 1.9rem);
+  line-height: 1.1;
+  letter-spacing: -.02em;
+}
+
+.order-detail-maintenance .maintenance-header__text p {
+  margin: 5px 0 0;
+  color: var(--od-muted);
+  font-size: .86rem;
+}
+
+.order-detail-maintenance .order-header-actions {
+  display: flex;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+/* ----------------------------------------------------------
+   Buttons
+   ---------------------------------------------------------- */
+
+.order-detail-maintenance button {
+  min-height: 40px;
+  padding: 9px 12px;
+  border: 1px solid var(--od-border-strong) !important;
+  border-radius: 10px;
+  background: #fff !important;
+  color: #344c5e !important;
+  font: inherit;
+  font-size: .84rem;
+  font-weight: 800;
+  cursor: pointer;
+  filter: none !important;
+  box-shadow: none;
+  transition:
+    background-color 150ms ease,
+    border-color 150ms ease,
+    color 150ms ease,
+    transform 150ms ease;
+}
+
+.order-detail-maintenance button svg {
+  vertical-align: middle;
+  margin-right: 6px;
+}
+
+.order-detail-maintenance button:disabled {
+  opacity: .55;
+  cursor: not-allowed;
+}
+
+/* Primary action only */
+.order-detail-maintenance .order-header-actions > button:not(.secondary-button),
+.order-detail-maintenance .add-service-form > button,
+.order-detail-maintenance .note-form > button {
+  border-color: var(--od-green) !important;
+  background: var(--od-green) !important;
+  color: #fff !important;
+}
+
+/* ----------------------------------------------------------
+   Alerts
+   ---------------------------------------------------------- */
+
+.order-detail-maintenance .operations-error,
+.order-detail-maintenance .operations-success {
+  margin-top: 12px;
+  padding: 11px 13px;
+  border-radius: 10px;
+  font-size: .82rem;
+}
+
+.order-detail-maintenance .operations-error {
+  border: 1px solid #efc8c8;
+  background: var(--od-red-soft);
+  color: var(--od-red);
+}
+
+.order-detail-maintenance .operations-success {
+  border: 1px solid #c9dfd1;
+  background: var(--od-green-soft);
+  color: #2f6b4d;
+}
+
+/* ----------------------------------------------------------
+   Main 3-column layout
+   ---------------------------------------------------------- */
+
+.order-detail-maintenance .order-center__grid {
+  display: grid;
+  grid-template-columns:
+    minmax(250px, 300px)
+    minmax(0, 1fr)
+    minmax(260px, 320px);
+  gap: 16px;
+  align-items: start;
+  margin-top: 16px;
+}
+
+.order-detail-maintenance .order-center__left,
+.order-detail-maintenance .order-center__main,
+.order-detail-maintenance .order-center__right {
+  min-width: 0;
+  display: grid;
+  gap: 14px;
+}
+
+/* ----------------------------------------------------------
+   Cards
+   ---------------------------------------------------------- */
+
+.order-detail-maintenance .order-panel-card {
+  padding: 16px;
+  border: 1px solid var(--od-border) !important;
+  border-radius: 14px;
+  background: #fff !important;
+  box-shadow: 0 1px 2px rgba(18, 38, 50, .04) !important;
+}
+
+.order-detail-maintenance .order-panel-card:hover {
+  background: #fff !important;
+  border-color: var(--od-border) !important;
+  transform: none !important;
+  box-shadow: 0 1px 2px rgba(18, 38, 50, .04) !important;
+}
+
+.order-detail-maintenance .order-panel-title {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin-bottom: 13px;
+}
+
+.order-detail-maintenance .order-panel-title svg {
+  color: var(--od-blue) !important;
+}
+
+.order-detail-maintenance .order-panel-title h2 {
+  margin: 0;
+  color: var(--od-text);
+  font-size: .98rem;
+}
+
+.order-detail-maintenance .panel-description {
+  margin: -3px 0 13px;
+  color: var(--od-muted);
+  font-size: .77rem;
+  line-height: 1.45;
+}
+
+/* ----------------------------------------------------------
+   Detail list
+   ---------------------------------------------------------- */
+
+.order-detail-maintenance .detail-list {
+  display: grid;
+  gap: 0;
+}
+
+.order-detail-maintenance .detail-list > div {
+  display: grid;
+  gap: 3px;
+  padding: 10px 0;
+  border-bottom: 1px solid #edf1f3;
+}
+
+.order-detail-maintenance .detail-list > div:last-child {
+  border-bottom: 0;
+}
+
+.order-detail-maintenance .detail-list span {
+  color: var(--od-muted);
+  font-size: .72rem;
+}
+
+.order-detail-maintenance .detail-list strong {
+  color: var(--od-text);
+  font-size: .84rem;
+  overflow-wrap: anywhere;
+}
+
+/* ----------------------------------------------------------
+   Status chips
+   ---------------------------------------------------------- */
+
+.order-detail-maintenance .hold-status {
+  display: inline-flex;
+  align-items: center;
+  min-height: 24px;
+  padding: 4px 8px;
+  border-radius: 999px;
+  background: #edf2f5 !important;
+  color: #536a7b !important;
+  font-size: .71rem;
+  font-weight: 900;
+}
+
+.order-detail-maintenance .hold-status--waiting {
+  background: var(--od-amber-soft) !important;
+  color: var(--od-amber) !important;
+}
+
+.order-detail-maintenance .hold-status--received,
+.order-detail-maintenance .hold-status--in_progress {
+  background: var(--od-blue-soft) !important;
+  color: var(--od-blue) !important;
+}
+
+.order-detail-maintenance .hold-status--services_completed {
+  background: #eef0f7 !important;
+  color: #58617c !important;
+}
+
+.order-detail-maintenance .hold-status--ready_for_delivery,
+.order-detail-maintenance .hold-status--delivered {
+  background: var(--od-green-soft) !important;
+  color: #2f6b4d !important;
+}
+
+.order-detail-maintenance .hold-status--cancelled {
+  background: var(--od-red-soft) !important;
+  color: var(--od-red) !important;
+}
+
+/* ----------------------------------------------------------
+   Checklist
+   ---------------------------------------------------------- */
+
+.order-detail-maintenance .checklist-list {
+  display: grid;
+  gap: 7px;
+}
+
+.order-detail-maintenance .checklist-item {
+  min-height: 40px;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 8px 10px;
+  border: 1px solid var(--od-border);
+  border-radius: 9px;
+  background: #fff !important;
+  color: #425769;
+  cursor: pointer;
+}
+
+.order-detail-maintenance .checklist-item:hover {
+  border-color: var(--od-hover-border);
+  background: var(--od-hover) !important;
+}
+
+.order-detail-maintenance .checklist-item input {
+  accent-color: var(--od-green);
+}
+
+/* ----------------------------------------------------------
+   Employees
+   ---------------------------------------------------------- */
+
+.order-detail-maintenance .employee-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.order-detail-maintenance .employee-list > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 9px;
+  border: 1px solid #d8e2ea;
+  border-radius: 9px;
+  background: #f2f6f9 !important;
+  color: #49657c;
+  font-size: .76rem;
+  font-weight: 800;
+}
+
+/* ----------------------------------------------------------
+   Forms
+   ---------------------------------------------------------- */
+
+.order-detail-maintenance .add-service-form {
+  display: grid;
+  grid-template-columns:
+    minmax(0, 1.35fr)
+    minmax(0, 1fr)
+    90px
+    auto;
+  gap: 9px;
+  align-items: end;
+}
+
+.order-detail-maintenance .add-service-form label,
+.order-detail-maintenance .note-form {
+  min-width: 0;
+}
+
+.order-detail-maintenance .add-service-form label {
+  display: grid;
+  gap: 6px;
+  color: #526777;
+  font-size: .75rem;
+  font-weight: 800;
+}
+
+.order-detail-maintenance .add-service-form select,
+.order-detail-maintenance .add-service-form input,
+.order-detail-maintenance .note-form select,
+.order-detail-maintenance .note-form textarea {
+  width: 100%;
+  min-height: 42px;
+  border: 1px solid var(--od-border-strong);
+  border-radius: 9px;
+  padding: 8px 10px;
+  background: #fff !important;
+  color: var(--od-text);
+  font: inherit;
+  outline: none;
+}
+
+.order-detail-maintenance .add-service-form select:focus,
+.order-detail-maintenance .add-service-form input:focus,
+.order-detail-maintenance .note-form select:focus,
+.order-detail-maintenance .note-form textarea:focus {
+  border-color: #91aabd;
+  box-shadow: 0 0 0 3px rgba(73,107,132,.10);
+}
+
+/* ----------------------------------------------------------
+   Services
+   ---------------------------------------------------------- */
+
+.order-detail-maintenance .service-detail-list {
+  display: grid;
+  gap: 8px;
+}
+
+.order-detail-maintenance .service-detail-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 14px;
+  padding: 12px;
+  border: 1px solid var(--od-border);
+  border-radius: 10px;
+  background: #fff !important;
+}
+
+.order-detail-maintenance .service-detail-row:hover {
+  border-color: var(--od-hover-border);
+  background: var(--od-hover) !important;
+}
+
+.order-detail-maintenance .service-detail-row > div:first-child {
+  min-width: 0;
+  display: grid;
+  gap: 4px;
+}
+
+.order-detail-maintenance .service-detail-row > div:first-child strong {
+  color: var(--od-text);
+  font-size: .84rem;
+}
+
+.order-detail-maintenance .service-detail-row > div:first-child span,
+.order-detail-maintenance .service-detail-quantity span {
+  color: var(--od-muted);
+  font-size: .72rem;
+}
+
+.order-detail-maintenance .service-detail-quantity {
+  display: grid;
+  justify-items: end;
+  gap: 4px;
+  text-align: right;
+}
+
+.order-detail-maintenance .service-detail-quantity strong {
+  color: var(--od-text);
+  font-size: .82rem;
+}
+
+/* ----------------------------------------------------------
+   Notes
+   ---------------------------------------------------------- */
+
+.order-detail-maintenance .note-form {
+  display: grid;
+  grid-template-columns: 150px minmax(0, 1fr) auto;
+  gap: 9px;
+  align-items: end;
+}
+
+.order-detail-maintenance .note-form textarea {
+  min-height: 78px;
+  resize: vertical;
+}
+
+.order-detail-maintenance .notes-list {
+  display: grid;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.order-detail-maintenance .note-card {
+  padding: 11px 12px;
+  border: 1px solid var(--od-border);
+  border-radius: 10px;
+  background: #fff !important;
+}
+
+.order-detail-maintenance .note-card:hover {
+  background: var(--od-hover) !important;
+  border-color: var(--od-hover-border);
+}
+
+.order-detail-maintenance .note-card p {
+  margin: 8px 0;
+  color: #405565;
+  font-size: .79rem;
+  line-height: 1.45;
+}
+
+.order-detail-maintenance .note-card small {
+  color: var(--od-muted);
+  font-size: .68rem;
+}
+
+.order-detail-maintenance .note-type {
+  display: inline-flex;
+  padding: 4px 7px;
+  border-radius: 999px;
+  font-size: .66rem;
+  font-weight: 900;
+}
+
+.order-detail-maintenance .note-type--internal {
+  background: #eef0f7;
+  color: #58617c;
+}
+
+.order-detail-maintenance .note-type--customer {
+  background: var(--od-blue-soft);
+  color: var(--od-blue);
+}
+
+/* ----------------------------------------------------------
+   Financial summary
+   ---------------------------------------------------------- */
+
+.order-detail-maintenance .total-card {
+  position: relative;
+  overflow: hidden;
+  background: #fff !important;
+}
+
+.order-detail-maintenance .total-card::after {
+  content: none !important;
+}
+
+.order-detail-maintenance .totals-box {
+  display: grid;
+  gap: 8px;
+  padding: 12px;
+  border: 1px solid var(--od-border);
+  border-radius: 10px;
+  background: var(--od-surface-soft) !important;
+}
+
+.order-detail-maintenance .totals-box > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  color: var(--od-muted);
+  font-size: .75rem;
+}
+
+.order-detail-maintenance .totals-box strong {
+  color: var(--od-text);
+}
+
+.order-detail-maintenance .totals-box .grand-total {
+  margin-top: 3px;
+  padding-top: 9px;
+  border-top: 1px solid var(--od-border);
+}
+
+.order-detail-maintenance .totals-box .grand-total span {
+  color: var(--od-text);
+  font-size: .86rem;
+  font-weight: 800;
+}
+
+.order-detail-maintenance .totals-box .grand-total strong {
+  color: var(--od-text);
+  font-size: .92rem;
+}
+
+.order-detail-maintenance .financial-status-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 11px;
+  padding: 9px 10px;
+  border: 1px solid var(--od-border);
+  border-radius: 9px;
+  background: #f7f9fb !important;
+  color: var(--od-muted);
+  font-size: .73rem;
+}
+
+.order-detail-maintenance .financial-status-row strong {
+  color: var(--od-text);
+}
+
+/* ----------------------------------------------------------
+   Timeline
+   ---------------------------------------------------------- */
+
+.order-detail-maintenance .timeline-list {
+  display: grid;
+  gap: 0;
+}
+
+.order-detail-maintenance .timeline-item {
+  position: relative;
+  display: grid;
+  grid-template-columns: 14px minmax(0, 1fr);
+  gap: 9px;
+  padding: 0 0 14px;
+  background: transparent !important;
+}
+
+.order-detail-maintenance .timeline-item::before {
+  content: none !important;
+}
+
+.order-detail-maintenance .timeline-dot {
+  width: 9px;
+  height: 9px;
+  margin-top: 5px;
+  border-radius: 999px;
+  background: #7896aa !important;
+  box-shadow: 0 0 0 4px #edf3f7;
+}
+
+.order-detail-maintenance .timeline-item strong {
+  color: var(--od-text);
+  font-size: .78rem;
+}
+
+.order-detail-maintenance .timeline-item p {
+  margin: 4px 0;
+  color: var(--od-muted);
+  font-size: .72rem;
+  line-height: 1.4;
+}
+
+.order-detail-maintenance .timeline-item small {
+  color: #8b97a5;
+  font-size: .66rem;
+}
+
+/* ----------------------------------------------------------
+   Loading / empty fallback
+   ---------------------------------------------------------- */
+
+.order-center-loading {
+  min-height: 320px;
+  display: grid;
+  place-items: center;
+  align-content: center;
+  gap: 12px;
+  padding: 24px;
+  background: var(--od-bg, #f4f7f9);
+  color: var(--od-muted, #667785);
+  text-align: center;
+}
+
+.order-center-loading button {
+  min-height: 40px;
+  padding: 9px 13px;
+  border: 1px solid #c8d4dc;
+  border-radius: 9px;
+  background: #fff;
+  color: #344c5e;
+  font-weight: 800;
+}
+
+/* ==========================================================
+   FINAL HOVER POLICY — NEVER GREEN
+   High specificity against legacy styles.css rules.
+   ========================================================== */
+
+.order-detail-maintenance.order-detail-maintenance
+button:hover:not(:disabled),
+.order-detail-maintenance.order-detail-maintenance
+button:focus-visible:not(:disabled) {
+  background: var(--od-hover) !important;
+  background-color: var(--od-hover) !important;
+  border-color: var(--od-hover-border) !important;
+  color: var(--od-hover-text) !important;
+  filter: none !important;
+}
+
+/* Primary action leaves green on hover. */
+.order-detail-maintenance.order-detail-maintenance
+.order-header-actions > button:not(.secondary-button):hover:not(:disabled),
+.order-detail-maintenance.order-detail-maintenance
+.add-service-form > button:hover:not(:disabled),
+.order-detail-maintenance.order-detail-maintenance
+.note-form > button:hover:not(:disabled) {
+  background: var(--od-hover-strong) !important;
+  background-color: var(--od-hover-strong) !important;
+  border-color: var(--od-hover-border) !important;
+  color: var(--od-hover-text) !important;
+}
+
+/* Semantic row/card hovers remain pastel. */
+.order-detail-maintenance.order-detail-maintenance
+.checklist-item:hover,
+.order-detail-maintenance.order-detail-maintenance
+.service-detail-row:hover,
+.order-detail-maintenance.order-detail-maintenance
+.note-card:hover {
+  background: var(--od-hover) !important;
+  background-color: var(--od-hover) !important;
+  border-color: var(--od-hover-border) !important;
+}
+
+/* ----------------------------------------------------------
+   Responsive
+   ---------------------------------------------------------- */
+
+@media (max-width: 1180px) {
+  .order-detail-maintenance .order-center__grid {
+    grid-template-columns: minmax(240px, 300px) minmax(0, 1fr);
+  }
+
+  .order-detail-maintenance .order-center__right {
+    grid-column: 1 / -1;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 900px) {
+  .order-detail-maintenance {
+    padding: 14px;
+  }
+
+  .order-detail-maintenance .order-center__header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .order-detail-maintenance .order-header-actions {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .order-detail-maintenance .order-center__grid {
+    grid-template-columns: 1fr;
+  }
+
+  .order-detail-maintenance .order-center__right {
+    grid-column: auto;
+    grid-template-columns: 1fr;
+  }
+
+  .order-detail-maintenance .add-service-form,
+  .order-detail-maintenance .note-form {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 620px) {
+  .order-detail-maintenance {
+    padding: 10px;
+  }
+
+  .order-detail-maintenance .order-center__header,
+  .order-detail-maintenance .order-panel-card {
+    border-radius: 12px;
+  }
+
+  .order-detail-maintenance .order-header-actions {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .order-detail-maintenance .order-header-actions button {
+    width: 100%;
+  }
+
+  .order-detail-maintenance .service-detail-row {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .order-detail-maintenance .service-detail-quantity {
+    justify-items: start;
+    text-align: left;
+  }
+}
+/* ==========================================================
+   ORDER DETAIL — TEXT WRAP FIX
+   Corrige cortes de palabras en:
+   - Vehículo y cliente
+   - Datos de control
+   Agregar AL FINAL de:
+   apps/web/src/pages/styles/OrderDetailPage.dashboard.css
+   ========================================================== */
+
+/* Evitar cortes arbitrarios como:
+   "asdasd" -> "asd" / "asd"
+   "Pendiente" -> "Pendi" / "ente"
+*/
+.order-detail-maintenance .detail-list strong {
+  white-space: normal !important;
+  word-break: normal !important;
+  overflow-wrap: break-word !important;
+  hyphens: none !important;
+  line-height: 1.4;
+}
+
+/* Dar más espacio útil a las filas de información */
+.order-detail-maintenance .detail-list > div {
+  min-width: 0;
+  grid-template-columns: 1fr !important;
+  align-items: start;
+}
+
+/* Valores del panel izquierdo */
+.order-detail-maintenance .order-center__left .detail-list strong {
+  width: 100%;
+  max-width: 100%;
+}
+
+/* Valores del panel derecho / Datos de control */
+.order-detail-maintenance .order-center__right .detail-list strong {
+  width: 100%;
+  max-width: 100%;
+}
+
+/* El QR sí puede ser largo sin espacios.
+   Solo él puede romperse de forma controlada si hace falta. */
+.order-detail-maintenance .order-center__right
+.detail-list > div:first-child strong {
+  overflow-wrap: anywhere !important;
+  word-break: break-word !important;
+}
+
+/* En desktop damos un poco más de ancho a la columna izquierda
+   para mejorar legibilidad sin afectar el layout general. */
+@media (min-width: 1181px) {
+  .order-detail-maintenance .order-center__grid {
+    grid-template-columns:
+      minmax(285px, 320px)
+      minmax(0, 1fr)
+      minmax(285px, 330px) !important;
+  }
+}
+/* ==========================================================
+   ORDER DETAIL — LAYOUT + PANEL BORDER FIX
+   Agregar AL FINAL de:
+   apps/web/src/pages/styles/OrderDetailPage.dashboard.css
+
+   Objetivos:
+   - Evitar overflow en "Agregar servicio adicional"
+   - Evitar overflow en "Observaciones"
+   - Redistribuir correctamente las 3 columnas
+   - Asignar borde semántico por panel
+   - Mantener cards blancas; solo cambia el borde/acento
+   ========================================================== */
+
+/* ----------------------------------------------------------
+   1) GRID PRINCIPAL — FUENTE DE VERDAD
+   ---------------------------------------------------------- */
+
+.order-detail-maintenance.order-detail-maintenance .order-center__grid {
+  display: grid !important;
+  grid-template-columns:
+    minmax(270px, 310px)
+    minmax(520px, 1fr)
+    minmax(280px, 320px) !important;
+  gap: 16px !important;
+  align-items: start !important;
+}
+
+/* Cada columna vuelve a ser una pila vertical real.
+   Esto neutraliza reglas legacy de styles.css. */
+.order-detail-maintenance.order-detail-maintenance .order-center__left,
+.order-detail-maintenance.order-detail-maintenance .order-center__main,
+.order-detail-maintenance.order-detail-maintenance .order-center__right {
+  min-width: 0 !important;
+  width: 100% !important;
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) !important;
+  grid-auto-flow: row !important;
+  align-content: start !important;
+  gap: 14px !important;
+}
+
+/* Evita que algún panel herede grid-column / grid-row del CSS legacy. */
+.order-detail-maintenance.order-detail-maintenance
+.order-center__left > .order-panel-card,
+.order-detail-maintenance.order-detail-maintenance
+.order-center__main > .order-panel-card,
+.order-detail-maintenance.order-detail-maintenance
+.order-center__right > .order-panel-card {
+  grid-column: auto !important;
+  grid-row: auto !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+}
+
+/* ----------------------------------------------------------
+   2) PANELES — CARDS BLANCAS + BORDES SEMÁNTICOS
+   ---------------------------------------------------------- */
+
+.order-detail-maintenance.order-detail-maintenance .order-panel-card {
+  position: relative;
+  overflow: hidden;
+  background: #ffffff !important;
+  border-width: 1px !important;
+  border-style: solid !important;
+}
+
+/* Columna izquierda — AZUL */
+.order-detail-maintenance.order-detail-maintenance
+.order-center__left > .order-panel-card {
+  border-color: #9bb8cd !important;
+  box-shadow:
+    inset 3px 0 0 #6f94ad,
+    0 1px 2px rgba(18, 38, 50, 0.04) !important;
+}
+
+/* Columna central — VERDE suave como acento, nunca fondo */
+.order-detail-maintenance.order-detail-maintenance
+.order-center__main > .order-panel-card {
+  border-color: #9fc9b4 !important;
+  box-shadow:
+    inset 3px 0 0 #5b9576,
+    0 1px 2px rgba(18, 38, 50, 0.04) !important;
+}
+
+/* Resumen financiero — VERDE */
+.order-detail-maintenance.order-detail-maintenance
+.order-center__right > .order-panel-card:nth-child(1) {
+  border-color: #9fc9b4 !important;
+  box-shadow:
+    inset 3px 0 0 #5b9576,
+    0 1px 2px rgba(18, 38, 50, 0.04) !important;
+}
+
+/* Timeline — NARANJA */
+.order-detail-maintenance.order-detail-maintenance
+.order-center__right > .order-panel-card:nth-child(2) {
+  border-color: #e4bf83 !important;
+  box-shadow:
+    inset 3px 0 0 #d69a3d,
+    0 1px 2px rgba(18, 38, 50, 0.04) !important;
+}
+
+/* Datos de control — ROJO suave */
+.order-detail-maintenance.order-detail-maintenance
+.order-center__right > .order-panel-card:nth-child(3) {
+  border-color: #e0a1a1 !important;
+  box-shadow:
+    inset 3px 0 0 #c76565,
+    0 1px 2px rgba(18, 38, 50, 0.04) !important;
+}
+
+/* Hover de panel: mantener blanco, solo reforzar borde.
+   Nunca convertir el panel en verde. */
+.order-detail-maintenance.order-detail-maintenance
+.order-panel-card:hover {
+  background: #ffffff !important;
+  transform: none !important;
+}
+
+/* ----------------------------------------------------------
+   3) AGREGAR SERVICIO — SIN OVERFLOW
+   ---------------------------------------------------------- */
+
+.order-detail-maintenance.order-detail-maintenance .add-service-panel {
+  min-width: 0 !important;
+  overflow: visible !important;
+}
+
+.order-detail-maintenance.order-detail-maintenance .add-service-form {
+  width: 100% !important;
+  min-width: 0 !important;
+
+  display: grid !important;
+  grid-template-columns:
+    minmax(200px, 1.35fr)
+    minmax(170px, 1fr)
+    minmax(78px, 90px)
+    minmax(135px, auto) !important;
+
+  gap: 10px !important;
+  align-items: end !important;
+}
+
+.order-detail-maintenance.order-detail-maintenance .add-service-form label {
+  min-width: 0 !important;
+  width: 100% !important;
+}
+
+.order-detail-maintenance.order-detail-maintenance
+.add-service-form select,
+.order-detail-maintenance.order-detail-maintenance
+.add-service-form input {
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+}
+
+/* El botón no debe empujar el resto del formulario fuera del panel. */
+.order-detail-maintenance.order-detail-maintenance
+.add-service-form > button {
+  width: auto !important;
+  min-width: 135px !important;
+  max-width: 100% !important;
+  white-space: nowrap !important;
+}
+
+/* ----------------------------------------------------------
+   4) OBSERVACIONES — SIN DESBORDAMIENTO
+   ---------------------------------------------------------- */
+
+.order-detail-maintenance.order-detail-maintenance .note-form {
+  width: 100% !important;
+  min-width: 0 !important;
+
+  display: grid !important;
+  grid-template-columns:
+    minmax(120px, 145px)
+    minmax(0, 1fr)
+    minmax(145px, auto) !important;
+
+  gap: 10px !important;
+  align-items: end !important;
+}
+
+.order-detail-maintenance.order-detail-maintenance
+.note-form select,
+.order-detail-maintenance.order-detail-maintenance
+.note-form textarea {
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+}
+
+.order-detail-maintenance.order-detail-maintenance
+.note-form textarea {
+  resize: vertical !important;
+}
+
+.order-detail-maintenance.order-detail-maintenance
+.note-form > button {
+  width: auto !important;
+  min-width: 145px !important;
+  max-width: 100% !important;
+  white-space: nowrap !important;
+}
+
+/* Cualquier contenido largo de notas permanece dentro del panel. */
+.order-detail-maintenance.order-detail-maintenance .note-card,
+.order-detail-maintenance.order-detail-maintenance .note-card p {
+  min-width: 0 !important;
+  max-width: 100% !important;
+  overflow-wrap: break-word !important;
+  word-break: normal !important;
+}
+
+/* ----------------------------------------------------------
+   5) CONTENIDO INTERNO — PROTECCIÓN DE ANCHO
+   ---------------------------------------------------------- */
+
+.order-detail-maintenance.order-detail-maintenance
+.service-detail-row,
+.order-detail-maintenance.order-detail-maintenance
+.timeline-item,
+.order-detail-maintenance.order-detail-maintenance
+.detail-list,
+.order-detail-maintenance.order-detail-maintenance
+.checklist-list,
+.order-detail-maintenance.order-detail-maintenance
+.employee-list,
+.order-detail-maintenance.order-detail-maintenance
+.totals-box {
+  min-width: 0 !important;
+  max-width: 100% !important;
+}
+
+/* ----------------------------------------------------------
+   6) RESPONSIVE — REDISTRIBUCIÓN PROGRESIVA
+   ---------------------------------------------------------- */
+
+@media (max-width: 1280px) {
+  .order-detail-maintenance.order-detail-maintenance .order-center__grid {
+    grid-template-columns:
+      minmax(250px, 285px)
+      minmax(0, 1fr) !important;
+  }
+
+  /* Columna derecha pasa debajo ocupando todo el ancho */
+  .order-detail-maintenance.order-detail-maintenance
+  .order-center__right {
+    grid-column: 1 / -1 !important;
+    grid-template-columns:
+      repeat(3, minmax(0, 1fr)) !important;
+  }
+}
+
+@media (max-width: 1020px) {
+  .order-detail-maintenance.order-detail-maintenance .order-center__grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .order-detail-maintenance.order-detail-maintenance
+  .order-center__right {
+    grid-column: auto !important;
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  .order-detail-maintenance.order-detail-maintenance
+  .add-service-form {
+    grid-template-columns:
+      minmax(0, 1fr)
+      minmax(0, 1fr) !important;
+  }
+
+  .order-detail-maintenance.order-detail-maintenance
+  .add-service-form > button {
+    width: 100% !important;
+  }
+
+  .order-detail-maintenance.order-detail-maintenance
+  .note-form {
+    grid-template-columns:
+      minmax(120px, 150px)
+      minmax(0, 1fr) !important;
+  }
+
+  .order-detail-maintenance.order-detail-maintenance
+  .note-form > button {
+    width: 100% !important;
+    grid-column: 1 / -1 !important;
+  }
+}
+
+@media (max-width: 720px) {
+  .order-detail-maintenance.order-detail-maintenance
+  .order-center__right,
+  .order-detail-maintenance.order-detail-maintenance
+  .add-service-form,
+  .order-detail-maintenance.order-detail-maintenance
+  .note-form {
+    grid-template-columns: 1fr !important;
+  }
+
+  .order-detail-maintenance.order-detail-maintenance
+  .add-service-form > button,
+  .order-detail-maintenance.order-detail-maintenance
+  .note-form > button {
+    width: 100% !important;
+    min-width: 0 !important;
+    grid-column: auto !important;
+  }
+}
+/* ==========================================================
+   ORDER DETAIL — DISTRIBUCIÓN FINAL DE PANELES
+   Agregar AL FINAL de:
+   apps/web/src/pages/styles/OrderDetailPage.dashboard.css
+
+   Layout solicitado:
+   1. Personal asignado — arriba
+   2. Vehículo y cliente | Checklist de recepción
+   3. Agregar servicio | Servicios de la orden | Observaciones
+   4. Resumen financiero | Datos de control | Timeline
+   ========================================================== */
+
+.order-detail-maintenance.order-detail-maintenance .order-center__grid {
+  display: grid !important;
+  grid-template-columns:
+    minmax(0, 1fr)
+    minmax(0, 1fr)
+    minmax(0, 1fr) !important;
+
+  grid-template-areas:
+    "personal    personal    personal"
+    "vehicle     checklist   checklist"
+    "addservice  services    notes"
+    "financial   control     timeline" !important;
+
+  gap: 16px !important;
+  align-items: start !important;
+}
+
+/* Los wrappers dejan de participar visualmente en el grid.
+   Sus cards pasan a ser hijos directos del grid principal. */
+.order-detail-maintenance.order-detail-maintenance .order-center__left,
+.order-detail-maintenance.order-detail-maintenance .order-center__main,
+.order-detail-maintenance.order-detail-maintenance .order-center__right {
+  display: contents !important;
+}
+
+/* ----------------------------------------------------------
+   FILA 1
+   Personal asignado
+   ---------------------------------------------------------- */
+
+.order-detail-maintenance.order-detail-maintenance
+.order-center__left > .order-panel-card:nth-child(3) {
+  grid-area: personal !important;
+}
+
+/* ----------------------------------------------------------
+   FILA 2
+   Vehículo y cliente | Checklist
+   ---------------------------------------------------------- */
+
+.order-detail-maintenance.order-detail-maintenance
+.order-center__left > .order-panel-card:nth-child(1) {
+  grid-area: vehicle !important;
+}
+
+.order-detail-maintenance.order-detail-maintenance
+.order-center__left > .order-panel-card:nth-child(2) {
+  grid-area: checklist !important;
+}
+
+/* ----------------------------------------------------------
+   FILA 3
+   Agregar servicio | Servicios | Observaciones
+   ---------------------------------------------------------- */
+
+.order-detail-maintenance.order-detail-maintenance
+.order-center__main > .order-panel-card:nth-child(1) {
+  grid-area: addservice !important;
+}
+
+.order-detail-maintenance.order-detail-maintenance
+.order-center__main > .order-panel-card:nth-child(2) {
+  grid-area: services !important;
+}
+
+.order-detail-maintenance.order-detail-maintenance
+.order-center__main > .order-panel-card:nth-child(3) {
+  grid-area: notes !important;
+}
+
+/* ----------------------------------------------------------
+   FILA 4
+   Resumen financiero | Datos de control | Timeline
+   ---------------------------------------------------------- */
+
+.order-detail-maintenance.order-detail-maintenance
+.order-center__right > .order-panel-card:nth-child(1) {
+  grid-area: financial !important;
+}
+
+.order-detail-maintenance.order-detail-maintenance
+.order-center__right > .order-panel-card:nth-child(3) {
+  grid-area: control !important;
+}
+
+.order-detail-maintenance.order-detail-maintenance
+.order-center__right > .order-panel-card:nth-child(2) {
+  grid-area: timeline !important;
+}
+
+/* ----------------------------------------------------------
+   REGLAS DE ANCHO / OVERFLOW
+   ---------------------------------------------------------- */
+
+.order-detail-maintenance.order-detail-maintenance .order-panel-card {
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+  overflow: hidden !important;
+}
+
+/* Personal arriba: contenido más horizontal */
+.order-detail-maintenance.order-detail-maintenance
+.order-center__left > .order-panel-card:nth-child(3)
+.employee-list {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 8px !important;
+}
+
+/* Agregar servicio: compacto y sin desbordar */
+.order-detail-maintenance.order-detail-maintenance .add-service-form {
+  display: grid !important;
+  grid-template-columns: 1fr !important;
+  gap: 9px !important;
+}
+
+.order-detail-maintenance.order-detail-maintenance
+.add-service-form > button {
+  width: 100% !important;
+  min-width: 0 !important;
+}
+
+/* Observaciones: una sola columna dentro de su card */
+.order-detail-maintenance.order-detail-maintenance .note-form {
+  display: grid !important;
+  grid-template-columns: 1fr !important;
+  gap: 9px !important;
+}
+
+.order-detail-maintenance.order-detail-maintenance
+.note-form > button {
+  width: 100% !important;
+  min-width: 0 !important;
+}
+
+/* Servicios: filas internas adaptables */
+.order-detail-maintenance.order-detail-maintenance
+.service-detail-row {
+  min-width: 0 !important;
+}
+
+.order-detail-maintenance.order-detail-maintenance
+.service-detail-row > div {
+  min-width: 0 !important;
+}
+
+/* ----------------------------------------------------------
+   BORDES SEMÁNTICOS POR PANEL
+   Fondo siempre blanco.
+   ---------------------------------------------------------- */
+
+/* Personal — azul */
+.order-detail-maintenance.order-detail-maintenance
+.order-center__left > .order-panel-card:nth-child(3) {
+  border-color: #9bb8cd !important;
+  box-shadow:
+    inset 3px 0 0 #6f94ad,
+    0 1px 2px rgba(18, 38, 50, 0.04) !important;
+}
+
+/* Vehículo — azul */
+.order-detail-maintenance.order-detail-maintenance
+.order-center__left > .order-panel-card:nth-child(1) {
+  border-color: #9bb8cd !important;
+  box-shadow:
+    inset 3px 0 0 #6f94ad,
+    0 1px 2px rgba(18, 38, 50, 0.04) !important;
+}
+
+/* Checklist — naranja */
+.order-detail-maintenance.order-detail-maintenance
+.order-center__left > .order-panel-card:nth-child(2) {
+  border-color: #e4bf83 !important;
+  box-shadow:
+    inset 3px 0 0 #d69a3d,
+    0 1px 2px rgba(18, 38, 50, 0.04) !important;
+}
+
+/* Agregar servicio — verde */
+.order-detail-maintenance.order-detail-maintenance
+.order-center__main > .order-panel-card:nth-child(1) {
+  border-color: #9fc9b4 !important;
+  box-shadow:
+    inset 3px 0 0 #5b9576,
+    0 1px 2px rgba(18, 38, 50, 0.04) !important;
+}
+
+/* Servicios — azul */
+.order-detail-maintenance.order-detail-maintenance
+.order-center__main > .order-panel-card:nth-child(2) {
+  border-color: #9bb8cd !important;
+  box-shadow:
+    inset 3px 0 0 #6f94ad,
+    0 1px 2px rgba(18, 38, 50, 0.04) !important;
+}
+
+/* Observaciones — naranja */
+.order-detail-maintenance.order-detail-maintenance
+.order-center__main > .order-panel-card:nth-child(3) {
+  border-color: #e4bf83 !important;
+  box-shadow:
+    inset 3px 0 0 #d69a3d,
+    0 1px 2px rgba(18, 38, 50, 0.04) !important;
+}
+
+/* Financiero — verde */
+.order-detail-maintenance.order-detail-maintenance
+.order-center__right > .order-panel-card:nth-child(1) {
+  border-color: #9fc9b4 !important;
+  box-shadow:
+    inset 3px 0 0 #5b9576,
+    0 1px 2px rgba(18, 38, 50, 0.04) !important;
+}
+
+/* Datos de control — rojo */
+.order-detail-maintenance.order-detail-maintenance
+.order-center__right > .order-panel-card:nth-child(3) {
+  border-color: #e0a1a1 !important;
+  box-shadow:
+    inset 3px 0 0 #c76565,
+    0 1px 2px rgba(18, 38, 50, 0.04) !important;
+}
+
+/* Timeline — naranja */
+.order-detail-maintenance.order-detail-maintenance
+.order-center__right > .order-panel-card:nth-child(2) {
+  border-color: #e4bf83 !important;
+  box-shadow:
+    inset 3px 0 0 #d69a3d,
+    0 1px 2px rgba(18, 38, 50, 0.04) !important;
+}
+
+/* ----------------------------------------------------------
+   RESPONSIVE
+   ---------------------------------------------------------- */
+
+@media (max-width: 1180px) {
+  .order-detail-maintenance.order-detail-maintenance .order-center__grid {
+    grid-template-columns:
+      minmax(0, 1fr)
+      minmax(0, 1fr) !important;
+
+    grid-template-areas:
+      "personal   personal"
+      "vehicle    checklist"
+      "addservice services"
+      "notes      notes"
+      "financial  control"
+      "timeline   timeline" !important;
+  }
+}
+
+@media (max-width: 760px) {
+  .order-detail-maintenance.order-detail-maintenance .order-center__grid {
+    grid-template-columns: 1fr !important;
+
+    grid-template-areas:
+      "personal"
+      "vehicle"
+      "checklist"
+      "addservice"
+      "services"
+      "notes"
+      "financial"
+      "control"
+      "timeline" !important;
+  }
+}

@@ -1,0 +1,980 @@
+/* ==========================================================
+   CACTUS CARWASH — NEW ORDER
+   DASHBOARD ENTERPRISE VISUAL SYSTEM
+   Archivo LOCAL de la página.
+   NO agregar a styles.css.
+   ========================================================== */
+
+.carwash-dashboard-ui {
+  --cw-bg: #f5f7f9;
+  --cw-surface: #ffffff;
+  --cw-surface-soft: #f8fafc;
+  --cw-border: #e2e8f0;
+  --cw-border-strong: #cbd5e1;
+  --cw-text: #172033;
+  --cw-muted: #667085;
+  --cw-muted-2: #8793a5;
+  --cw-blue: #526f88;
+  --cw-blue-soft: #edf3f8;
+  --cw-blue-soft-2: #e6eef5;
+  --cw-green: #176a49;
+  --cw-green-soft: #edf8f2;
+  --cw-red: #a64242;
+  --cw-red-soft: #fff1f1;
+  --cw-shadow: 0 8px 24px rgb(15 23 42 / 5%);
+
+  min-height: 100vh;
+  background: var(--cw-bg);
+  color: var(--cw-text);
+}
+
+/* ----------------------------------------------------------
+   CRITICAL RESET
+   El styles.css global tiene button { background: verde }.
+   Esta pantalla NO hereda ese patrón.
+   ---------------------------------------------------------- */
+
+.carwash-dashboard-ui button,
+.carwash-dashboard-ui button:hover,
+.carwash-dashboard-ui button:focus,
+.carwash-dashboard-ui button:active {
+  filter: none !important;
+  box-shadow: none;
+}
+
+.carwash-dashboard-ui button {
+  min-height: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  color: var(--cw-text) !important;
+}
+
+/* ----------------------------------------------------------
+   TOP BAR
+   ---------------------------------------------------------- */
+
+.carwash-dashboard-ui__topbar {
+  min-height: 72px;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  display: grid;
+  grid-template-columns: 220px minmax(0, 1fr) 150px;
+  align-items: center;
+  gap: 18px;
+  padding: 10px 18px;
+  border-bottom: 1px solid var(--cw-border);
+  background: rgba(255,255,255,.97);
+  backdrop-filter: blur(12px);
+}
+
+.carwash-dashboard-ui__brand {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.carwash-dashboard-ui__logo {
+  font-size: 1rem;
+  font-weight: 950;
+  letter-spacing: .13em;
+}
+
+.carwash-dashboard-ui__brand > div {
+  min-width: 0;
+  display: grid;
+  gap: 2px;
+}
+
+.carwash-dashboard-ui__brand > div strong {
+  font-size: .82rem;
+}
+
+.carwash-dashboard-ui__brand > div span {
+  overflow: hidden;
+  color: var(--cw-muted);
+  font-size: .70rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.carwash-dashboard-ui__nav {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  overflow-x: auto;
+  scrollbar-width: thin;
+}
+
+.carwash-dashboard-ui .carwash-dashboard-ui__nav-item {
+  min-height: 38px !important;
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 0 11px !important;
+  border: 1px solid transparent !important;
+  border-radius: 9px !important;
+  background: transparent !important;
+  color: #536173 !important;
+  font-size: .72rem;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.carwash-dashboard-ui .carwash-dashboard-ui__nav-item:hover {
+  border-color: #d8e2ea !important;
+  background: #f0f4f7 !important;
+  color: #30475b !important;
+}
+
+.carwash-dashboard-ui .carwash-dashboard-ui__nav-item--primary {
+  border-color: var(--cw-green) !important;
+  background: var(--cw-green) !important;
+  color: #fff !important;
+}
+
+.carwash-dashboard-ui .carwash-dashboard-ui__nav-item--primary:hover {
+  border-color: #b9ccd9 !important;
+  background: #e4edf4 !important;
+  color: #304b61 !important;
+}
+
+.carwash-dashboard-ui__user {
+  display: grid;
+  justify-items: end;
+  gap: 2px;
+}
+
+.carwash-dashboard-ui__user span {
+  color: var(--cw-muted-2);
+  font-size: .66rem;
+}
+
+.carwash-dashboard-ui__user strong {
+  font-size: .74rem;
+}
+
+/* ----------------------------------------------------------
+   WORKSPACE / PANELS
+   ---------------------------------------------------------- */
+
+.carwash-dashboard-ui__workspace {
+  width: 100%;
+  max-width: 1720px;
+  min-height: calc(100vh - 72px);
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: minmax(380px, 430px) minmax(0, 1fr);
+  gap: 16px;
+  padding: 16px;
+}
+
+.carwash-dashboard-ui__order,
+.carwash-dashboard-ui__panel {
+  border: 1px solid var(--cw-border);
+  border-radius: 14px;
+  background: var(--cw-surface);
+  box-shadow: var(--cw-shadow);
+}
+
+.carwash-dashboard-ui__order {
+  position: sticky;
+  top: 88px;
+  max-height: calc(100vh - 104px);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 18px;
+  overflow-y: auto;
+}
+
+.carwash-dashboard-ui__catalog {
+  min-width: 0;
+  display: grid;
+  align-content: start;
+  gap: 16px;
+}
+
+.carwash-dashboard-ui__panel {
+  padding: 18px;
+}
+
+.carwash-dashboard-ui__heading,
+.carwash-dashboard-ui__panel-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.carwash-dashboard-ui__heading h1,
+.carwash-dashboard-ui__panel-heading h2 {
+  margin: 4px 0 0;
+  color: var(--cw-text);
+}
+
+.carwash-dashboard-ui__heading h1 {
+  font-size: 1.45rem;
+}
+
+.carwash-dashboard-ui__panel-heading h2 {
+  font-size: 1rem;
+}
+
+.carwash-dashboard-ui__heading p {
+  margin: 4px 0 0;
+  color: var(--cw-muted);
+  font-size: .73rem;
+  line-height: 1.45;
+}
+
+.carwash-dashboard-ui__eyebrow {
+  color: #6f7f91;
+  font-size: .62rem;
+  font-weight: 900;
+  letter-spacing: .13em;
+  text-transform: uppercase;
+}
+
+.carwash-dashboard-ui__badge {
+  padding: 5px 8px;
+  border: 1px solid #d5e0e9;
+  border-radius: 999px;
+  background: #f1f5f8;
+  color: #5d6d7f;
+  font-size: .66rem;
+  font-weight: 900;
+}
+
+.carwash-dashboard-ui .carwash-dashboard-ui__icon-button {
+  width: 36px;
+  min-height: 36px !important;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--cw-border) !important;
+  border-radius: 9px !important;
+  background: #fff !important;
+  color: #526173 !important;
+}
+
+.carwash-dashboard-ui .carwash-dashboard-ui__icon-button:hover {
+  background: #eef3f7 !important;
+  color: #30475b !important;
+}
+
+/* ----------------------------------------------------------
+   CONTEXT + FORM
+   ---------------------------------------------------------- */
+
+.carwash-dashboard-ui__context {
+  min-height: 58px;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border: 1px solid #d9e3eb;
+  border-radius: 11px;
+  background: #f7f9fb;
+  color: #536b81;
+}
+
+.carwash-dashboard-ui__context > div {
+  display: grid;
+  gap: 2px;
+}
+
+.carwash-dashboard-ui__context > div span {
+  color: var(--cw-muted);
+  font-size: .63rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.carwash-dashboard-ui__context > div strong {
+  overflow: hidden;
+  color: var(--cw-text);
+  font-size: .82rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.carwash-dashboard-ui__context-code {
+  padding: 5px 8px;
+  border: 1px solid #c4d5e1;
+  border-radius: 999px;
+  background: #edf3f7;
+  color: #49637a;
+  font-size: .64rem;
+  font-weight: 900;
+}
+
+.carwash-dashboard-ui__form-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 120px;
+  gap: 10px;
+}
+
+.carwash-dashboard-ui__form-grid label,
+.carwash-dashboard-ui__field {
+  display: grid;
+  gap: 6px;
+}
+
+.carwash-dashboard-ui__form-grid label > span,
+.carwash-dashboard-ui__field > span {
+  color: #48566a;
+  font-size: .72rem;
+  font-weight: 800;
+}
+
+.carwash-dashboard-ui input,
+.carwash-dashboard-ui select {
+  min-height: 42px;
+  border: 1px solid var(--cw-border-strong);
+  border-radius: 10px;
+  padding: 0 11px;
+  background: #fff;
+  color: var(--cw-text);
+  font-size: .80rem;
+}
+
+.carwash-dashboard-ui input:focus,
+.carwash-dashboard-ui select:focus {
+  outline: 3px solid rgb(82 111 136 / 12%);
+  border-color: #8099ae;
+}
+
+/* ----------------------------------------------------------
+   VEHICLE SELECTOR
+   WHITE/NEUTRAL — NEVER GREEN
+   ---------------------------------------------------------- */
+
+.carwash-dashboard-ui__vehicle-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(108px, 1fr));
+  gap: 9px;
+  margin-top: 14px;
+}
+
+.carwash-dashboard-ui .carwash-dashboard-ui__vehicle {
+  min-height: 100px !important;
+  display: grid;
+  place-items: center;
+  align-content: center;
+  gap: 8px;
+  padding: 12px !important;
+  border: 1px solid var(--cw-border) !important;
+  border-radius: 11px !important;
+  background: #fff !important;
+  color: #526173 !important;
+  font-size: .72rem;
+  font-weight: 850;
+}
+
+.carwash-dashboard-ui .carwash-dashboard-ui__vehicle:hover {
+  transform: translateY(-1px);
+  border-color: #b8cad8 !important;
+  background: #f2f6f9 !important;
+  color: #355269 !important;
+}
+
+.carwash-dashboard-ui .carwash-dashboard-ui__vehicle--selected,
+.carwash-dashboard-ui .carwash-dashboard-ui__vehicle[aria-pressed="true"] {
+  border-color: #8da8bc !important;
+  background: var(--cw-blue-soft-2) !important;
+  color: #304f67 !important;
+  box-shadow: inset 0 0 0 1px rgb(82 111 136 / 8%);
+}
+
+/* ----------------------------------------------------------
+   CATALOG TOOLBAR
+   ---------------------------------------------------------- */
+
+.carwash-dashboard-ui__toolbar {
+  display: grid;
+  grid-template-columns: minmax(220px, 1fr) auto;
+  gap: 10px;
+  margin: 14px 0;
+}
+
+.carwash-dashboard-ui__search {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 11px;
+  border: 1px solid var(--cw-border-strong);
+  border-radius: 10px;
+  background: #fff;
+  color: #7d8998;
+}
+
+.carwash-dashboard-ui__search input {
+  border: 0;
+  padding-left: 0;
+}
+
+.carwash-dashboard-ui__search input:focus {
+  outline: 0;
+}
+
+.carwash-dashboard-ui__filters {
+  display: flex;
+  gap: 6px;
+}
+
+.carwash-dashboard-ui .carwash-dashboard-ui__filter {
+  min-height: 40px !important;
+  padding: 0 13px !important;
+  border: 1px solid var(--cw-border) !important;
+  border-radius: 9px !important;
+  background: #fff !important;
+  color: #566579 !important;
+  font-size: .72rem;
+  font-weight: 850;
+}
+
+.carwash-dashboard-ui .carwash-dashboard-ui__filter:hover {
+  border-color: #c4d2dc !important;
+  background: #f1f5f8 !important;
+  color: #3b566d !important;
+}
+
+.carwash-dashboard-ui .carwash-dashboard-ui__filter--active {
+  border-color: #adc2d2 !important;
+  background: var(--cw-blue-soft-2) !important;
+  color: #35536b !important;
+}
+
+/* ----------------------------------------------------------
+   SERVICE CARDS
+   WHITE — NEVER GREEN
+   ---------------------------------------------------------- */
+
+.carwash-dashboard-ui__services-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(165px, 1fr));
+  gap: 10px;
+}
+
+.carwash-dashboard-ui .carwash-dashboard-ui__service {
+  min-height: 190px !important;
+  display: grid;
+  align-content: start;
+  justify-items: start;
+  gap: 8px;
+  padding: 14px !important;
+  border: 1px solid var(--cw-border) !important;
+  border-radius: 12px !important;
+  background: #fff !important;
+  color: var(--cw-text) !important;
+  text-align: left;
+}
+
+.carwash-dashboard-ui .carwash-dashboard-ui__service:hover {
+  transform: translateY(-1px);
+  border-color: #b8cad8 !important;
+  background: #fafcfd !important;
+  color: var(--cw-text) !important;
+  box-shadow: 0 8px 18px rgb(15 23 42 / 6%);
+}
+
+.carwash-dashboard-ui .carwash-dashboard-ui__service--selected {
+  border-color: #91aabd !important;
+  background: #f7fafc !important;
+  color: var(--cw-text) !important;
+  box-shadow: inset 0 0 0 1px rgb(82 111 136 / 7%);
+}
+
+.carwash-dashboard-ui__service-icon {
+  width: 46px;
+  height: 46px;
+  display: grid;
+  place-items: center;
+  border-radius: 11px;
+  background: var(--cw-blue-soft);
+  color: var(--cw-blue);
+}
+
+.carwash-dashboard-ui__service-price {
+  margin-top: 4px;
+  color: var(--cw-text);
+  font-size: .86rem;
+}
+
+.carwash-dashboard-ui__service-name {
+  margin-top: auto;
+  color: var(--cw-text);
+  font-size: .82rem;
+}
+
+.carwash-dashboard-ui__service-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.carwash-dashboard-ui__service-tags span {
+  padding: 4px 7px;
+  border: 1px solid #d7e0e8;
+  border-radius: 999px;
+  background: #f7f9fb;
+  color: #5d6c7d;
+  font-size: .62rem;
+  font-weight: 800;
+}
+
+/* ----------------------------------------------------------
+   CURRENT ORDER
+   ---------------------------------------------------------- */
+
+.carwash-dashboard-ui__list-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--cw-border);
+}
+
+.carwash-dashboard-ui__list-title strong {
+  font-size: .80rem;
+}
+
+.carwash-dashboard-ui__list-title span {
+  color: var(--cw-muted);
+  font-size: .68rem;
+  font-weight: 800;
+}
+
+.carwash-dashboard-ui__order-lines {
+  min-height: 150px;
+  max-height: 315px;
+  display: grid;
+  align-content: start;
+  gap: 8px;
+  overflow-y: auto;
+}
+
+.carwash-dashboard-ui__empty {
+  min-height: 120px;
+  display: grid;
+  place-items: center;
+  align-content: center;
+  gap: 4px;
+  padding: 18px;
+  border: 1px dashed #ccd7e0;
+  border-radius: 10px;
+  background: #fafbfd;
+  color: var(--cw-muted);
+  font-size: .72rem;
+  text-align: center;
+}
+
+.carwash-dashboard-ui__order-line {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 10px;
+  padding: 11px 36px 11px 11px;
+  border: 1px solid var(--cw-border);
+  border-radius: 10px;
+  background: #fff;
+}
+
+.carwash-dashboard-ui__order-line:hover {
+  border-color: #c8d4df;
+  background: #fafcfd;
+}
+
+.carwash-dashboard-ui__order-line--invalid {
+  border-color: #e7bebe;
+  background: #fff8f8;
+}
+
+.carwash-dashboard-ui__line-main,
+.carwash-dashboard-ui__line-side {
+  display: grid;
+  gap: 5px;
+}
+
+.carwash-dashboard-ui__line-main > strong {
+  font-size: .80rem;
+}
+
+.carwash-dashboard-ui__line-main > span,
+.carwash-dashboard-ui__line-side > span {
+  color: var(--cw-muted);
+  font-size: .66rem;
+}
+
+.carwash-dashboard-ui__line-main em {
+  color: var(--cw-red);
+  font-size: .66rem;
+  font-style: normal;
+  font-weight: 800;
+}
+
+.carwash-dashboard-ui__line-side {
+  justify-items: end;
+  text-align: right;
+}
+
+.carwash-dashboard-ui__line-side > strong {
+  font-size: .75rem;
+}
+
+.carwash-dashboard-ui__employee {
+  width: fit-content;
+  max-width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 6px;
+  border: 1px solid #d8e2ea;
+  border-radius: 7px;
+  background: #f2f6f9;
+  color: #49657c;
+}
+
+.carwash-dashboard-ui__employee select {
+  width: auto;
+  max-width: 160px;
+  min-height: 22px;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  color: #49657c;
+  font-size: .66rem;
+  font-weight: 800;
+}
+
+.carwash-dashboard-ui__employee select:focus {
+  outline: 0;
+}
+
+.carwash-dashboard-ui__quantity {
+  display: grid;
+  grid-template-columns: 26px 30px 26px;
+  align-items: center;
+  overflow: hidden;
+  border: 1px solid #d5dee6;
+  border-radius: 7px;
+}
+
+.carwash-dashboard-ui .carwash-dashboard-ui__quantity button {
+  width: 26px;
+  min-height: 26px !important;
+  display: grid;
+  place-items: center;
+  background: #f1f5f8 !important;
+  color: #49657c !important;
+}
+
+.carwash-dashboard-ui .carwash-dashboard-ui__quantity button:hover {
+  background: #e5edf3 !important;
+}
+
+.carwash-dashboard-ui__quantity strong {
+  text-align: center;
+  font-size: .70rem;
+}
+
+.carwash-dashboard-ui .carwash-dashboard-ui__remove {
+  position: absolute;
+  top: 7px;
+  right: 7px;
+  width: 26px;
+  min-height: 26px !important;
+  display: grid;
+  place-items: center;
+  border-radius: 7px !important;
+  background: var(--cw-red-soft) !important;
+  color: var(--cw-red) !important;
+}
+
+.carwash-dashboard-ui .carwash-dashboard-ui__remove:hover {
+  background: #fde5e5 !important;
+}
+
+/* ----------------------------------------------------------
+   TOTALS / FEEDBACK
+   ---------------------------------------------------------- */
+
+.carwash-dashboard-ui__totals {
+  display: grid;
+  gap: 7px;
+  padding: 12px;
+  border: 1px solid var(--cw-border);
+  border-radius: 10px;
+  background: var(--cw-surface-soft);
+}
+
+.carwash-dashboard-ui__totals > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+  color: #586579;
+  font-size: .70rem;
+}
+
+.carwash-dashboard-ui__totals strong {
+  color: var(--cw-text);
+}
+
+.carwash-dashboard-ui__total-main {
+  margin-top: 3px;
+  padding-top: 9px;
+  border-top: 1px solid var(--cw-border);
+}
+
+.carwash-dashboard-ui__total-main span {
+  color: var(--cw-text);
+  font-size: .88rem;
+}
+
+.carwash-dashboard-ui__total-main strong {
+  color: var(--cw-green);
+  font-size: .90rem;
+}
+
+.carwash-dashboard-ui__message {
+  display: grid;
+  gap: 3px;
+  padding: 10px 11px;
+  border-radius: 9px;
+  font-size: .70rem;
+}
+
+.carwash-dashboard-ui__message--error {
+  border: 1px solid #edc5c5;
+  background: var(--cw-red-soft);
+  color: #903a3a;
+}
+
+.carwash-dashboard-ui__message--success {
+  border: 1px solid #cce4d6;
+  background: var(--cw-green-soft);
+  color: #236a4a;
+}
+
+/* ----------------------------------------------------------
+   ACTIONS
+   Green ONLY for the primary action.
+   ---------------------------------------------------------- */
+
+.carwash-dashboard-ui__actions {
+  display: grid;
+  grid-template-columns: 1fr 1.25fr 1fr;
+  gap: 8px;
+}
+
+.carwash-dashboard-ui .carwash-dashboard-ui__action {
+  min-height: 42px !important;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 0 12px !important;
+  border-radius: 9px !important;
+  font-size: .72rem;
+  font-weight: 900;
+}
+
+.carwash-dashboard-ui .carwash-dashboard-ui__action--secondary {
+  border: 1px solid var(--cw-border-strong) !important;
+  background: #fff !important;
+  color: #536173 !important;
+}
+
+.carwash-dashboard-ui .carwash-dashboard-ui__action--secondary:hover {
+  background: #f2f5f7 !important;
+}
+
+.carwash-dashboard-ui .carwash-dashboard-ui__action--outline {
+  border: 1px solid #a7b9c7 !important;
+  background: #fff !important;
+  color: #456078 !important;
+}
+
+.carwash-dashboard-ui .carwash-dashboard-ui__action--outline:hover {
+  background: #edf3f7 !important;
+  color: #344f66 !important;
+}
+
+.carwash-dashboard-ui .carwash-dashboard-ui__action--primary {
+  border: 1px solid var(--cw-green) !important;
+  background: var(--cw-green) !important;
+  color: #fff !important;
+}
+
+.carwash-dashboard-ui .carwash-dashboard-ui__action--primary:hover {
+  border-color: #b9ccd9 !important;
+  background: #e4edf4 !important;
+  color: #304b61 !important;
+}
+
+.carwash-dashboard-ui .carwash-dashboard-ui__action:disabled {
+  opacity: .55;
+  cursor: not-allowed;
+}
+
+/* ----------------------------------------------------------
+   RESPONSIVE
+   ---------------------------------------------------------- */
+
+@media (max-width: 1220px) {
+  .carwash-dashboard-ui__topbar {
+    grid-template-columns: 190px minmax(0, 1fr);
+  }
+
+  .carwash-dashboard-ui__user {
+    display: none;
+  }
+
+  .carwash-dashboard-ui__workspace {
+    grid-template-columns: minmax(350px, 390px) minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 920px) {
+  .carwash-dashboard-ui__topbar {
+    position: static;
+    grid-template-columns: 1fr;
+  }
+
+  .carwash-dashboard-ui__workspace {
+    grid-template-columns: 1fr;
+  }
+
+  .carwash-dashboard-ui__order {
+    position: static;
+    max-height: none;
+  }
+
+  .carwash-dashboard-ui__toolbar {
+    grid-template-columns: 1fr;
+  }
+
+  .carwash-dashboard-ui__filters {
+    overflow-x: auto;
+  }
+}
+
+@media (max-width: 620px) {
+  .carwash-dashboard-ui__workspace {
+    padding: 10px;
+  }
+
+  .carwash-dashboard-ui__order,
+  .carwash-dashboard-ui__panel {
+    padding: 14px;
+  }
+
+  .carwash-dashboard-ui__form-grid,
+  .carwash-dashboard-ui__actions {
+    grid-template-columns: 1fr;
+  }
+
+  .carwash-dashboard-ui__vehicle-grid,
+  .carwash-dashboard-ui__services-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .carwash-dashboard-ui__order-line {
+    grid-template-columns: 1fr;
+  }
+
+  .carwash-dashboard-ui__line-side {
+    justify-items: start;
+    text-align: left;
+  }
+
+  .carwash-dashboard-ui__context {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+
+  .carwash-dashboard-ui__context select,
+  .carwash-dashboard-ui__context-code {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 420px) {
+  .carwash-dashboard-ui__vehicle-grid,
+  .carwash-dashboard-ui__services-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+/* ==========================================================
+   FINAL HOVER POLICY — CACTUS ERP
+   Verde solo en estado normal de acciones primarias.
+   Todo hover interactivo usa azul-gris pastel.
+   ========================================================== */
+
+.carwash-dashboard-ui.carwash-dashboard-ui
+.carwash-dashboard-ui__nav-item:hover:not(:disabled),
+
+.carwash-dashboard-ui.carwash-dashboard-ui
+.carwash-dashboard-ui__icon-button:hover:not(:disabled),
+
+.carwash-dashboard-ui.carwash-dashboard-ui
+.carwash-dashboard-ui__vehicle:hover:not(:disabled),
+
+.carwash-dashboard-ui.carwash-dashboard-ui
+.carwash-dashboard-ui__filter:hover:not(:disabled),
+
+.carwash-dashboard-ui.carwash-dashboard-ui
+.carwash-dashboard-ui__service:hover:not(:disabled),
+
+.carwash-dashboard-ui.carwash-dashboard-ui
+.carwash-dashboard-ui__action--secondary:hover:not(:disabled),
+
+.carwash-dashboard-ui.carwash-dashboard-ui
+.carwash-dashboard-ui__action--outline:hover:not(:disabled),
+
+.carwash-dashboard-ui.carwash-dashboard-ui
+.carwash-dashboard-ui__quantity button:hover:not(:disabled) {
+  background: #eef4f8 !important;
+  background-color: #eef4f8 !important;
+  border-color: #bfd0dc !important;
+  color: #304b61 !important;
+  filter: none !important;
+}
+
+.carwash-dashboard-ui.carwash-dashboard-ui
+.carwash-dashboard-ui__nav-item--primary:hover:not(:disabled),
+
+.carwash-dashboard-ui.carwash-dashboard-ui
+.carwash-dashboard-ui__action--primary:hover:not(:disabled) {
+  background: #e4edf4 !important;
+  background-color: #e4edf4 !important;
+  border-color: #b9ccd9 !important;
+  color: #304b61 !important;
+  filter: none !important;
+}
+
+.carwash-dashboard-ui.carwash-dashboard-ui
+.carwash-dashboard-ui__vehicle--selected:hover:not(:disabled),
+
+.carwash-dashboard-ui.carwash-dashboard-ui
+.carwash-dashboard-ui__vehicle[aria-pressed="true"]:hover:not(:disabled),
+
+.carwash-dashboard-ui.carwash-dashboard-ui
+.carwash-dashboard-ui__filter--active:hover:not(:disabled),
+
+.carwash-dashboard-ui.carwash-dashboard-ui
+.carwash-dashboard-ui__service--selected:hover:not(:disabled) {
+  background: #dde8f0 !important;
+  background-color: #dde8f0 !important;
+  border-color: #91aabd !important;
+  color: #304f67 !important;
+  filter: none !important;
+}

@@ -11,14 +11,17 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@cactus/shared": "workspace:*",
+    "@cactus/ui": "workspace:*",
     "@vitejs/plugin-react": "^5.0.0",
-    "vite": "^8.1.0",
+    "exceljs": "^4.4.0",
+    "jspdf": "^4.2.1",
+    "jspdf-autotable": "^5.0.8",
+    "lucide-react": "^0.468.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "react-router-dom": "^7.9.0",
-    "@cactus/ui": "workspace:*",
-    "@cactus/shared": "workspace:*",
-    "lucide-react": "^0.468.0"
+    "vite": "^8.1.0"
   },
   "devDependencies": {
     "@types/react": "^19.2.0",

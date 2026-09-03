@@ -1,0 +1,64 @@
+/* VALORACION MONETARIA DE INVENTARIO */
+.inventory-valuation-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.inventory-valuation-grid article {
+  display: grid;
+  gap: 5px;
+  padding: 16px;
+  border: 1px solid #d8e2e7;
+  border-radius: 12px;
+  background: #fff;
+}
+
+.inventory-valuation-grid span,
+.inventory-valuation-grid small,
+.inventory-cell-value {
+  color: #667783;
+}
+
+.inventory-valuation-grid strong {
+  color: #173f31;
+  font-size: 1.25rem;
+}
+
+.inventory-cell-value {
+  display: block;
+  margin-top: 3px;
+  font-weight: 600;
+}
+
+@media (max-width: 900px) {
+  .inventory-valuation-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media print {
+  .inventory-valuation-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 2mm;
+    margin-bottom: 4mm;
+  }
+
+  .inventory-valuation-grid article {
+    gap: 1mm;
+    padding: 2.5mm;
+    border-radius: 0;
+    break-inside: avoid;
+  }
+
+  .inventory-valuation-grid span,
+  .inventory-valuation-grid small {
+    font-size: 7pt;
+  }
+
+  .inventory-valuation-grid strong {
+    font-size: 10pt;
+  }
+}
+

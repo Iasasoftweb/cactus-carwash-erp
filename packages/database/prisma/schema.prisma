@@ -43,9 +43,22 @@ enum OrderFinancialStatus {
   CREDIT_NOTE_APPLIED
 }
 
+enum CreditNoteStatus {
+  ISSUED
+  CANCELLED
+}
+
 enum OrderItemType {
   SERVICE
   PRODUCT
+}
+
+enum PurchaseOrderStatus {
+  DRAFT
+  OPEN
+  PARTIALLY_RECEIVED
+  RECEIVED
+  CANCELLED
 }
 
 enum OrderItemStatus {
@@ -92,6 +105,33 @@ enum CreditAuthorizationStatus {
   CANCELLED
 }
 
+enum BusinessModuleType {
+  POS
+  CAR_WASH
+  INVENTORY
+  PURCHASES
+  ACCOUNTS_RECEIVABLE
+  ACCOUNTS_PAYABLE
+  EXPENSES
+}
+
+enum PosCapabilityType {
+  RETAIL
+  FOOD_SERVICE
+  WEIGHTED_PRODUCTS
+  HOLD_ORDERS
+  TABLES
+  KITCHEN_TICKETS
+  DELIVERY
+}
+
+enum ProductSaleUnit {
+  UNIT
+  WEIGHT
+  VOLUME
+  SERVICE
+}
+
 model Company {
   id             String   @id @default(uuid()) @db.Char(36)
   name           String   @db.VarChar(160)
@@ -99,26 +139,42 @@ model Company {
   taxId          String?  @map("tax_id") @db.VarChar(50)
   currencyCode   String   @default("DOP") @map("currency_code") @db.Char(3)
   currencySymbol String   @default("RD$") @map("currency_symbol") @db.VarChar(8)
+  logoUrl        String?  @map("logo_url") @db.VarChar(500)
+  branchLimit    Int      @default(1) @map("branch_limit")
   active         Boolean  @default(true)
   createdAt      DateTime @default(now()) @map("created_at")
   updatedAt      DateTime @updatedAt @map("updated_at")
 
-  branches          Branch[]
-  users             User[]
-  customers         Customer[]
-  employees         Employee[]
-  services          Service[]
-  serviceCategories ServiceCategory[]
-  operationalAreas  OperationalArea[]
-  pointsOfSale      PointOfSale[]
-  productCategories ProductCategory[]
-  products          Product[]
+  branches            Branch[]
+  users               User[]
+  customers           Customer[]
+  employees           Employee[]
+  services            Service[]
+  serviceCategories   ServiceCategory[]
+  operationalAreas    OperationalArea[]
+  pointsOfSale        PointOfSale[]
+  productCategories   ProductCategory[]
+  products            Product[]
+  inventoryMovements  InventoryMovement[]
+  inventoryCounts     InventoryCount[]
+  suppliers           Supplier[]
+  purchaseOrders      PurchaseOrder[]
+  modules             CompanyModule[]
+  branchModules       BranchModule[]
+  productBranches     ProductBranch[]
+  priceLevels         PriceLevel[]
+  productBranchPrices ProductBranchPrice[]
 
   expenseCategories ExpenseCategory[]
   expenses          Expense[]
 
-  auditLogs       AuditLog[]
-  numberSequences NumberSequence[]
+  creditNotes          CreditNote[]
+  collectionActivities CustomerCollectionActivity[]
+
+  auditLogs        AuditLog[]
+  numberSequences  NumberSequence[]
+  supplierInvoices SupplierInvoice[]
+  supplierPayments SupplierPayment[]
 
   @@map("companies")
 }
@@ -134,39 +190,73 @@ model Branch {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
-  company           Company           @relation(fields: [companyId], references: [id])
-  orders            ServiceOrder[]
-  cashRegisters     CashRegister[]
-  servicePrices     ServicePrice[]
-  employees         Employee[]
-  serviceCategories ServiceCategory[]
-  operationalAreas  OperationalArea[]
-  pointsOfSale      PointOfSale[]
-  productCategories ProductCategory[]
-  products          Product[]
-  expenses          Expense[]
+  company            Company             @relation(fields: [companyId], references: [id])
+  orders             ServiceOrder[]
+  cashRegisters      CashRegister[]
+  servicePrices      ServicePrice[]
+  employees          Employee[]
+  userBranches       UserBranch[]
+  serviceCategories  ServiceCategory[]
+  operationalAreas   OperationalArea[]
+  pointsOfSale       PointOfSale[]
+  productCategories  ProductCategory[]
+  products           Product[]
+  expenses           Expense[]
+  inventoryMovements InventoryMovement[]
+  inventoryCounts    InventoryCount[]
+  purchaseOrders     PurchaseOrder[]
+  supplierInvoices   SupplierInvoice[]
+  supplierPayments   SupplierPayment[]
+  modules            BranchModule[]
+  productBranches    ProductBranch[]
 
   @@unique([companyId, code])
   @@index([companyId, active])
   @@map("branches")
 }
 
+model BranchModule {
+  id        String             @id @default(uuid()) @db.Char(36)
+  companyId String             @map("company_id") @db.Char(36)
+  branchId  String             @map("branch_id") @db.Char(36)
+  module    BusinessModuleType
+  enabled   Boolean            @default(true)
+  createdAt DateTime           @default(now()) @map("created_at")
+  updatedAt DateTime           @updatedAt @map("updated_at")
+
+  company Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  branch  Branch  @relation(fields: [branchId], references: [id], onDelete: Cascade)
+
+  @@unique([branchId, module])
+  @@index([companyId, branchId, enabled])
+  @@map("branch_modules")
+}
+
 model User {
-  id           String     @id @default(uuid()) @db.Char(36)
-  companyId    String     @map("company_id") @db.Char(36)
-  username     String     @db.VarChar(80)
-  email        String?    @db.VarChar(180)
-  passwordHash String     @map("password_hash") @db.VarChar(255)
-  fullName     String     @map("full_name") @db.VarChar(160)
-  status       UserStatus @default(ACTIVE)
-  createdAt    DateTime   @default(now()) @map("created_at")
-  updatedAt    DateTime   @updatedAt @map("updated_at")
+  id               String           @id @default(uuid()) @db.Char(36)
+  companyId        String           @map("company_id") @db.Char(36)
+  username         String           @db.VarChar(80)
+  email            String?          @db.VarChar(180)
+  passwordHash     String           @map("password_hash") @db.VarChar(255)
+  fullName         String           @map("full_name") @db.VarChar(160)
+  status           UserStatus       @default(ACTIVE)
+  branchAccessMode BranchAccessMode @default(ASSIGNED) @map("branch_access_mode")
+  createdAt        DateTime         @default(now()) @map("created_at")
+  updatedAt        DateTime         @updatedAt @map("updated_at")
+  isPlatformAdmin  Boolean          @default(false) @map("is_platform_admin")
 
   company              Company               @relation(fields: [companyId], references: [id])
   userRoles            UserRole[]
+  userBranches         UserBranch[]
   cashSessions         CashSession[]
-  auditLogs            AuditLog[]              @relation("AuditUser")
-  creditAuthorizations CreditAuthorization[]   @relation("CreditAuthorizationUser")
+  employee             Employee?
+  auditLogs            AuditLog[]            @relation("AuditUser")
+  creditAuthorizations CreditAuthorization[] @relation("CreditAuthorizationUser")
+
+  issuedCreditNotes CreditNote[] @relation("CreditNoteIssuedBy")
+
+  collectionActivitiesCreated  CustomerCollectionActivity[] @relation("CustomerCollectionCreatedBy")
+  collectionActivitiesResolved CustomerCollectionActivity[] @relation("CustomerCollectionResolvedBy")
 
   @@unique([companyId, username])
   @@unique([companyId, email])
@@ -206,6 +296,19 @@ model UserRole {
   @@map("user_roles")
 }
 
+model UserBranch {
+  userId    String   @map("user_id") @db.Char(36)
+  branchId  String   @map("branch_id") @db.Char(36)
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  branch Branch @relation(fields: [branchId], references: [id], onDelete: Cascade)
+
+  @@id([userId, branchId])
+  @@index([branchId])
+  @@map("user_branches")
+}
+
 model RolePermission {
   roleId       String @map("role_id") @db.Char(36)
   permissionId String @map("permission_id") @db.Char(36)
@@ -232,16 +335,80 @@ model Customer {
   active        Boolean      @default(true)
   createdAt     DateTime     @default(now()) @map("created_at")
   updatedAt     DateTime     @updatedAt @map("updated_at")
+  priceLevelId  String?      @map("price_level_id") @db.Char(36)
+  priceLevel    PriceLevel?  @relation(fields: [priceLevelId], references: [id], onDelete: SetNull)
 
-  company              Company               @relation(fields: [companyId], references: [id])
+  company              Company                      @relation(fields: [companyId], references: [id])
   vehicles             Vehicle[]
   orders               ServiceOrder[]
   invoices             Invoice[]
   creditAuthorizations CreditAuthorization[]
+  collectionActivities CustomerCollectionActivity[]
+  posAccounts          PosAccount[]
+  posMovements         PosMovement[]
 
   @@index([companyId, displayName])
   @@index([companyId, phone])
+  @@index([companyId, priceLevelId])
   @@map("customers")
+}
+
+enum CustomerCollectionContactType {
+  PHONE
+  WHATSAPP
+  EMAIL
+  SMS
+  IN_PERSON
+  OTHER
+}
+
+enum BranchAccessMode {
+  ALL
+  ASSIGNED
+}
+
+enum CustomerCollectionResult {
+  CONTACTED
+  NO_ANSWER
+  PROMISE_TO_PAY
+  PAYMENT_REPORTED
+  DISPUTED
+  FOLLOW_UP_REQUIRED
+  OTHER
+}
+
+model CustomerCollectionActivity {
+  id          String  @id @default(uuid()) @db.Char(36)
+  companyId   String  @map("company_id") @db.Char(36)
+  customerId  String  @map("customer_id") @db.Char(36)
+  createdById String? @map("created_by_id") @db.Char(36)
+
+  contactType CustomerCollectionContactType @map("contact_type")
+  result      CustomerCollectionResult
+  notes       String                        @db.Text
+
+  nextFollowUpAt      DateTime? @map("next_follow_up_at")
+  promisedPaymentDate DateTime? @map("promised_payment_date")
+  promisedAmount      Decimal?  @map("promised_amount") @db.Decimal(14, 2)
+
+  followUpResolvedAt   DateTime? @map("follow_up_resolved_at")
+  followUpResolvedById String?   @map("follow_up_resolved_by_id") @db.Char(36)
+  followUpResolution   String?   @map("follow_up_resolution") @db.VarChar(500)
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  company  Company  @relation(fields: [companyId], references: [id])
+  customer Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+
+  createdBy          User? @relation("CustomerCollectionCreatedBy", fields: [createdById], references: [id])
+  followUpResolvedBy User? @relation("CustomerCollectionResolvedBy", fields: [followUpResolvedById], references: [id])
+
+  @@index([companyId, createdAt])
+  @@index([customerId, createdAt])
+  @@index([companyId, nextFollowUpAt])
+  @@index([companyId, promisedPaymentDate])
+  @@map("customer_collection_activities")
 }
 
 model VehicleType {
@@ -302,6 +469,7 @@ model Vehicle {
 model Employee {
   id             String   @id @default(uuid()) @db.Char(36)
   companyId      String   @map("company_id") @db.Char(36)
+  userId         String?  @unique @map("user_id") @db.Char(36)
   branchId       String   @map("branch_id") @db.Char(36)
   employeeNo     String   @map("employee_no") @db.VarChar(30)
   fullName       String   @map("full_name") @db.VarChar(160)
@@ -314,6 +482,7 @@ model Employee {
 
   company           Company                  @relation(fields: [companyId], references: [id])
   branch            Branch                   @relation(fields: [branchId], references: [id])
+  user              User?                    @relation(fields: [userId], references: [id], onDelete: SetNull)
   orderItems        ServiceOrderItem[]
   commissionRules   EmployeeCommissionRule[]
   cashSessions      CashSession[]
@@ -419,15 +588,15 @@ model ServiceOrder {
   createdAt           DateTime               @default(now()) @map("created_at")
   updatedAt           DateTime               @updatedAt @map("updated_at")
 
-  branch         Branch               @relation(fields: [branchId], references: [id])
-  customer       Customer?            @relation(fields: [customerId], references: [id])
-  vehicle        Vehicle              @relation(fields: [vehicleId], references: [id])
-  items          ServiceOrderItem[]
-  invoice        Invoice?
-  events         OrderEvent[]
-  checklistItems OrderChecklistItem[]
-  observations   OrderNote[]
-  printLogs      TicketPrintLog[]
+  branch              Branch               @relation(fields: [branchId], references: [id])
+  customer            Customer?            @relation(fields: [customerId], references: [id])
+  vehicle             Vehicle              @relation(fields: [vehicleId], references: [id])
+  items               ServiceOrderItem[]
+  invoice             Invoice?
+  events              OrderEvent[]
+  checklistItems      OrderChecklistItem[]
+  observations        OrderNote[]
+  printLogs           TicketPrintLog[]
   posMovements        PosMovement[]
   posAccounts         PosAccount[]
   creditAuthorization CreditAuthorization?
@@ -509,6 +678,7 @@ model Invoice {
   order       ServiceOrder        @relation(fields: [orderId], references: [id])
   customer    Customer?           @relation(fields: [customerId], references: [id])
   items       InvoiceItem[]
+  creditNotes CreditNote[]
   allocations PaymentAllocation[]
 
   @@index([customerId, status, dueDate])
@@ -532,14 +702,39 @@ model InvoiceItem {
   @@map("invoice_items")
 }
 
+model CreditNote {
+  id           String           @id @default(uuid()) @db.Char(36)
+  companyId    String           @map("company_id") @db.Char(36)
+  invoiceId    String           @map("invoice_id") @db.Char(36)
+  issuedById   String?          @map("issued_by_id") @db.Char(36)
+  creditNoteNo String           @map("credit_note_no") @db.VarChar(30)
+  status       CreditNoteStatus @default(ISSUED)
+  amount       Decimal          @db.Decimal(14, 2)
+  reason       String           @db.VarChar(255)
+  issuedAt     DateTime         @default(now()) @map("issued_at")
+  cancelledAt  DateTime?        @map("cancelled_at")
+  createdAt    DateTime         @default(now()) @map("created_at")
+  updatedAt    DateTime         @updatedAt @map("updated_at")
+
+  company  Company @relation(fields: [companyId], references: [id])
+  invoice  Invoice @relation(fields: [invoiceId], references: [id])
+  issuedBy User?   @relation("CreditNoteIssuedBy", fields: [issuedById], references: [id])
+
+  @@unique([companyId, creditNoteNo])
+  @@index([invoiceId, status])
+  @@index([companyId, issuedAt])
+  @@map("credit_notes")
+}
+
 model PaymentMethod {
-  id          String            @id @default(uuid()) @db.Char(36)
-  code        String            @unique @db.VarChar(40)
-  name        String            @db.VarChar(100)
-  type        PaymentMethodType
-  active      Boolean           @default(true)
-  payments    Payment[]
-  posAccounts PosAccount[]
+  id               String            @id @default(uuid()) @db.Char(36)
+  code             String            @unique @db.VarChar(40)
+  name             String            @db.VarChar(100)
+  type             PaymentMethodType
+  active           Boolean           @default(true)
+  payments         Payment[]
+  posAccounts      PosAccount[]
+  supplierPayments SupplierPayment[]
 
   @@map("payment_methods")
 }
@@ -586,11 +781,12 @@ model CashRegister {
   name              String  @db.VarChar(100)
   active            Boolean @default(true)
 
-  branch      Branch        @relation(fields: [branchId], references: [id])
-  pointOfSale PointOfSale?  @relation(fields: [pointOfSaleId], references: [id])
-  sessions    CashSession[]
-  posAccounts PosAccount[]
-  expenses    Expense[]
+  branch          Branch           @relation(fields: [branchId], references: [id])
+  operationalArea OperationalArea? @relation(fields: [operationalAreaId], references: [id])
+  pointOfSale     PointOfSale?     @relation(fields: [pointOfSaleId], references: [id])
+  sessions        CashSession[]
+  posAccounts     PosAccount[]
+  expenses        Expense[]
 
   @@unique([branchId, code])
   @@index([pointOfSaleId, active])
@@ -757,10 +953,11 @@ model OperationalArea {
   createdAt    DateTime @default(now()) @map("created_at")
   updatedAt    DateTime @updatedAt @map("updated_at")
 
-  company    Company           @relation(fields: [companyId], references: [id])
-  branch     Branch            @relation(fields: [branchId], references: [id])
-  categories ServiceCategory[]
-  printLogs  TicketPrintLog[]
+  company       Company           @relation(fields: [companyId], references: [id])
+  branch        Branch            @relation(fields: [branchId], references: [id])
+  categories    ServiceCategory[]
+  printLogs     TicketPrintLog[]
+  cashRegisters CashRegister[]
 
   @@unique([branchId, code])
   @@index([companyId, active])
@@ -801,9 +998,45 @@ enum ProductType {
   GIFT
 }
 
+enum InventoryMovementType {
+  INITIAL
+  PURCHASE
+  SALE
+  ADJUSTMENT_IN
+  ADJUSTMENT_OUT
+  RETURN_IN
+  RETURN_OUT
+  TRANSFER_OUT
+  TRANSFER_IN
+}
+
+enum InventoryCountStatus {
+  DRAFT
+  CONFIRMED
+  CANCELLED
+}
+
 enum PosMovementType {
   ORDER_ASSOCIATED
   DIRECT_SALE
+}
+
+enum PosSaleMode {
+  DINE_IN
+  TAKEAWAY
+  DIRECT
+}
+
+enum SupplierInvoiceStatus {
+  PENDING
+  PARTIALLY_PAID
+  PAID
+  CANCELLED
+}
+
+enum SupplierPaymentStatus {
+  ISSUED
+  CANCELLED
 }
 
 model PointOfSale {
@@ -817,101 +1050,257 @@ model PointOfSale {
   createdAt   DateTime @default(now()) @map("created_at")
   updatedAt   DateTime @updatedAt @map("updated_at")
 
-  company       Company            @relation(fields: [companyId], references: [id])
-  branch        Branch             @relation(fields: [branchId], references: [id])
-  products      Product[]
-  orderItems    ServiceOrderItem[]
-  movements     PosMovement[]
-  cashRegisters CashRegister[]
-  accounts      PosAccount[]
+  company                Company                    @relation(fields: [companyId], references: [id])
+  branch                 Branch                     @relation(fields: [branchId], references: [id])
+  products               Product[]
+  orderItems             ServiceOrderItem[]
+  movements              PosMovement[]
+  cashRegisters          CashRegister[]
+  accounts               PosAccount[]
+  inventoryMovements     InventoryMovement[]
+  supplierInvoices       SupplierInvoice[]
+  supplierPayments       SupplierPayment[]
+  capabilities           PosCapability[]
+  kitchenTickets         KitchenTicket[]
+  preparationStations    PreparationStation[]
+  financialConfiguration PosFinancialConfiguration?
+  profitabilityPolicy    PosProfitabilityPolicy?
+  productAssignments     ProductPointOfSale[]
 
   @@unique([branchId, code])
   @@index([companyId, active])
   @@map("points_of_sale")
 }
 
-model ProductCategory {
-  id        String   @id @default(uuid()) @db.Char(36)
-  companyId String   @map("company_id") @db.Char(36)
-  branchId  String   @map("branch_id") @db.Char(36)
-  code      String   @db.VarChar(40)
-  name      String   @db.VarChar(120)
-  sortOrder Int      @default(0) @map("sort_order")
-  active    Boolean  @default(true)
+model PosFinancialConfiguration {
+  id            String @id @default(uuid()) @db.Char(36)
+  pointOfSaleId String @unique @map("point_of_sale_id") @db.Char(36)
+
+  taxesEnabled Boolean @default(false) @map("taxes_enabled")
+
+  serviceChargeEnabled  Boolean @default(false) @map("service_charge_enabled")
+  serviceChargeRate     Decimal @default(0) @map("service_charge_rate") @db.Decimal(7, 4)
+  serviceChargeDineIn   Boolean @default(true) @map("service_charge_dine_in")
+  serviceChargeTakeaway Boolean @default(false) @map("service_charge_takeaway")
+  serviceChargeDirect   Boolean @default(false) @map("service_charge_direct")
+
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
-  company  Company   @relation(fields: [companyId], references: [id])
-  branch   Branch    @relation(fields: [branchId], references: [id])
-  products Product[]
+  pointOfSale PointOfSale @relation(fields: [pointOfSaleId], references: [id], onDelete: Cascade)
+
+  @@map("pos_financial_configurations")
+}
+
+model PosProfitabilityPolicy {
+  id            String @id @default(uuid()) @db.Char(36)
+  pointOfSaleId String @unique @map("point_of_sale_id") @db.Char(36)
+
+  enabled Boolean @default(true)
+
+  minimumGrossMarginPercent  Decimal @default(20) @map("minimum_gross_margin_percent") @db.Decimal(7, 2)
+  minimumCostCoveragePercent Decimal @default(95) @map("minimum_cost_coverage_percent") @db.Decimal(7, 2)
+
+  alertLowMarginEnabled      Boolean @default(true) @map("alert_low_margin_enabled")
+  alertIncompleteCostEnabled Boolean @default(true) @map("alert_incomplete_cost_enabled")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  pointOfSale PointOfSale @relation(fields: [pointOfSaleId], references: [id], onDelete: Cascade)
+
+  @@map("pos_profitability_policies")
+}
+
+model PosCapability {
+  id            String            @id @default(uuid()) @db.Char(36)
+  pointOfSaleId String            @map("point_of_sale_id") @db.Char(36)
+  capability    PosCapabilityType
+  enabled       Boolean           @default(true)
+  createdAt     DateTime          @default(now()) @map("created_at")
+  updatedAt     DateTime          @updatedAt @map("updated_at")
+
+  pointOfSale PointOfSale @relation(fields: [pointOfSaleId], references: [id], onDelete: Cascade)
+
+  @@unique([pointOfSaleId, capability])
+  @@index([pointOfSaleId, enabled])
+  @@map("pos_capabilities")
+}
+
+model PreparationStation {
+  id            String   @id @default(uuid()) @db.Char(36)
+  pointOfSaleId String   @map("point_of_sale_id") @db.Char(36)
+  code          String   @db.VarChar(50)
+  name          String   @db.VarChar(100)
+  active        Boolean  @default(true)
+  sortOrder     Int      @default(0) @map("sort_order")
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  pointOfSale        PointOfSale          @relation(fields: [pointOfSaleId], references: [id], onDelete: Cascade)
+  products           Product[]
+  productAssignments ProductPointOfSale[]
+
+  @@unique([pointOfSaleId, code])
+  @@index([pointOfSaleId, active, sortOrder])
+  @@map("preparation_stations")
+}
+
+model ProductCategory {
+  id        String  @id @default(uuid()) @db.Char(36)
+  companyId String  @map("company_id") @db.Char(36)
+  branchId  String? @map("branch_id") @db.Char(36)
+
+  code String @db.VarChar(40)
+  name String @db.VarChar(120)
+
+  iconCode String @default("tag") @map("icon_code") @db.VarChar(50)
+
+  sortOrder Int     @default(0) @map("sort_order")
+  active    Boolean @default(true)
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  company         Company         @relation(fields: [companyId], references: [id])
+  branch          Branch?         @relation(fields: [branchId], references: [id])
+  products        Product[]
+  productBranches ProductBranch[]
 
   @@unique([companyId, code])
+  @@index([companyId, active, sortOrder])
   @@index([branchId, active])
   @@map("product_categories")
 }
 
 model Product {
-  id             String      @id @default(uuid()) @db.Char(36)
-  companyId      String      @map("company_id") @db.Char(36)
-  branchId       String      @map("branch_id") @db.Char(36)
-  pointOfSaleId  String      @map("point_of_sale_id") @db.Char(36)
-  categoryId     String      @map("category_id") @db.Char(36)
-  sku            String      @db.VarChar(50)
-  name           String      @db.VarChar(160)
-  description    String?     @db.VarChar(255)
-  imageUrl       String?     @map("image_url") @db.VarChar(500)
-  type           ProductType
-  price          Decimal     @db.Decimal(14, 2)
-  taxRate        Decimal     @default(0) @map("tax_rate") @db.Decimal(7, 4)
-  stockQuantity  Decimal     @default(0) @map("stock_quantity") @db.Decimal(14, 3)
-  trackInventory Boolean     @default(true) @map("track_inventory")
-  active         Boolean     @default(true)
-  createdAt      DateTime    @default(now()) @map("created_at")
-  updatedAt      DateTime    @updatedAt @map("updated_at")
+  id                   String          @id @default(uuid()) @db.Char(36)
+  companyId            String          @map("company_id") @db.Char(36)
+  branchId             String          @map("branch_id") @db.Char(36)
+  pointOfSaleId        String          @map("point_of_sale_id") @db.Char(36)
+  categoryId           String          @map("category_id") @db.Char(36)
+  preparationStationId String?         @map("preparation_station_id") @db.Char(36)
+  sku                  String          @db.VarChar(50)
+  barcode              String?         @db.VarChar(64)
+  name                 String          @db.VarChar(160)
+  description          String?         @db.VarChar(255)
+  imageUrl             String?         @map("image_url") @db.VarChar(500)
+  type                 ProductType
+  saleUnit             ProductSaleUnit @default(UNIT) @map("sale_unit")
+  price                Decimal         @db.Decimal(14, 2)
+  unitCost             Decimal?        @map("unit_cost") @db.Decimal(14, 4)
+  taxRate              Decimal         @default(0) @map("tax_rate") @db.Decimal(7, 4)
+  stockQuantity        Decimal         @default(0) @map("stock_quantity") @db.Decimal(14, 3)
+  trackInventory       Boolean         @default(true) @map("track_inventory")
+  active               Boolean         @default(true)
+  createdAt            DateTime        @default(now()) @map("created_at")
+  updatedAt            DateTime        @updatedAt @map("updated_at")
+  minimumStock         Decimal         @default(0) @map("minimum_stock") @db.Decimal(14, 3)
 
-  company       Company            @relation(fields: [companyId], references: [id])
-  branch        Branch             @relation(fields: [branchId], references: [id])
-  pointOfSale   PointOfSale        @relation(fields: [pointOfSaleId], references: [id])
-  category      ProductCategory    @relation(fields: [categoryId], references: [id])
-  orderItems    ServiceOrderItem[]
-  movementItems PosMovementItem[]
-  accountItems  PosAccountItem[]
+  company              Company             @relation(fields: [companyId], references: [id])
+  branch               Branch              @relation(fields: [branchId], references: [id])
+  pointOfSale          PointOfSale         @relation(fields: [pointOfSaleId], references: [id])
+  category             ProductCategory     @relation(fields: [categoryId], references: [id])
+  preparationStation   PreparationStation? @relation(fields: [preparationStationId], references: [id], onDelete: SetNull)
+  orderItems           ServiceOrderItem[]
+  movementItems        PosMovementItem[]
+  accountItems         PosAccountItem[]
+  inventoryMovements   InventoryMovement[]
+  purchaseOrderItems   PurchaseOrderItem[]
+  branchConfigurations ProductBranch[]
 
   @@unique([companyId, sku])
+  @@unique([companyId, barcode])
   @@index([branchId, pointOfSaleId, active])
   @@index([categoryId, active])
+  @@index([preparationStationId, active])
   @@map("products")
 }
 
+model InventoryMovement {
+  id            String @id @default(uuid()) @db.Char(36)
+  companyId     String @map("company_id") @db.Char(36)
+  branchId      String @map("branch_id") @db.Char(36)
+  pointOfSaleId String @map("point_of_sale_id") @db.Char(36)
+  productId     String @map("product_id") @db.Char(36)
+
+  type InventoryMovementType
+
+  quantity      Decimal @db.Decimal(14, 3)
+  previousStock Decimal @map("previous_stock") @db.Decimal(14, 3)
+  newStock      Decimal @map("new_stock") @db.Decimal(14, 3)
+  unitCost      Decimal? @map("unit_cost") @db.Decimal(14, 4)
+  movementValue Decimal? @map("movement_value") @db.Decimal(16, 2)
+
+  referenceType   String? @map("reference_type") @db.VarChar(60)
+  referenceId     String? @map("reference_id") @db.Char(36)
+  referenceNumber String? @map("reference_number") @db.VarChar(80)
+
+  note      String?  @db.VarChar(255)
+  createdBy String?  @map("created_by") @db.VarChar(160)
+  createdAt DateTime @default(now()) @map("created_at")
+
+  company     Company     @relation(fields: [companyId], references: [id])
+  branch      Branch      @relation(fields: [branchId], references: [id])
+  pointOfSale PointOfSale @relation(fields: [pointOfSaleId], references: [id])
+  product     Product     @relation(fields: [productId], references: [id])
+
+  @@index([productId, createdAt])
+  @@index([companyId, branchId, createdAt])
+  @@index([pointOfSaleId, createdAt])
+  @@index([referenceType, referenceId])
+  @@map("inventory_movements")
+}
+
 model PosMovement {
-  id            String          @id @default(uuid()) @db.Char(36)
-  pointOfSaleId String          @map("point_of_sale_id") @db.Char(36)
-  orderId       String?         @map("order_id") @db.Char(36)
-  type          PosMovementType
-  reference     String          @db.VarChar(50)
-  customerAlias String?         @map("customer_alias") @db.VarChar(160)
-  subtotal      Decimal         @db.Decimal(14, 2)
-  taxAmount     Decimal         @map("tax_amount") @db.Decimal(14, 2)
-  total         Decimal         @db.Decimal(14, 2)
-  createdAt     DateTime        @default(now()) @map("created_at")
+  id                  String          @id @default(uuid()) @db.Char(36)
+  pointOfSaleId       String          @map("point_of_sale_id") @db.Char(36)
+  orderId             String?         @map("order_id") @db.Char(36)
+  customerId          String?         @map("customer_id") @db.Char(36)
+  priceLevelId        String?         @map("price_level_id") @db.Char(36)
+  priceLevelCode      String?         @map("price_level_code") @db.VarChar(40)
+  priceLevelName      String?         @map("price_level_name") @db.VarChar(120)
+  type                PosMovementType
+  reference           String          @db.VarChar(50)
+  customerAlias       String?         @map("customer_alias") @db.VarChar(160)
+  saleMode            PosSaleMode     @default(DIRECT) @map("sale_mode")
+  subtotal            Decimal         @db.Decimal(14, 2)
+  taxAmount           Decimal         @map("tax_amount") @db.Decimal(14, 2)
+  serviceChargeRate   Decimal         @default(0) @map("service_charge_rate") @db.Decimal(7, 4)
+  serviceChargeAmount Decimal         @default(0) @map("service_charge_amount") @db.Decimal(14, 2)
+  total               Decimal         @db.Decimal(14, 2)
+  createdAt           DateTime        @default(now()) @map("created_at")
 
   pointOfSale PointOfSale       @relation(fields: [pointOfSaleId], references: [id])
   order       ServiceOrder?     @relation(fields: [orderId], references: [id])
+  customer    Customer?         @relation(fields: [customerId], references: [id], onDelete: SetNull)
+  priceLevel  PriceLevel?       @relation(fields: [priceLevelId], references: [id], onDelete: SetNull)
   items       PosMovementItem[]
 
   @@index([pointOfSaleId, createdAt])
   @@index([orderId, createdAt])
+  @@index([customerId, createdAt])
+  @@index([priceLevelId])
   @@map("pos_movements")
 }
 
 model PosMovementItem {
-  id         String  @id @default(uuid()) @db.Char(36)
-  movementId String  @map("movement_id") @db.Char(36)
-  productId  String  @map("product_id") @db.Char(36)
-  quantity   Decimal @db.Decimal(12, 3)
-  unitPrice  Decimal @map("unit_price") @db.Decimal(14, 2)
-  taxAmount  Decimal @map("tax_amount") @db.Decimal(14, 2)
-  lineTotal  Decimal @map("line_total") @db.Decimal(14, 2)
+  id                  String   @id @default(uuid()) @db.Char(36)
+  movementId          String   @map("movement_id") @db.Char(36)
+  productId           String   @map("product_id") @db.Char(36)
+  quantity            Decimal  @db.Decimal(12, 3)
+  unitPrice           Decimal  @map("unit_price") @db.Decimal(14, 2)
+  standardUnitPrice   Decimal  @map("standard_unit_price") @db.Decimal(14, 2)
+  priceLevelCode      String?  @map("price_level_code") @db.VarChar(40)
+  priceLevelName      String?  @map("price_level_name") @db.VarChar(120)
+  manualPriceOverride Boolean  @default(false) @map("manual_price_override")
+  priceOverrideReason String?  @map("price_override_reason") @db.VarChar(255)
+  unitCost            Decimal? @map("unit_cost") @db.Decimal(14, 4)
+  costTotal           Decimal? @map("cost_total") @db.Decimal(14, 2)
+
+  taxRate   Decimal @default(0) @map("tax_rate") @db.Decimal(7, 4)
+  taxAmount Decimal @map("tax_amount") @db.Decimal(14, 2)
+  lineTotal Decimal @map("line_total") @db.Decimal(14, 2)
 
   movement PosMovement @relation(fields: [movementId], references: [id], onDelete: Cascade)
   product  Product     @relation(fields: [productId], references: [id])
@@ -926,49 +1315,132 @@ enum PosAccountStatus {
   CANCELLED
 }
 
-model PosAccount {
-  id               String           @id @default(uuid()) @db.Char(36)
-  pointOfSaleId    String           @map("point_of_sale_id") @db.Char(36)
-  cashRegisterId   String?          @map("cash_register_id") @db.Char(36)
-  orderId          String?          @map("order_id") @db.Char(36)
-  reference        String           @unique @db.VarChar(50)
-  customerAlias    String           @map("customer_alias") @db.VarChar(160)
-  tableReference   String?          @map("table_reference") @db.VarChar(50)
-  status           PosAccountStatus @default(OPEN)
-  subtotal         Decimal          @default(0) @db.Decimal(14, 2)
-  taxAmount        Decimal          @default(0) @map("tax_amount") @db.Decimal(14, 2)
-  total            Decimal          @default(0) @db.Decimal(14, 2)
-  openedAt         DateTime         @default(now()) @map("opened_at")
-  paidAt           DateTime?        @map("paid_at")
-  closedAt         DateTime?        @map("closed_at")
-  paymentMethodId  String?          @map("payment_method_id") @db.Char(36)
-  paymentReference String?          @map("payment_reference") @db.VarChar(120)
-  createdAt        DateTime         @default(now()) @map("created_at")
-  updatedAt        DateTime         @updatedAt @map("updated_at")
+enum KitchenTicketStatus {
+  PENDING
+  PREPARING
+  READY
+  COMPLETED
+  CANCELLED
+}
 
-  pointOfSale   PointOfSale      @relation(fields: [pointOfSaleId], references: [id])
-  cashRegister  CashRegister?    @relation(fields: [cashRegisterId], references: [id])
-  order         ServiceOrder?    @relation(fields: [orderId], references: [id])
-  paymentMethod PaymentMethod?   @relation(fields: [paymentMethodId], references: [id])
-  items         PosAccountItem[]
+enum KitchenTicketItemStatus {
+  PENDING
+  PREPARING
+  READY
+  COMPLETED
+  CANCELLED
+}
+
+model KitchenTicket {
+  id            String              @id @default(uuid()) @db.Char(36)
+  pointOfSaleId String              @map("point_of_sale_id") @db.Char(36)
+  accountId     String              @map("account_id") @db.Char(36)
+  ticketNumber  String              @map("ticket_number") @db.VarChar(50)
+  status        KitchenTicketStatus @default(PENDING)
+  notes         String?             @db.VarChar(255)
+  sentAt        DateTime            @default(now()) @map("sent_at")
+  startedAt     DateTime?           @map("started_at")
+  readyAt       DateTime?           @map("ready_at")
+  completedAt   DateTime?           @map("completed_at")
+  cancelledAt   DateTime?           @map("cancelled_at")
+  createdAt     DateTime            @default(now()) @map("created_at")
+  updatedAt     DateTime            @updatedAt @map("updated_at")
+
+  pointOfSale PointOfSale         @relation(fields: [pointOfSaleId], references: [id])
+  account     PosAccount          @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  items       KitchenTicketItem[]
+
+  @@unique([pointOfSaleId, ticketNumber])
+  @@index([pointOfSaleId, status, sentAt])
+  @@index([accountId, sentAt])
+  @@map("kitchen_tickets")
+}
+
+model KitchenTicketItem {
+  id                 String                  @id @default(uuid()) @db.Char(36)
+  ticketId           String                  @map("ticket_id") @db.Char(36)
+  accountItemId      String                  @map("account_item_id") @db.Char(36)
+  quantity           Decimal                 @db.Decimal(12, 3)
+  status             KitchenTicketItemStatus @default(PENDING)
+  notes              String?                 @db.VarChar(255)
+  cancellationReason String?                 @map("cancellation_reason") @db.VarChar(255)
+  cancelledAt        DateTime?               @map("cancelled_at")
+  createdAt          DateTime                @default(now()) @map("created_at")
+  updatedAt          DateTime                @updatedAt @map("updated_at")
+
+  ticket      KitchenTicket  @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+  accountItem PosAccountItem @relation(fields: [accountItemId], references: [id])
+
+  @@unique([ticketId, accountItemId])
+  @@index([accountItemId])
+  @@index([ticketId, status])
+  @@map("kitchen_ticket_items")
+}
+
+model PosAccount {
+  id                  String           @id @default(uuid()) @db.Char(36)
+  pointOfSaleId       String           @map("point_of_sale_id") @db.Char(36)
+  cashRegisterId      String?          @map("cash_register_id") @db.Char(36)
+  orderId             String?          @map("order_id") @db.Char(36)
+  customerId          String?          @map("customer_id") @db.Char(36)
+  priceLevelId        String?          @map("price_level_id") @db.Char(36)
+  priceLevelCode      String?          @map("price_level_code") @db.VarChar(40)
+  priceLevelName      String?          @map("price_level_name") @db.VarChar(120)
+  reference           String           @unique @db.VarChar(50)
+  customerAlias       String           @map("customer_alias") @db.VarChar(160)
+  tableReference      String?          @map("table_reference") @db.VarChar(50)
+  status              PosAccountStatus @default(OPEN)
+  saleMode            PosSaleMode      @default(DIRECT) @map("sale_mode")
+  subtotal            Decimal          @default(0) @db.Decimal(14, 2)
+  taxAmount           Decimal          @default(0) @map("tax_amount") @db.Decimal(14, 2)
+  serviceChargeRate   Decimal          @default(0) @map("service_charge_rate") @db.Decimal(7, 4)
+  serviceChargeAmount Decimal          @default(0) @map("service_charge_amount") @db.Decimal(14, 2)
+  total               Decimal          @default(0) @db.Decimal(14, 2)
+  openedAt            DateTime         @default(now()) @map("opened_at")
+  paidAt              DateTime?        @map("paid_at")
+  closedAt            DateTime?        @map("closed_at")
+  paymentMethodId     String?          @map("payment_method_id") @db.Char(36)
+  paymentReference    String?          @map("payment_reference") @db.VarChar(120)
+  createdAt           DateTime         @default(now()) @map("created_at")
+  updatedAt           DateTime         @updatedAt @map("updated_at")
+
+  pointOfSale    PointOfSale      @relation(fields: [pointOfSaleId], references: [id])
+  cashRegister   CashRegister?    @relation(fields: [cashRegisterId], references: [id])
+  order          ServiceOrder?    @relation(fields: [orderId], references: [id])
+  paymentMethod  PaymentMethod?   @relation(fields: [paymentMethodId], references: [id])
+  customer       Customer?        @relation(fields: [customerId], references: [id], onDelete: SetNull)
+  priceLevel     PriceLevel?      @relation(fields: [priceLevelId], references: [id], onDelete: SetNull)
+  items          PosAccountItem[]
+  kitchenTickets KitchenTicket[]
 
   @@index([pointOfSaleId, status, openedAt])
   @@index([orderId, status])
+  @@index([customerId, status])
+  @@index([priceLevelId])
   @@map("pos_accounts")
 }
 
 model PosAccountItem {
-  id        String   @id @default(uuid()) @db.Char(36)
-  accountId String   @map("account_id") @db.Char(36)
-  productId String   @map("product_id") @db.Char(36)
-  quantity  Decimal  @db.Decimal(12, 3)
-  unitPrice Decimal  @map("unit_price") @db.Decimal(14, 2)
-  taxAmount Decimal  @map("tax_amount") @db.Decimal(14, 2)
-  lineTotal Decimal  @map("line_total") @db.Decimal(14, 2)
-  createdAt DateTime @default(now()) @map("created_at")
+  id                  String   @id @default(uuid()) @db.Char(36)
+  accountId           String   @map("account_id") @db.Char(36)
+  productId           String   @map("product_id") @db.Char(36)
+  quantity            Decimal  @db.Decimal(12, 3)
+  unitPrice           Decimal  @map("unit_price") @db.Decimal(14, 2)
+  standardUnitPrice   Decimal  @map("standard_unit_price") @db.Decimal(14, 2)
+  priceLevelCode      String?  @map("price_level_code") @db.VarChar(40)
+  priceLevelName      String?  @map("price_level_name") @db.VarChar(120)
+  manualPriceOverride Boolean  @default(false) @map("manual_price_override")
+  priceOverrideReason String?  @map("price_override_reason") @db.VarChar(255)
+  unitCost            Decimal? @map("unit_cost") @db.Decimal(14, 4)
+  costTotal           Decimal? @map("cost_total") @db.Decimal(14, 2)
+  taxRate             Decimal  @default(0) @map("tax_rate") @db.Decimal(7, 4)
+  taxAmount           Decimal  @map("tax_amount") @db.Decimal(14, 2)
+  lineTotal           Decimal  @map("line_total") @db.Decimal(14, 2)
+  createdAt           DateTime @default(now()) @map("created_at")
 
-  account PosAccount @relation(fields: [accountId], references: [id], onDelete: Cascade)
-  product Product    @relation(fields: [productId], references: [id])
+  account            PosAccount          @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  product            Product             @relation(fields: [productId], references: [id])
+  kitchenTicketItems KitchenTicketItem[]
 
   @@index([accountId, createdAt])
   @@map("pos_account_items")
@@ -1039,4 +1511,302 @@ model CashPrintLog {
 
   @@index([cashSessionId, documentType, printedAt])
   @@map("cash_print_logs")
+}
+
+model Supplier {
+  id        String            @id @default(uuid()) @db.Char(36)
+  companyId String            @map("company_id") @db.Char(36)
+  name      String            @db.VarChar(160)
+  taxId     String?           @map("tax_id") @db.VarChar(50)
+  phone     String?           @db.VarChar(30)
+  email     String?           @db.VarChar(180)
+  address   String?           @db.VarChar(255)
+  active    Boolean           @default(true)
+  createdAt DateTime          @default(now()) @map("created_at")
+  updatedAt DateTime          @updatedAt @map("updated_at")
+  invoices  SupplierInvoice[]
+  payments  SupplierPayment[]
+
+  company        Company         @relation(fields: [companyId], references: [id])
+  purchaseOrders PurchaseOrder[]
+
+  @@index([companyId, active])
+  @@index([companyId, name])
+  @@map("suppliers")
+}
+
+model PurchaseOrder {
+  id          String              @id @default(uuid()) @db.Char(36)
+  companyId   String              @map("company_id") @db.Char(36)
+  branchId    String              @map("branch_id") @db.Char(36)
+  supplierId  String              @map("supplier_id") @db.Char(36)
+  orderNumber String              @map("order_number") @db.VarChar(50)
+  status      PurchaseOrderStatus @default(DRAFT)
+  notes       String?             @db.VarChar(255)
+  createdBy   String?             @map("created_by") @db.VarChar(160)
+  orderedAt   DateTime?           @map("ordered_at")
+  receivedAt  DateTime?           @map("received_at")
+  createdAt   DateTime            @default(now()) @map("created_at")
+  updatedAt   DateTime            @updatedAt @map("updated_at")
+
+  company          Company             @relation(fields: [companyId], references: [id])
+  branch           Branch              @relation(fields: [branchId], references: [id])
+  supplier         Supplier            @relation(fields: [supplierId], references: [id])
+  items            PurchaseOrderItem[]
+  supplierInvoices SupplierInvoice[]
+
+  @@unique([companyId, orderNumber])
+  @@index([companyId, branchId, status])
+  @@index([supplierId, createdAt])
+  @@map("purchase_orders")
+}
+
+model PurchaseOrderItem {
+  id               String  @id @default(uuid()) @db.Char(36)
+  purchaseOrderId  String  @map("purchase_order_id") @db.Char(36)
+  productId        String  @map("product_id") @db.Char(36)
+  quantity         Decimal @db.Decimal(14, 3)
+  receivedQuantity Decimal @default(0) @map("received_quantity") @db.Decimal(14, 3)
+  unitCost         Decimal @map("unit_cost") @db.Decimal(14, 2)
+
+  purchaseOrder PurchaseOrder @relation(fields: [purchaseOrderId], references: [id], onDelete: Cascade)
+  product       Product       @relation(fields: [productId], references: [id])
+
+  @@unique([purchaseOrderId, productId])
+  @@index([productId])
+  @@map("purchase_order_items")
+}
+
+model SupplierInvoice {
+  id              String  @id @default(uuid()) @db.Char(36)
+  companyId       String  @map("company_id") @db.Char(36)
+  branchId        String  @map("branch_id") @db.Char(36)
+  supplierId      String  @map("supplier_id") @db.Char(36)
+  purchaseOrderId String? @map("purchase_order_id") @db.Char(36)
+
+  invoiceNumber String                @map("invoice_number") @db.VarChar(80)
+  status        SupplierInvoiceStatus @default(PENDING)
+
+  subtotal  Decimal @db.Decimal(14, 2)
+  taxAmount Decimal @default(0) @map("tax_amount") @db.Decimal(14, 2)
+  total     Decimal @db.Decimal(14, 2)
+  balance   Decimal @db.Decimal(14, 2)
+
+  issuedAt DateTime  @map("issued_at")
+  dueDate  DateTime? @map("due_date")
+
+  notes     String? @db.VarChar(255)
+  createdBy String? @map("created_by") @db.VarChar(160)
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  company       Company        @relation(fields: [companyId], references: [id])
+  branch        Branch         @relation(fields: [branchId], references: [id])
+  supplier      Supplier       @relation(fields: [supplierId], references: [id])
+  purchaseOrder PurchaseOrder? @relation(fields: [purchaseOrderId], references: [id])
+
+  allocations   SupplierPaymentAllocation[]
+  pointOfSale   PointOfSale?                @relation(fields: [pointOfSaleId], references: [id])
+  pointOfSaleId String?                     @db.Char(36)
+
+  @@unique([supplierId, invoiceNumber])
+  @@index([companyId, branchId, status])
+  @@index([supplierId, status, dueDate])
+  @@index([purchaseOrderId])
+  @@map("supplier_invoices")
+}
+
+model SupplierPayment {
+  id              String @id @default(uuid()) @db.Char(36)
+  companyId       String @map("company_id") @db.Char(36)
+  branchId        String @map("branch_id") @db.Char(36)
+  supplierId      String @map("supplier_id") @db.Char(36)
+  paymentMethodId String @map("payment_method_id") @db.Char(36)
+
+  status SupplierPaymentStatus @default(ISSUED)
+
+  reference   String? @db.VarChar(120)
+  description String? @db.VarChar(255)
+
+  amount Decimal @db.Decimal(14, 2)
+
+  paidAt    DateTime @default(now()) @map("paid_at")
+  createdBy String?  @map("created_by") @db.VarChar(160)
+  createdAt DateTime @default(now()) @map("created_at")
+
+  company  Company       @relation(fields: [companyId], references: [id])
+  branch   Branch        @relation(fields: [branchId], references: [id])
+  supplier Supplier      @relation(fields: [supplierId], references: [id])
+  method   PaymentMethod @relation(fields: [paymentMethodId], references: [id])
+
+  allocations   SupplierPaymentAllocation[]
+  pointOfSale   PointOfSale?                @relation(fields: [pointOfSaleId], references: [id])
+  pointOfSaleId String?                     @db.Char(36)
+
+  @@index([companyId, branchId, paidAt])
+  @@index([supplierId, paidAt])
+  @@map("supplier_payments")
+}
+
+model SupplierPaymentAllocation {
+  supplierPaymentId String  @map("supplier_payment_id") @db.Char(36)
+  supplierInvoiceId String  @map("supplier_invoice_id") @db.Char(36)
+  amount            Decimal @db.Decimal(14, 2)
+
+  payment SupplierPayment @relation(fields: [supplierPaymentId], references: [id], onDelete: Cascade)
+  invoice SupplierInvoice @relation(fields: [supplierInvoiceId], references: [id])
+
+  @@id([supplierPaymentId, supplierInvoiceId])
+  @@index([supplierInvoiceId])
+  @@map("supplier_payment_allocations")
+}
+
+model CompanyModule {
+  id        String             @id @default(uuid()) @db.Char(36)
+  companyId String             @map("company_id") @db.Char(36)
+  module    BusinessModuleType
+  enabled   Boolean            @default(true)
+  createdAt DateTime           @default(now()) @map("created_at")
+  updatedAt DateTime           @updatedAt @map("updated_at")
+
+  company Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  @@unique([companyId, module])
+  @@index([companyId, enabled])
+  @@map("company_modules")
+}
+
+model ProductBranch {
+  id             String   @id @default(uuid()) @db.Char(36)
+  companyId      String   @map("company_id") @db.Char(36)
+  branchId       String   @map("branch_id") @db.Char(36)
+  productId      String   @map("product_id") @db.Char(36)
+  categoryId     String   @map("category_id") @db.Char(36)
+  price          Decimal  @db.Decimal(14, 2)
+  minimumPrice   Decimal? @map("minimum_price") @db.Decimal(14, 2)
+  unitCost       Decimal? @map("unit_cost") @db.Decimal(14, 4)
+  stockQuantity  Decimal  @default(0) @map("stock_quantity") @db.Decimal(14, 3)
+  minimumStock   Decimal  @default(0) @map("minimum_stock") @db.Decimal(14, 3)
+  trackInventory Boolean  @default(true) @map("track_inventory")
+  active         Boolean  @default(true)
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
+
+  company      Company              @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  branch       Branch               @relation(fields: [branchId], references: [id], onDelete: Cascade)
+  product      Product              @relation(fields: [productId], references: [id], onDelete: Cascade)
+  category     ProductCategory      @relation(fields: [categoryId], references: [id])
+  pointOfSales ProductPointOfSale[]
+  levelPrices  ProductBranchPrice[]
+  inventoryCountItems InventoryCountItem[]
+
+  @@unique([productId, branchId])
+  @@index([companyId, branchId, active])
+  @@index([categoryId, active])
+  @@map("product_branches")
+}
+
+model InventoryCount {
+  id             String               @id @default(uuid()) @db.Char(36)
+  companyId      String               @map("company_id") @db.Char(36)
+  branchId       String               @map("branch_id") @db.Char(36)
+  reference      String               @db.VarChar(50)
+  status         InventoryCountStatus @default(DRAFT)
+  notes          String?              @db.VarChar(255)
+  createdBy      String               @map("created_by") @db.VarChar(160)
+  confirmedBy    String?              @map("confirmed_by") @db.VarChar(160)
+  confirmedAt    DateTime?            @map("confirmed_at")
+  cancelledAt    DateTime?            @map("cancelled_at")
+  createdAt      DateTime             @default(now()) @map("created_at")
+  updatedAt      DateTime             @updatedAt @map("updated_at")
+
+  company Company              @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  branch  Branch               @relation(fields: [branchId], references: [id])
+  items   InventoryCountItem[]
+
+  @@unique([companyId, reference])
+  @@index([companyId, branchId, status, createdAt])
+  @@map("inventory_counts")
+}
+
+model InventoryCountItem {
+  id                 String   @id @default(uuid()) @db.Char(36)
+  inventoryCountId   String   @map("inventory_count_id") @db.Char(36)
+  productBranchId    String   @map("product_branch_id") @db.Char(36)
+  expectedQuantity   Decimal  @map("expected_quantity") @db.Decimal(14, 3)
+  countedQuantity    Decimal? @map("counted_quantity") @db.Decimal(14, 3)
+  differenceQuantity Decimal? @map("difference_quantity") @db.Decimal(14, 3)
+  unitCost           Decimal? @map("unit_cost") @db.Decimal(14, 4)
+  differenceValue    Decimal? @map("difference_value") @db.Decimal(16, 2)
+  note               String?  @db.VarChar(255)
+  updatedAt          DateTime @updatedAt @map("updated_at")
+
+  inventoryCount InventoryCount @relation(fields: [inventoryCountId], references: [id], onDelete: Cascade)
+  productBranch  ProductBranch  @relation(fields: [productBranchId], references: [id])
+
+  @@unique([inventoryCountId, productBranchId])
+  @@index([productBranchId])
+  @@map("inventory_count_items")
+}
+
+model ProductPointOfSale {
+  id                   String   @id @default(uuid()) @db.Char(36)
+  productBranchId      String   @map("product_branch_id") @db.Char(36)
+  pointOfSaleId        String   @map("point_of_sale_id") @db.Char(36)
+  preparationStationId String?  @map("preparation_station_id") @db.Char(36)
+  active               Boolean  @default(true)
+  createdAt            DateTime @default(now()) @map("created_at")
+  updatedAt            DateTime @updatedAt @map("updated_at")
+
+  productBranch      ProductBranch       @relation(fields: [productBranchId], references: [id], onDelete: Cascade)
+  pointOfSale        PointOfSale         @relation(fields: [pointOfSaleId], references: [id], onDelete: Cascade)
+  preparationStation PreparationStation? @relation(fields: [preparationStationId], references: [id], onDelete: SetNull)
+
+  @@unique([productBranchId, pointOfSaleId])
+  @@index([pointOfSaleId, active])
+  @@index([preparationStationId, active])
+  @@map("product_points_of_sale")
+}
+
+model PriceLevel {
+  id        String   @id @default(uuid()) @db.Char(36)
+  companyId String   @map("company_id") @db.Char(36)
+  code      String   @db.VarChar(40)
+  name      String   @db.VarChar(120)
+  isDefault Boolean  @default(false) @map("is_default")
+  sortOrder Int      @default(0) @map("sort_order")
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  company       Company              @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  customers     Customer[]
+  productPrices ProductBranchPrice[]
+  posAccounts   PosAccount[]
+  posMovements  PosMovement[]
+
+  @@unique([companyId, code])
+  @@index([companyId, active, sortOrder])
+  @@map("price_levels")
+}
+
+model ProductBranchPrice {
+  id              String   @id @default(uuid()) @db.Char(36)
+  companyId       String   @map("company_id") @db.Char(36)
+  productBranchId String   @map("product_branch_id") @db.Char(36)
+  priceLevelId    String   @map("price_level_id") @db.Char(36)
+  price           Decimal  @db.Decimal(14, 2)
+  active          Boolean  @default(true)
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  company       Company       @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  productBranch ProductBranch @relation(fields: [productBranchId], references: [id], onDelete: Cascade)
+  priceLevel    PriceLevel    @relation(fields: [priceLevelId], references: [id], onDelete: Cascade)
+
+  @@unique([productBranchId, priceLevelId])
+  @@index([companyId, active])
+  @@index([priceLevelId, active])
+  @@map("product_branch_prices")
 }

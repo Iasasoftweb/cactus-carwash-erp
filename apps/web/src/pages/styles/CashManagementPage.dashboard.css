@@ -1,0 +1,279 @@
+/* CACTUS ERP — CASH MANAGEMENT / DASHBOARD ENTERPRISE V2 */
+
+.cash-center.maintenance-page {
+  --cash-bg:#f4f7f9;
+  --cash-surface:#fff;
+  --cash-surface-soft:#f8fafb;
+  --cash-border:#dce4e9;
+  --cash-border-strong:#c8d4dc;
+  --cash-text:#17232d;
+  --cash-muted:#667785;
+  --cash-green:#1f5c3f;
+  --cash-green-soft:#eaf5ee;
+  --cash-blue:#496b84;
+  --cash-blue-soft:#eaf1f6;
+  --cash-hover:#eef4f8;
+  --cash-hover-strong:#e4edf4;
+  --cash-hover-border:#b9ccd9;
+  --cash-hover-text:#304b61;
+  --cash-amber:#8a651c;
+  --cash-red:#a33e3e;
+  --cash-red-soft:#fde9e9;
+  --cash-shadow:0 1px 2px rgba(18,38,50,.04);
+  min-height:100vh;
+  padding:22px;
+  background:var(--cash-bg);
+  color:var(--cash-text);
+}
+
+.cash-center.maintenance-page *{box-sizing:border-box}
+
+.cash-center.maintenance-page .module-header.maintenance-header{
+  display:flex;align-items:center;justify-content:space-between;gap:18px;
+  padding:18px 20px;border:1px solid var(--cash-border);border-radius:16px;
+  background:#fff!important;box-shadow:var(--cash-shadow)
+}
+.cash-center.maintenance-page .maintenance-header__content{min-width:0;display:flex;align-items:center;gap:13px}
+.cash-center.maintenance-page .maintenance-header__icon{
+  width:46px;height:46px;flex:0 0 46px;display:grid;place-items:center;
+  border-radius:12px;background:var(--cash-blue-soft)!important;color:var(--cash-blue)!important
+}
+.cash-center.maintenance-page .maintenance-header__text h1{
+  margin:0;color:var(--cash-text);font-size:clamp(1.5rem,2vw,1.95rem);line-height:1.1
+}
+.cash-center.maintenance-page .maintenance-header__text p{margin:5px 0 0;color:var(--cash-muted);font-size:.86rem}
+.cash-center.maintenance-page .cash-maintenance-header-actions{display:flex;justify-content:flex-end;flex-wrap:wrap;gap:8px}
+
+.cash-center.maintenance-page button{
+  min-height:40px;padding:9px 12px;border:1px solid var(--cash-border-strong)!important;
+  border-radius:10px;background:#fff!important;color:#344c5e!important;
+  font:inherit;font-size:.84rem;font-weight:800;cursor:pointer;filter:none!important;box-shadow:none
+}
+.cash-center.maintenance-page button svg{vertical-align:middle;margin-right:6px}
+.cash-center.maintenance-page button:disabled{opacity:.55;cursor:not-allowed}
+
+.cash-center.maintenance-page .cash-open-form>button,
+.cash-center.maintenance-page .cash-maintenance-commandbar__actions>button:first-child,
+.cash-center.maintenance-page .maintenance-modal__footer>button[type="submit"]{
+  border-color:var(--cash-green)!important;background:var(--cash-green)!important;color:#fff!important
+}
+
+.cash-center.maintenance-page .maintenance-alert{margin-top:12px;padding:11px 13px;border-radius:10px;font-size:.82rem}
+.cash-center.maintenance-page .maintenance-alert--error{border:1px solid #efc8c8;background:var(--cash-red-soft);color:var(--cash-red)}
+.cash-center.maintenance-page .maintenance-alert--success{border:1px solid #c9dfd1;background:var(--cash-green-soft);color:#2f6b4d}
+
+.cash-center.maintenance-page .cash-maintenance-layout{
+  display:grid;grid-template-columns:minmax(230px,280px) minmax(0,1fr);
+  gap:16px;align-items:start;margin-top:16px
+}
+.cash-center.maintenance-page .maintenance-card,
+.cash-center.maintenance-page .cash-panel.maintenance-card{
+  border:1px solid var(--cash-border)!important;border-radius:14px;
+  background:#fff!important;box-shadow:var(--cash-shadow)!important
+}
+
+.cash-center.maintenance-page .cash-register-list{padding:14px;position:sticky;top:16px}
+.cash-center.maintenance-page .cash-maintenance-aside-title{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;padding:3px 2px 12px
+}
+.cash-center.maintenance-page .eyebrow{margin:0 0 3px;color:#6f7f91;font-size:.62rem;font-weight:900;letter-spacing:.13em}
+.cash-center.maintenance-page .cash-maintenance-aside-title h2,
+.cash-center.maintenance-page .cash-panel__title h2,
+.cash-center.maintenance-page .cash-maintenance-commandbar h2{
+  margin:0;color:var(--cash-text);font-size:1rem
+}
+.cash-center.maintenance-page .maintenance-count{
+  display:inline-grid;place-items:center;min-width:28px;height:28px;padding:0 8px;
+  border:1px solid #d5e0e9;border-radius:999px;background:#f1f5f8;color:#5d6d7f;
+  font-size:.74rem;font-weight:900
+}
+
+.cash-center.maintenance-page .cash-register-list .cash-register-card{
+  width:100%;min-height:58px;display:grid;grid-template-columns:auto minmax(0,1fr) auto;
+  align-items:center;gap:10px;margin-top:8px;padding:10px 11px;
+  border:1px solid var(--cash-border)!important;border-radius:10px;
+  background:#fff!important;color:#425769!important;text-align:left
+}
+.cash-center.maintenance-page .cash-register-list .cash-register-card>svg{margin:0;color:#7890a1}
+.cash-center.maintenance-page .cash-register-list .cash-register-card span{min-width:0;display:grid;gap:3px}
+.cash-center.maintenance-page .cash-register-list .cash-register-card strong{
+  overflow:hidden;color:var(--cash-text);font-size:.82rem;text-overflow:ellipsis;white-space:nowrap
+}
+.cash-center.maintenance-page .cash-register-list .cash-register-card small{color:var(--cash-muted);font-size:.68rem}
+.cash-center.maintenance-page .cash-register-list .cash-register-card--active{
+  border-color:#91aabd!important;background:var(--cash-blue-soft)!important;color:#304f67!important;
+  box-shadow:inset 3px 0 0 #6f8fa6
+}
+.cash-center.maintenance-page .cash-status-dot{width:9px;height:9px;border-radius:999px;background:#aab4bd}
+.cash-center.maintenance-page .cash-status-dot--open{background:#4f8a68}
+
+.cash-center.maintenance-page .cash-workspace{min-width:0;display:grid;gap:14px}
+.cash-center.maintenance-page .operations-empty{
+  padding:34px 18px;border:1px dashed var(--cash-border-strong);
+  border-radius:14px;background:#fff;color:var(--cash-muted);text-align:center
+}
+
+.cash-center.maintenance-page .cash-open-panel{
+  padding:18px;border-color:#9bb8cd!important;
+  box-shadow:inset 3px 0 0 #6f94ad,var(--cash-shadow)!important
+}
+.cash-center.maintenance-page .cash-panel__title{display:flex;align-items:flex-start;gap:10px}
+.cash-center.maintenance-page .cash-panel__title>svg{flex:0 0 auto;color:var(--cash-blue)!important}
+.cash-center.maintenance-page .cash-panel__title p{margin:4px 0 0;color:var(--cash-muted);font-size:.76rem;line-height:1.45}
+
+.cash-center.maintenance-page .cash-open-form{
+  display:grid;grid-template-columns:minmax(220px,1fr) minmax(150px,220px) auto;
+  gap:10px;align-items:end;margin-top:16px
+}
+.cash-center.maintenance-page .cash-form label,
+.cash-center.maintenance-page .cash-modal-form label,
+.cash-center.maintenance-page .cash-close-form label{
+  min-width:0;display:grid;gap:6px;color:#526777;font-size:.75rem;font-weight:800
+}
+.cash-center.maintenance-page .cash-form select,
+.cash-center.maintenance-page .cash-form input,
+.cash-center.maintenance-page .cash-modal-form select,
+.cash-center.maintenance-page .cash-modal-form input,
+.cash-center.maintenance-page .cash-close-form input{
+  width:100%;min-width:0;min-height:42px;border:1px solid var(--cash-border-strong);
+  border-radius:9px;padding:8px 10px;background:#fff!important;color:var(--cash-text);font:inherit;outline:none
+}
+.cash-center.maintenance-page .cash-form select:focus,
+.cash-center.maintenance-page .cash-form input:focus,
+.cash-center.maintenance-page .cash-modal-form select:focus,
+.cash-center.maintenance-page .cash-modal-form input:focus,
+.cash-center.maintenance-page .cash-close-form input:focus{
+  border-color:#91aabd;box-shadow:0 0 0 3px rgba(73,107,132,.10)
+}
+
+.cash-center.maintenance-page .cash-maintenance-commandbar.maintenance-card{
+  display:flex;align-items:center;justify-content:space-between;gap:16px;padding:16px 18px;
+  border-color:#9fc9b4!important;box-shadow:inset 3px 0 0 #5b9576,var(--cash-shadow)!important
+}
+.cash-center.maintenance-page .cash-maintenance-commandbar p{margin:4px 0 0;color:var(--cash-muted);font-size:.76rem}
+.cash-center.maintenance-page .cash-maintenance-commandbar__actions{display:flex;justify-content:flex-end;flex-wrap:wrap;gap:8px}
+
+.cash-center.maintenance-page .cash-kpis{
+  display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px
+}
+.cash-center.maintenance-page .cash-kpis article{
+  min-width:0;min-height:116px;display:grid;align-content:start;gap:7px;padding:14px;
+  border:1px solid var(--cash-border)!important;border-radius:12px;background:#fff!important;
+  box-shadow:var(--cash-shadow)!important
+}
+.cash-center.maintenance-page .cash-kpis article::after{content:none!important}
+.cash-center.maintenance-page .cash-kpis article>svg{color:var(--cash-blue)!important}
+.cash-center.maintenance-page .cash-kpis article>span{color:var(--cash-muted)!important;font-size:.72rem}
+.cash-center.maintenance-page .cash-kpis article>strong{margin-top:auto;color:var(--cash-text)!important;font-size:1.02rem}
+.cash-center.maintenance-page .cash-kpis article:nth-child(1){border-color:#9bb8cd!important;box-shadow:inset 3px 0 0 #6f94ad,var(--cash-shadow)!important}
+.cash-center.maintenance-page .cash-kpis article:nth-child(2){border-color:#9fc9b4!important;box-shadow:inset 3px 0 0 #5b9576,var(--cash-shadow)!important}
+.cash-center.maintenance-page .cash-kpis article:nth-child(3),
+.cash-center.maintenance-page .cash-kpis article:nth-child(4){border-color:#e4bf83!important;box-shadow:inset 3px 0 0 #d69a3d,var(--cash-shadow)!important}
+.cash-center.maintenance-page .cash-kpis article:nth-child(5){border-color:#a8b7c4!important;box-shadow:inset 3px 0 0 #708699,var(--cash-shadow)!important}
+
+.cash-center.maintenance-page .cash-movements-panel{
+  padding:16px;border-color:#9bb8cd!important;
+  box-shadow:inset 3px 0 0 #6f94ad,var(--cash-shadow)!important
+}
+.cash-center.maintenance-page .cash-movement-list{display:grid;gap:0;margin-top:13px}
+.cash-center.maintenance-page .cash-movement-list article{
+  min-width:0;display:flex;align-items:center;justify-content:space-between;gap:14px;
+  padding:11px 2px;border-bottom:1px solid #edf1f3;background:transparent!important
+}
+.cash-center.maintenance-page .cash-movement-list article:last-child{border-bottom:0}
+.cash-center.maintenance-page .cash-movement-list article:hover{
+  padding-left:10px;padding-right:10px;border-radius:9px;background:var(--cash-hover)!important
+}
+.cash-center.maintenance-page .cash-movement-list article>div{min-width:0;display:grid;gap:3px}
+.cash-center.maintenance-page .cash-movement-list article>div:last-child{flex:0 0 auto;justify-items:end;text-align:right}
+.cash-center.maintenance-page .cash-movement-list strong{color:var(--cash-text);font-size:.80rem}
+.cash-center.maintenance-page .cash-movement-list span,
+.cash-center.maintenance-page .cash-movement-list small{color:var(--cash-muted);font-size:.69rem}
+
+.cash-center.maintenance-page .maintenance-modal-backdrop{
+  position:fixed;inset:0;z-index:100;display:grid;place-items:center;padding:18px;
+  background:rgba(15,23,42,.42);backdrop-filter:blur(3px)
+}
+.cash-center.maintenance-page .maintenance-modal.cash-maintenance-modal{
+  width:min(620px,100%);max-height:calc(100vh - 36px);overflow-y:auto;
+  border:1px solid var(--cash-border);border-radius:16px;background:#fff!important;
+  box-shadow:0 24px 64px rgba(15,23,42,.18)
+}
+.cash-center.maintenance-page .cash-maintenance-modal--close{width:min(520px,100%)}
+.cash-center.maintenance-page .maintenance-modal__header{
+  display:flex;align-items:flex-start;justify-content:space-between;gap:14px;
+  padding:17px 18px;border-bottom:1px solid var(--cash-border);background:#fff!important
+}
+.cash-center.maintenance-page .maintenance-modal__header h2{margin:0;color:var(--cash-text);font-size:1.05rem}
+.cash-center.maintenance-page .maintenance-modal__header p{margin:4px 0 0;color:var(--cash-muted);font-size:.76rem}
+.cash-center.maintenance-page .maintenance-modal__close{
+  width:34px;min-height:34px;display:grid;place-items:center;padding:0;border-radius:9px
+}
+.cash-center.maintenance-page .maintenance-modal__body{padding:16px 18px}
+.cash-center.maintenance-page .cash-modal-form{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}
+.cash-center.maintenance-page .cash-modal-form__wide{grid-column:1/-1}
+.cash-center.maintenance-page .cash-close-form{display:grid;gap:12px}
+.cash-center.maintenance-page .cash-close-summary,
+.cash-center.maintenance-page .cash-difference-preview{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px;
+  border:1px solid var(--cash-border);border-radius:10px;background:var(--cash-surface-soft)!important
+}
+.cash-center.maintenance-page .cash-close-summary span,
+.cash-center.maintenance-page .cash-difference-preview span{color:var(--cash-muted);font-size:.75rem}
+.cash-center.maintenance-page .cash-close-summary strong,
+.cash-center.maintenance-page .cash-difference-preview strong{color:var(--cash-text)}
+.cash-center.maintenance-page .maintenance-modal__footer{
+  display:flex;justify-content:flex-end;gap:8px;padding:13px 18px 17px;
+  border-top:1px solid var(--cash-border);background:#fff!important
+}
+
+/* FINAL HOVER POLICY — NEVER GREEN */
+.cash-center.maintenance-page.cash-center.maintenance-page button:hover:not(:disabled),
+.cash-center.maintenance-page.cash-center.maintenance-page button:focus-visible:not(:disabled){
+  background:var(--cash-hover)!important;background-color:var(--cash-hover)!important;
+  border-color:var(--cash-hover-border)!important;color:var(--cash-hover-text)!important;filter:none!important
+}
+.cash-center.maintenance-page.cash-center.maintenance-page .cash-open-form>button:hover:not(:disabled),
+.cash-center.maintenance-page.cash-center.maintenance-page .cash-maintenance-commandbar__actions>button:first-child:hover:not(:disabled),
+.cash-center.maintenance-page.cash-center.maintenance-page .maintenance-modal__footer>button[type="submit"]:hover:not(:disabled){
+  background:var(--cash-hover-strong)!important;background-color:var(--cash-hover-strong)!important;
+  border-color:var(--cash-hover-border)!important;color:var(--cash-hover-text)!important
+}
+.cash-center.maintenance-page.cash-center.maintenance-page .cash-register-card--active:hover:not(:disabled){
+  background:#dde8f0!important;background-color:#dde8f0!important;border-color:#91aabd!important;color:#304f67!important
+}
+.cash-center.maintenance-page.cash-center.maintenance-page .cash-kpis article:hover{
+  background:var(--cash-hover)!important;background-color:var(--cash-hover)!important;transform:translateY(-1px)
+}
+
+@media(max-width:1180px){
+  .cash-center.maintenance-page .cash-kpis{grid-template-columns:repeat(3,minmax(0,1fr))}
+}
+@media(max-width:900px){
+  .cash-center.maintenance-page{padding:14px}
+  .cash-center.maintenance-page .module-header.maintenance-header{align-items:flex-start;flex-direction:column}
+  .cash-center.maintenance-page .cash-maintenance-header-actions{width:100%;justify-content:flex-start}
+  .cash-center.maintenance-page .cash-maintenance-layout{grid-template-columns:1fr}
+  .cash-center.maintenance-page .cash-register-list{position:static}
+  .cash-center.maintenance-page .cash-maintenance-commandbar.maintenance-card{align-items:flex-start;flex-direction:column}
+  .cash-center.maintenance-page .cash-maintenance-commandbar__actions{justify-content:flex-start}
+  .cash-center.maintenance-page .cash-open-form{grid-template-columns:1fr 1fr}
+  .cash-center.maintenance-page .cash-open-form>button{width:100%;grid-column:1/-1}
+}
+@media(max-width:640px){
+  .cash-center.maintenance-page{padding:10px}
+  .cash-center.maintenance-page .cash-kpis,
+  .cash-center.maintenance-page .cash-open-form,
+  .cash-center.maintenance-page .cash-modal-form{grid-template-columns:1fr}
+  .cash-center.maintenance-page .cash-modal-form__wide{grid-column:auto}
+  .cash-center.maintenance-page .cash-maintenance-header-actions,
+  .cash-center.maintenance-page .cash-maintenance-commandbar__actions,
+  .cash-center.maintenance-page .maintenance-modal__footer{
+    display:grid;grid-template-columns:1fr;width:100%
+  }
+  .cash-center.maintenance-page .cash-maintenance-header-actions button,
+  .cash-center.maintenance-page .cash-maintenance-commandbar__actions button,
+  .cash-center.maintenance-page .maintenance-modal__footer button{width:100%}
+  .cash-center.maintenance-page .cash-movement-list article{align-items:flex-start;flex-direction:column}
+  .cash-center.maintenance-page .cash-movement-list article>div:last-child{justify-items:start;text-align:left}
+}

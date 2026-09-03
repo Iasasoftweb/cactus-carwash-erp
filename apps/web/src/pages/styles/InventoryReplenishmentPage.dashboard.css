@@ -1,0 +1,263 @@
+/* INVENTORY REPLENISHMENT — DASHBOARD LOCAL CSS */
+.inventory-replenishment-v2.maintenance-page {
+  --ir-bg:#f4f7f9; --ir-surface:#fff; --ir-soft:#f8fafb;
+  --ir-border:#dce4e9; --ir-border-strong:#c8d4dc;
+  --ir-text:#17232d; --ir-muted:#667785;
+  --ir-blue:#496b84; --ir-blue-strong:#31516c; --ir-blue-soft:#eaf1f6;
+  --ir-red:#9f443c; --ir-red-soft:#fff1ef; --ir-red-border:#e7bdb8;
+  --ir-amber:#80601e; --ir-amber-soft:#fff7e6; --ir-amber-border:#e6cf9f;
+  --ir-green:#1f5c3f; --ir-green-soft:#eaf5ee;
+  --ir-hover:#eef4f8; --ir-hover-border:#b9ccd9;
+  --ir-shadow:0 1px 2px rgba(18,38,50,.04);
+  min-height:100vh; padding:22px; background:var(--ir-bg); color:var(--ir-text);
+}
+.inventory-replenishment-v2.maintenance-page *,
+.inventory-replenishment-v2.maintenance-page *::before,
+.inventory-replenishment-v2.maintenance-page *::after { box-sizing:border-box; }
+
+.inventory-replenishment-v2.maintenance-page .inventory-replenishment-v2__header.maintenance-header {
+  width:100%; display:flex; align-items:center; justify-content:space-between; gap:18px;
+  padding:18px 20px; border:1px solid var(--ir-border); border-radius:16px;
+  background:#fff!important; box-shadow:var(--ir-shadow);
+}
+.inventory-replenishment-v2.maintenance-page .maintenance-header__content {
+  min-width:0; display:flex; align-items:center; gap:13px;
+}
+.inventory-replenishment-v2.maintenance-page .maintenance-header__icon {
+  width:46px; height:46px; flex:0 0 46px; display:grid; place-items:center;
+  border-radius:12px; background:var(--ir-blue-soft)!important; color:var(--ir-blue)!important;
+}
+.inventory-replenishment-v2.maintenance-page .maintenance-header__text h1 {
+  margin:0; color:var(--ir-text); font-size:clamp(1.45rem,2vw,1.9rem); line-height:1.1;
+}
+.inventory-replenishment-v2.maintenance-page .maintenance-header__text p {
+  margin:5px 0 0; color:var(--ir-muted); font-size:.84rem;
+}
+.inventory-replenishment-v2.maintenance-page .inventory-replenishment-v2__header-actions {
+  display:flex!important; align-items:center!important; justify-content:flex-end; flex-wrap:wrap; gap:8px!important;
+}
+.inventory-replenishment-v2.maintenance-page .inventory-replenishment-v2__point {
+  display:grid; gap:5px; min-width:190px; margin:0; color:#526777; font-size:.73rem; font-weight:800;
+}
+.inventory-replenishment-v2.maintenance-page .inventory-replenishment-v2__point select {
+  min-width:190px; min-height:40px; padding:8px 30px 8px 10px;
+  border:1px solid var(--ir-border-strong); border-radius:9px; background:#fff; color:var(--ir-text); outline:none;
+}
+.inventory-replenishment-v2.maintenance-page .inventory-replenishment-v2__header-actions button {
+  min-height:40px!important; display:inline-flex!important; align-items:center!important; justify-content:center!important;
+  gap:7px!important; padding:8px 12px!important; border:1px solid var(--ir-border-strong)!important;
+  border-radius:9px!important; background:#fff!important; background-image:none!important; color:#344c5e!important;
+  box-shadow:none!important; filter:none!important; font-size:.78rem!important; font-weight:800!important;
+}
+.inventory-replenishment-v2.maintenance-page .inventory-replenishment-v2__header-actions button:hover:not(:disabled) {
+  background:var(--ir-hover)!important; border-color:var(--ir-hover-border)!important; color:var(--ir-blue-strong)!important;
+}
+.inventory-replenishment-v2.maintenance-page .inventory-replenishment-v2__pos-button {
+  background:var(--ir-blue-soft)!important; border-color:#cad9e4!important; color:var(--ir-blue-strong)!important;
+}
+
+.inventory-replenishment-v2.maintenance-page .inventory-replenishment-v2__error {
+  margin-top:12px; padding:11px 13px; border:1px solid #efc8c8; border-radius:10px;
+  background:var(--ir-red-soft); color:var(--ir-red); font-size:.8rem;
+}
+
+.inventory-replenishment-v2.maintenance-page .inventory-replenishment-v2__summary {
+  display:grid!important; grid-template-columns:repeat(4,minmax(0,1fr))!important; gap:10px!important; margin:14px 0!important;
+}
+.inventory-replenishment-v2.maintenance-page .inventory-replenishment-v2__summary article {
+  min-width:0; min-height:104px; display:grid!important;
+  grid-template-columns:38px minmax(0,1fr)!important; grid-template-rows:auto auto!important;
+  align-items:center; gap:5px 10px!important; padding:14px!important;
+  border:1px solid var(--ir-border)!important; border-radius:12px!important; background:#fff!important;
+  box-shadow:var(--ir-shadow)!important;
+}
+.inventory-replenishment-v2.maintenance-page .inventory-replenishment-v2__summary article::after { content:none!important; }
+.inventory-replenishment-v2.maintenance-page .inventory-replenishment-v2__summary article:nth-child(1) {
+  border-color:#9bb8cd!important; box-shadow:inset 3px 0 0 #6f94ad,var(--ir-shadow)!important;
+}
+.inventory-replenishment-v2.maintenance-page .inventory-replenishment-v2__summary article:nth-child(2) {
+  border-color:var(--ir-red-border)!important; box-shadow:inset 3px 0 0 #cf756c,var(--ir-shadow)!important;
+}
+.inventory-replenishment-v2.maintenance-page .inventory-replenishment-v2__summary article:nth-child(3) {
+  border-color:var(--ir-amber-border)!important; box-shadow:inset 3px 0 0 #c89a43,var(--ir-shadow)!important;
+}
+.inventory-replenishment-v2.maintenance-page .inventory-replenishment-v2__summary article:nth-child(4) {
+  border-color:#9fc9b4!important; box-shadow:inset 3px 0 0 #5b9576,var(--ir-shadow)!important;
+}
+.inventory-replenishment-v2.maintenance-page .inventory-replenishment-v2__summary article > svg {
+  width:34px; height:34px; padding:7px; grid-row:1 / span 2; border-radius:9px;
+  background:var(--ir-blue-soft)!important; color:var(--ir-blue)!important;
+}
+.inventory-replenishment-v2.maintenance-page .inventory-replenishment-v2__summary article:nth-child(2) > svg {
+  background:var(--ir-red-soft)!important; color:var(--ir-red)!important;
+}
+.inventory-replenishment-v2.maintenance-page .inventory-replenishment-v2__summary article:nth-child(3) > svg {
+  background:var(--ir-amber-soft)!important; color:var(--ir-amber)!important;
+}
+.inventory-replenishment-v2.maintenance-page .inventory-replenishment-v2__summary article:nth-child(4) > svg {
+  background:var(--ir-green-soft)!important; color:var(--ir-green)!important;
+}
+.inventory-replenishment-v2.maintenance-page .inventory-replenishment-v2__summary article span {
+  align-self:end; color:var(--ir-muted); font-size:.72rem; font-weight:700;
+}
+.inventory-replenishment-v2.maintenance-page .inventory-replenishment-v2__summary article strong {
+  align-self:start; color:var(--ir-text); font-size:1.05rem;
+}
+
+.inventory-replenishment-v2.maintenance-page .inventory-replenishment-v2__panel {
+  overflow:hidden; border:1px solid #9bb8cd!important; border-radius:14px;
+  background:#fff!important; box-shadow:inset 3px 0 0 #6f94ad,var(--ir-shadow)!important;
+}
+.inventory-replenishment-v2.maintenance-page .inventory-replenishment-v2__toolbar {
+  display:flex!important; align-items:center; justify-content:space-between; gap:12px;
+  padding:12px 14px!important; border-bottom:1px solid var(--ir-border); background:var(--ir-soft)!important;
+}
+.inventory-replenishment-v2.maintenance-page .inventory-replenishment-v2__search {
+  min-width:260px; max-width:560px; flex:1; display:flex; align-items:center; gap:8px;
+  min-height:40px; padding:0 10px; border:1px solid var(--ir-border-strong)!important;
+  border-radius:9px; background:#fff!important; color:var(--ir-muted);
+}
+.inventory-replenishment-v2.maintenance-page .inventory-replenishment-v2__search input {
+  width:100%; min-width:0; min-height:38px; padding:0; border:0!important; outline:0;
+  background:transparent!important; box-shadow:none!important; color:var(--ir-text);
+}
+
+.inventory-replenishment-v2.maintenance-page .inventory-replenishment-v2__filters {
+  display:inline-flex!important; align-items:center; gap:6px;
+}
+.inventory-replenishment-v2.maintenance-page .inventory-replenishment-v2__filters button {
+  min-height:34px!important; padding:6px 11px!important; border:1px solid var(--ir-border-strong)!important;
+  border-radius:8px!important; background:#fff!important; background-image:none!important; color:#55636d!important;
+  box-shadow:none!important; filter:none!important; font-size:.69rem!important; font-weight:800!important;
+}
+.inventory-replenishment-v2.maintenance-page .inventory-replenishment-v2__filters button:first-child.active {
+  background:#e8edf0!important; border-color:#8e9ca5!important; color:#26363d!important;
+}
+.inventory-replenishment-v2.maintenance-page .inventory-replenishment-v2__filters button:nth-child(2) {
+  color:var(--ir-red)!important; border-color:#efd8d5!important; background:#fffafa!important;
+}
+.inventory-replenishment-v2.maintenance-page .inventory-replenishment-v2__filters button:nth-child(2).active {
+  background:#fdebea!important; border-color:#dfa7a1!important; color:#963c34!important;
+}
+.inventory-replenishment-v2.maintenance-page .inventory-replenishment-v2__filters button:nth-child(3) {
+  color:var(--ir-amber)!important; border-color:#eadfca!important; background:#fffdf8!important;
+}
+.inventory-replenishment-v2.maintenance-page .inventory-replenishment-v2__filters button:nth-child(3).active {
+  background:#fff3d8!important; border-color:#d8ba78!important; color:#785711!important;
+}
+.inventory-replenishment-v2.maintenance-page .inventory-replenishment-v2__filters button:hover:not(:disabled) {
+  background:var(--ir-hover)!important; border-color:var(--ir-hover-border)!important; color:var(--ir-blue-strong)!important;
+}
+
+.inventory-replenishment-v2.maintenance-page .inventory-replenishment-v2__list { display:grid; gap:0; }
+.inventory-replenishment-v2.maintenance-page .inventory-replenishment-v2__item {
+  min-width:0; min-height:78px; display:grid!important;
+  grid-template-columns:58px minmax(0,1fr) auto!important; align-items:center; gap:12px;
+  padding:10px 13px!important; border-bottom:1px solid #edf1f3!important; background:#fff!important;
+}
+.inventory-replenishment-v2.maintenance-page .inventory-replenishment-v2__item:last-child { border-bottom:0!important; }
+.inventory-replenishment-v2.maintenance-page .inventory-replenishment-v2__item:hover { background:#fbfcfd!important; }
+.inventory-replenishment-v2.maintenance-page .inventory-replenishment-v2__image {
+  width:56px; height:56px; display:flex; align-items:center; justify-content:center; overflow:hidden;
+  border:1px solid var(--ir-border); border-radius:9px; background:var(--ir-soft)!important;
+}
+.inventory-replenishment-v2.maintenance-page .inventory-replenishment-v2__image img {
+  width:100%; height:100%; padding:3px; object-fit:contain!important; object-position:center;
+}
+.inventory-replenishment-v2.maintenance-page .inventory-replenishment-v2__image > svg { color:#8998a3; }
+.inventory-replenishment-v2.maintenance-page .inventory-replenishment-v2__main { min-width:0; }
+.inventory-replenishment-v2.maintenance-page .inventory-replenishment-v2__title {
+  min-width:0; display:flex!important; align-items:center; justify-content:space-between; gap:10px;
+}
+.inventory-replenishment-v2.maintenance-page .inventory-replenishment-v2__title > div {
+  min-width:0; display:flex!important; align-items:baseline; gap:8px;
+}
+.inventory-replenishment-v2.maintenance-page .inventory-replenishment-v2__title > div > span {
+  flex:0 0 auto; color:#7a8790; font-size:.67rem; font-weight:800;
+}
+.inventory-replenishment-v2.maintenance-page .inventory-replenishment-v2__title strong {
+  min-width:0; overflow:hidden; color:var(--ir-text); font-size:.82rem; font-weight:800;
+  text-overflow:ellipsis; white-space:nowrap;
+}
+.inventory-replenishment-v2.maintenance-page .inventory-replenishment-v2__meta {
+  display:flex!important; flex-wrap:wrap; align-items:center; gap:5px 14px;
+  margin-top:5px; color:var(--ir-muted); font-size:.68rem;
+}
+.inventory-replenishment-v2.maintenance-page .inventory-replenishment-v2__suggested {
+  color:#34454d; font-weight:800;
+}
+
+.inventory-replenishment-v2.maintenance-page .inventory-alert {
+  flex:0 0 auto; padding:3px 7px; border:1px solid var(--ir-border); border-radius:999px;
+  background:#f5f7f8; color:#53616a; font-size:.63rem; font-weight:800;
+}
+.inventory-replenishment-v2.maintenance-page .inventory-alert--out {
+  border-color:var(--ir-red-border); background:var(--ir-red-soft); color:var(--ir-red);
+}
+.inventory-replenishment-v2.maintenance-page .inventory-alert--low {
+  border-color:var(--ir-amber-border); background:var(--ir-amber-soft); color:var(--ir-amber);
+}
+
+.inventory-replenishment-v2.maintenance-page .inventory-replenishment-v2__actions {
+  display:flex!important; align-items:center; gap:7px;
+}
+.inventory-replenishment-v2.maintenance-page .inventory-replenishment-v2__actions button {
+  min-height:34px!important; display:inline-flex!important; align-items:center!important; justify-content:center!important;
+  gap:7px!important; padding:6px 11px!important; border-radius:8px!important; white-space:nowrap;
+  box-shadow:none!important; filter:none!important; font-size:.69rem!important; font-weight:800!important;
+}
+.inventory-replenishment-v2.maintenance-page .inventory-replenishment-v2__actions .secondary-button {
+  background:#fff!important; background-image:none!important; color:var(--ir-blue-strong)!important;
+  border:1px solid #b8cad8!important;
+}
+.inventory-replenishment-v2.maintenance-page .inventory-replenishment-v2__actions .secondary-button:hover:not(:disabled) {
+  background:var(--ir-hover)!important; border-color:var(--ir-hover-border)!important; color:#203f59!important;
+}
+.inventory-replenishment-v2.maintenance-page .inventory-replenishment-v2__actions button:not(.secondary-button) {
+  background:#2563eb!important; background-color:#2563eb!important; background-image:none!important;
+  color:#fff!important; border:1px solid #2563eb!important;
+}
+.inventory-replenishment-v2.maintenance-page .inventory-replenishment-v2__actions button:not(.secondary-button):hover:not(:disabled) {
+  background:#1d4ed8!important; background-color:#1d4ed8!important; border-color:#1d4ed8!important; color:#fff!important;
+}
+.inventory-replenishment-v2.maintenance-page .inventory-replenishment-v2__empty {
+  padding:28px 16px; color:var(--ir-muted); text-align:center; font-size:.75rem;
+}
+
+@media (max-width:980px) {
+  .inventory-replenishment-v2.maintenance-page .inventory-replenishment-v2__summary {
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  }
+  .inventory-replenishment-v2.maintenance-page .inventory-replenishment-v2__header.maintenance-header,
+  .inventory-replenishment-v2.maintenance-page .inventory-replenishment-v2__toolbar {
+    align-items:stretch; flex-direction:column;
+  }
+  .inventory-replenishment-v2.maintenance-page .inventory-replenishment-v2__search { max-width:none; }
+  .inventory-replenishment-v2.maintenance-page .inventory-replenishment-v2__item {
+    grid-template-columns:54px minmax(0,1fr)!important;
+  }
+  .inventory-replenishment-v2.maintenance-page .inventory-replenishment-v2__actions {
+    grid-column:1 / -1; justify-content:flex-end;
+  }
+}
+
+@media (max-width:620px) {
+  .inventory-replenishment-v2.maintenance-page { padding:10px; }
+  .inventory-replenishment-v2.maintenance-page .inventory-replenishment-v2__summary {
+    grid-template-columns:1fr!important;
+  }
+  .inventory-replenishment-v2.maintenance-page .inventory-replenishment-v2__header-actions,
+  .inventory-replenishment-v2.maintenance-page .inventory-replenishment-v2__filters,
+  .inventory-replenishment-v2.maintenance-page .inventory-replenishment-v2__actions {
+    width:100%; flex-wrap:wrap;
+  }
+  .inventory-replenishment-v2.maintenance-page .inventory-replenishment-v2__point { width:100%; }
+  .inventory-replenishment-v2.maintenance-page .inventory-replenishment-v2__point select {
+    width:100%; min-width:0;
+  }
+  .inventory-replenishment-v2.maintenance-page .inventory-replenishment-v2__title,
+  .inventory-replenishment-v2.maintenance-page .inventory-replenishment-v2__title > div {
+    align-items:flex-start; flex-direction:column; gap:3px;
+  }
+  .inventory-replenishment-v2.maintenance-page .inventory-replenishment-v2__actions button { flex:1 1 auto; }
+}

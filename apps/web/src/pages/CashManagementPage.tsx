@@ -14,6 +14,7 @@ import type {
   CashSessionResponse,
 } from '@cactus/shared';
 import { api } from '../lib/api';
+import './styles/CashManagementPage.dashboard.css';
 
 type MovementType = 'WITHDRAWAL';
 
@@ -49,6 +50,8 @@ export function CashManagementPage() {
   const [working, setWorking] = useState(false);
   const [error, setError] = useState('');
   const [message, setMessage] = useState('');
+  const [movementModalOpen, setMovementModalOpen] = useState(false);
+  const [closeModalOpen, setCloseModalOpen] = useState(false);
 
   function load(): void {
     Promise.all([api.cashRegisters(), api.cashiers()])
@@ -81,6 +84,8 @@ export function CashManagementPage() {
     setSession(register.openSession);
     setError('');
     setMessage('');
+    setMovementModalOpen(false);
+    setCloseModalOpen(false);
   }
 
   const totals = useMemo(() => {
@@ -177,11 +182,8 @@ export function CashManagementPage() {
       setMovementDescription('');
       setMovementBeneficiary('');
       setMovementReference('');
-      setMessage(
-        movementType === 'WITHDRAWAL'
-          ? 'Retiro registrado correctamente.'
-          : 'Gasto registrado correctamente.',
-      );
+      setMovementModalOpen(false);
+      setMessage('Retiro registrado correctamente.');
       load();
     } catch (reason) {
       setError(
@@ -217,8 +219,11 @@ export function CashManagementPage() {
         `/cash/sessions/${closed.id}/print/detail`,
         '_blank',
       );
-      setMessage('Caja cerrada correctamente. Se generaron los tickets.');
+      setMessage(
+        'Caja cerrada correctamente. Se generaron los tickets.',
+      );
       setCountedAmount(0);
+      setCloseModalOpen(false);
       load();
     } catch (reason) {
       setError(
@@ -232,30 +237,63 @@ export function CashManagementPage() {
   }
 
   return (
-    <main className="cash-center">
-      <header className="cash-center__header">
-        <button type="button" className="secondary-button" onClick={() => navigate(-1)}>
-          ← Volver
-        </button>
+    <main className="cash-center maintenance-page">
+      <header className="module-header maintenance-header">
+        <div className="maintenance-header__content">
+          <div className="maintenance-header__icon">
+            <WalletCards size={22} strokeWidth={1.8} />
+          </div>
 
-        <div>
-          <span className="brand">CACTUS</span>
-          <h1>Administración de Cajas</h1>
-          <p>Cajeros autorizados, retiros, gastos, arqueo y cierre.</p>
+          <div className="maintenance-header__text">
+            <h1>Administración de cajas</h1>
+            <p>
+              Cajeros autorizados, retiros, arqueo y cierre de turnos.
+            </p>
+          </div>
         </div>
 
-        <button type="button" className="secondary-button" onClick={load}>
-          <RefreshCw size={17} />
-          Actualizar
-        </button>
+        <div className="cash-maintenance-header-actions">
+          <button
+            type="button"
+            className="secondary-button"
+            onClick={() => navigate(-1)}
+          >
+            Volver
+          </button>
+
+          <button
+            type="button"
+            className="secondary-button"
+            onClick={load}
+          >
+            <RefreshCw size={15} />
+            Actualizar
+          </button>
+        </div>
       </header>
 
-      {error ? <div className="operations-error">{error}</div> : null}
-      {message ? <div className="operations-success">{message}</div> : null}
+      {error ? (
+        <div className="maintenance-alert maintenance-alert--error">
+          {error}
+        </div>
+      ) : null}
 
-      <section className="cash-center__layout">
-        <aside className="cash-register-list">
-          <h2>Cajas</h2>
+      {message ? (
+        <div className="maintenance-alert maintenance-alert--success">
+          {message}
+        </div>
+      ) : null}
+
+      <section className="cash-maintenance-layout">
+        <aside className="cash-register-list maintenance-card">
+          <div className="cash-maintenance-aside-title">
+            <div>
+              <p className="eyebrow">CAJAS</p>
+              <h2>Puntos de caja</h2>
+            </div>
+
+            <span className="maintenance-count">{registers.length}</span>
+          </div>
 
           {registers.map((register) => (
             <button
@@ -268,36 +306,58 @@ export function CashManagementPage() {
               }
               onClick={() => selectRegister(register)}
             >
-              <WalletCards size={20} />
+              <WalletCards size={17} />
+
               <span>
                 <strong>{register.name}</strong>
                 <small>{register.openSession ? 'Abierta' : 'Cerrada'}</small>
               </span>
+
+              <i
+                className={
+                  register.openSession
+                    ? 'cash-status-dot cash-status-dot--open'
+                    : 'cash-status-dot'
+                }
+              />
             </button>
           ))}
         </aside>
 
         <section className="cash-workspace">
           {!selectedRegister ? (
-            <div className="operations-empty">No hay cajas configuradas.</div>
+            <div className="operations-empty">
+              No hay cajas configuradas.
+            </div>
           ) : !session || session.status === 'CLOSED' ? (
-            <section className="cash-panel">
+            <section className="cash-panel maintenance-card cash-open-panel">
               <div className="cash-panel__title">
-                <LockKeyhole size={21} />
+                <LockKeyhole size={20} />
+
                 <div>
+                  <p className="eyebrow">APERTURA</p>
                   <h2>Abrir {selectedRegister.name}</h2>
-                  <p>Selecciona un empleado autorizado y registra el fondo.</p>
+                  <p>
+                    Selecciona un empleado autorizado y registra el fondo
+                    inicial.
+                  </p>
                 </div>
               </div>
 
-              <form className="cash-form" onSubmit={openSession}>
+              <form
+                className="cash-form cash-open-form"
+                onSubmit={openSession}
+              >
                 <label>
                   Cajero autorizado
                   <select
                     value={employeeId}
-                    onChange={(event) => setEmployeeId(event.target.value)}
+                    onChange={(event) =>
+                      setEmployeeId(event.target.value)
+                    }
                   >
                     <option value="">Seleccionar cajero</option>
+
                     {cashiers.map((cashier) => (
                       <option key={cashier.id} value={cashier.id}>
                         {cashier.fullName}
@@ -322,222 +382,408 @@ export function CashManagementPage() {
                   />
                 </label>
 
-                <button type="submit" disabled={working || !employeeId}>
+                <button className="erp-button-primary"
+                  type="submit"
+                  disabled={working || !employeeId}
+                >
                   Abrir caja
                 </button>
               </form>
 
               {cashiers.length === 0 ? (
-                <div className="operations-error">
+                <div className="maintenance-alert maintenance-alert--error">
                   No hay empleados autorizados para operar caja.
                 </div>
               ) : null}
             </section>
           ) : (
             <>
+              <section className="cash-maintenance-commandbar maintenance-card">
+                <div>
+                  <p className="eyebrow">TURNO ACTIVO</p>
+                  <h2>{session.cashRegisterName}</h2>
+                  <p>
+                    Cajero: {session.cashierName} · Abierta{' '}
+                    {new Date(session.openedAt).toLocaleString('es-DO')}
+                  </p>
+                </div>
+
+                <div className="cash-maintenance-commandbar__actions">
+                  <button className="erp-button-primary"
+                    type="button"
+                    onClick={() => setMovementModalOpen(true)}
+                  >
+                    <ArrowDownCircle size={15} />
+                    Registrar retiro
+                  </button>
+
+                  <button
+                    type="button"
+                    className="secondary-button"
+                    onClick={() =>
+                      window.open(
+                        `/cash/sessions/${session.id}/print/summary`,
+                        '_blank',
+                      )
+                    }
+                  >
+                    Resumen
+                  </button>
+
+                  <button
+                    type="button"
+                    className="secondary-button"
+                    onClick={() =>
+                      window.open(
+                        `/cash/sessions/${session.id}/print/detail`,
+                        '_blank',
+                      )
+                    }
+                  >
+                    Detalle
+                  </button>
+
+                  <button
+                    type="button"
+                    className="secondary-button"
+                    onClick={() => setCloseModalOpen(true)}
+                  >
+                    <Calculator size={15} />
+                    Arqueo y cierre
+                  </button>
+                </div>
+              </section>
+
               <section className="cash-kpis">
                 <article>
-                  <Banknote size={21} />
+                  <Banknote size={19} />
                   <span>Fondo inicial</span>
                   <strong>RD$ {session.openingAmount.toFixed(2)}</strong>
                 </article>
+
                 <article>
-                  <Banknote size={21} />
+                  <Banknote size={19} />
                   <span>Cobros automáticos</span>
                   <strong>RD$ {totals.sales.toFixed(2)}</strong>
                 </article>
+
                 <article>
-                  <ArrowDownCircle size={21} />
+                  <ArrowDownCircle size={19} />
                   <span>Retiros</span>
                   <strong>RD$ {totals.withdrawals.toFixed(2)}</strong>
                 </article>
+
                 <article>
-                  <ArrowDownCircle size={21} />
+                  <ArrowDownCircle size={19} />
                   <span>Gastos</span>
                   <strong>RD$ {totals.expenses.toFixed(2)}</strong>
                 </article>
+
                 <article>
-                  <Calculator size={21} />
+                  <Calculator size={19} />
                   <span>Saldo esperado</span>
                   <strong>RD$ {session.expectedAmount.toFixed(2)}</strong>
                 </article>
               </section>
 
-              <section className="cash-two-columns">
-                <section className="cash-panel">
-                  <div className="cash-panel__title">
-                    <WalletCards size={21} />
-                    <div>
-                      <h2>{session.cashRegisterName}</h2>
-                      <p>
-                        Cajero: {session.cashierName} · Abierta{' '}
-                        {new Date(session.openedAt).toLocaleString('es-DO')}
-                      </p>
-                    </div>
-                  </div>
-
-                  <form className="cash-form" onSubmit={addMovement}>
-                    <label>
-                      Operación
-                      <select
-                        value={movementType}
-                        onChange={(event) =>
-                          setMovementType(event.target.value as MovementType)
-                        }
-                      >
-                        <option value="WITHDRAWAL">Retiro de efectivo</option>
-                      </select>
-                    </label>
-
-                    <label>
-                      Monto
-                      <input
-                        type="number"
-                        min={0.01}
-                        step="0.01"
-                        value={movementAmount}
-                        onChange={(event) =>
-                          setMovementAmount(Number(event.target.value))
-                        }
-                      />
-                    </label>
-
-                    <label>
-                      Beneficiario o receptor
-                      <input
-                        value={movementBeneficiary}
-                        onChange={(event) =>
-                          setMovementBeneficiary(event.target.value)
-                        }
-                        placeholder="Persona, proveedor o banco"
-                      />
-                    </label>
-
-                    <label>
-                      Referencia
-                      <input
-                        value={movementReference}
-                        onChange={(event) =>
-                          setMovementReference(event.target.value)
-                        }
-                        placeholder="Opcional"
-                      />
-                    </label>
-
-                    <label className="cash-form__wide">
-                      Motivo
-                      <input
-                        value={movementDescription}
-                        onChange={(event) =>
-                          setMovementDescription(event.target.value)
-                        }
-                        placeholder="Describe el motivo"
-                      />
-                    </label>
-
-                    <button type="submit" disabled={working}>
-                      Registrar retiro
-                    </button>
-                  </form>
-                </section>
-
-                <section className="cash-panel">
-                  <div className="cash-panel__title">
-                    <Calculator size={21} />
-                    <div>
-                      <h2>Arqueo y cierre</h2>
-                      <p>Cuenta el efectivo disponible antes de cerrar.</p>
-                    </div>
-                  </div>
-
-                  <div className="cash-print-actions">
-                    <button
-                      type="button"
-                      className="secondary-button"
-                      onClick={() =>
-                        window.open(
-                          `/cash/sessions/${session.id}/print/summary`,
-                          '_blank',
-                        )
-                      }
-                    >
-                      Imprimir resumen actual
-                    </button>
-                    <button
-                      type="button"
-                      className="secondary-button"
-                      onClick={() =>
-                        window.open(
-                          `/cash/sessions/${session.id}/print/detail`,
-                          '_blank',
-                        )
-                      }
-                    >
-                      Imprimir detalle
-                    </button>
-                  </div>
-
-                  <form className="cash-form" onSubmit={closeSession}>
-                    <label>
-                      Efectivo contado
-                      <input
-                        type="number"
-                        min={0}
-                        step="0.01"
-                        value={countedAmount}
-                        onChange={(event) =>
-                          setCountedAmount(Number(event.target.value))
-                        }
-                      />
-                    </label>
-
-                    <div className="cash-difference-preview">
-                      <span>Diferencia estimada</span>
-                      <strong>
-                        RD$ {(countedAmount - session.expectedAmount).toFixed(2)}
-                      </strong>
-                    </div>
-
-                    <button type="submit" disabled={working}>
-                      Cerrar caja
-                    </button>
-                  </form>
-                </section>
-              </section>
-
-              <section className="cash-panel">
+              <section className="cash-panel maintenance-card cash-movements-panel">
                 <div className="cash-panel__title">
-                  <Banknote size={21} />
+                  <Banknote size={19} />
+
                   <div>
                     <h2>Movimientos del turno</h2>
-                    <p>Ventas automáticas, retiros y gastos auditables.</p>
+                    <p>
+                      Ventas automáticas, retiros y movimientos auditables.
+                    </p>
                   </div>
                 </div>
 
                 <div className="cash-movement-list">
-                  {session.movements.map((movement) => (
-                    <article key={movement.id}>
-                      <div>
-                        <strong>{movementLabels[movement.type]}</strong>
-                        <span>{movement.description}</span>
-                        {movement.beneficiary ? (
-                          <small>Beneficiario: {movement.beneficiary}</small>
-                        ) : null}
-                      </div>
-                      <div>
-                        <strong>RD$ {movement.amount.toFixed(2)}</strong>
-                        <small>
-                          {new Date(movement.createdAt).toLocaleString('es-DO')}
-                        </small>
-                      </div>
-                    </article>
-                  ))}
+                  {session.movements.length === 0 ? (
+                    <div className="operations-empty">
+                      No hay movimientos en este turno.
+                    </div>
+                  ) : (
+                    session.movements.map((movement) => (
+                      <article key={movement.id}>
+                        <div>
+                          <strong>
+                            {movementLabels[movement.type]}
+                          </strong>
+
+                          <span>{movement.description}</span>
+
+                          {movement.beneficiary ? (
+                            <small>
+                              Beneficiario: {movement.beneficiary}
+                            </small>
+                          ) : null}
+                        </div>
+
+                        <div>
+                          <strong>
+                            RD$ {movement.amount.toFixed(2)}
+                          </strong>
+
+                          <small>
+                            {new Date(
+                              movement.createdAt,
+                            ).toLocaleString('es-DO')}
+                          </small>
+                        </div>
+                      </article>
+                    ))
+                  )}
                 </div>
               </section>
             </>
           )}
         </section>
       </section>
+
+      {movementModalOpen && session ? (
+        <div
+          className="maintenance-modal-backdrop"
+          role="presentation"
+          onMouseDown={(event) => {
+            if (
+              event.target === event.currentTarget &&
+              !working
+            ) {
+              setMovementModalOpen(false);
+            }
+          }}
+        >
+          <section
+            className="maintenance-modal cash-maintenance-modal"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="cash-movement-title"
+          >
+            <header className="maintenance-modal__header">
+              <div>
+                <p className="eyebrow">
+                  MOVIMIENTO DE CAJA
+                </p>
+
+                <h2 id="cash-movement-title">
+                  Registrar retiro
+                </h2>
+
+                <p>
+                  Registra la salida de efectivo con su trazabilidad.
+                </p>
+              </div>
+
+              <button
+                type="button"
+                className="maintenance-modal__close"
+                onClick={() => setMovementModalOpen(false)}
+                disabled={working}
+                aria-label="Cerrar"
+              >
+                ×
+              </button>
+            </header>
+
+            <form
+              className="maintenance-modal__form"
+              onSubmit={addMovement}
+            >
+              <div className="maintenance-modal__body cash-modal-form">
+                <label>
+                  Operación
+                  <select
+                    value={movementType}
+                    onChange={(event) =>
+                      setMovementType(
+                        event.target.value as MovementType,
+                      )
+                    }
+                  >
+                    <option value="WITHDRAWAL">
+                      Retiro de efectivo
+                    </option>
+                  </select>
+                </label>
+
+                <label>
+                  Monto
+                  <input
+                    type="number"
+                    min={0.01}
+                    step="0.01"
+                    value={movementAmount}
+                    onChange={(event) =>
+                      setMovementAmount(Number(event.target.value))
+                    }
+                  />
+                </label>
+
+                <label>
+                  Beneficiario o receptor
+                  <input
+                    value={movementBeneficiary}
+                    onChange={(event) =>
+                      setMovementBeneficiary(event.target.value)
+                    }
+                    placeholder="Persona, proveedor o banco"
+                  />
+                </label>
+
+                <label>
+                  Referencia
+                  <input
+                    value={movementReference}
+                    onChange={(event) =>
+                      setMovementReference(event.target.value)
+                    }
+                    placeholder="Opcional"
+                  />
+                </label>
+
+                <label className="cash-modal-form__wide">
+                  Motivo
+                  <input
+                    value={movementDescription}
+                    onChange={(event) =>
+                      setMovementDescription(event.target.value)
+                    }
+                    placeholder="Describe el motivo"
+                  />
+                </label>
+              </div>
+
+              <footer className="maintenance-modal__footer">
+                <button
+                  type="button"
+                  className="secondary-button"
+                  onClick={() => setMovementModalOpen(false)}
+                  disabled={working}
+                >
+                  Cancelar
+                </button>
+
+                <button
+                  type="submit"
+                  className="erp-button-primary"
+                  disabled={working}
+                >
+                  {working
+                    ? 'Registrando...'
+                    : 'Registrar retiro'}
+                </button>
+              </footer>
+            </form>
+          </section>
+        </div>
+      ) : null}
+
+      {closeModalOpen && session ? (
+        <div
+          className="maintenance-modal-backdrop"
+          role="presentation"
+          onMouseDown={(event) => {
+            if (
+              event.target === event.currentTarget &&
+              !working
+            ) {
+              setCloseModalOpen(false);
+            }
+          }}
+        >
+          <section
+            className="maintenance-modal cash-maintenance-modal cash-maintenance-modal--close"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="cash-close-title"
+          >
+            <header className="maintenance-modal__header">
+              <div>
+                <p className="eyebrow">ARQUEO</p>
+
+                <h2 id="cash-close-title">
+                  Arqueo y cierre
+                </h2>
+
+                <p>
+                  Cuenta el efectivo disponible antes de cerrar la caja.
+                </p>
+              </div>
+
+              <button
+                type="button"
+                className="maintenance-modal__close"
+                onClick={() => setCloseModalOpen(false)}
+                disabled={working}
+                aria-label="Cerrar"
+              >
+                ×
+              </button>
+            </header>
+
+            <form
+              className="maintenance-modal__form"
+              onSubmit={closeSession}
+            >
+              <div className="maintenance-modal__body cash-close-form">
+                <div className="cash-close-summary">
+                  <span>Saldo esperado</span>
+                  <strong>
+                    RD$ {session.expectedAmount.toFixed(2)}
+                  </strong>
+                </div>
+
+                <label>
+                  Efectivo contado
+                  <input
+                    type="number"
+                    min={0}
+                    step="0.01"
+                    value={countedAmount}
+                    onChange={(event) =>
+                      setCountedAmount(Number(event.target.value))
+                    }
+                  />
+                </label>
+
+                <div className="cash-difference-preview">
+                  <span>Diferencia estimada</span>
+
+                  <strong>
+                    RD${' '}
+                    {(
+                      countedAmount -
+                      session.expectedAmount
+                    ).toFixed(2)}
+                  </strong>
+                </div>
+              </div>
+
+              <footer className="maintenance-modal__footer">
+                <button
+                  type="button"
+                  className="secondary-button"
+                  onClick={() => setCloseModalOpen(false)}
+                  disabled={working}
+                >
+                  Cancelar
+                </button>
+
+                <button
+                  type="submit"
+                  className="erp-button-primary"
+                  disabled={working}
+                >
+                  {working
+                    ? 'Cerrando...'
+                    : 'Cerrar caja'}
+                </button>
+              </footer>
+            </form>
+          </section>
+        </div>
+      ) : null}
     </main>
   );
 }

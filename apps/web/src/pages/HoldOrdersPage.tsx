@@ -1,7 +1,13 @@
 import {
+  Car,
   CircleDollarSign,
+  ClipboardCheck,
   Clock3,
+  FileText,
+  House,
+  Plus,
   Play,
+  RefreshCw,
   Search,
   Printer,
   Sparkles,
@@ -16,6 +22,7 @@ import type {
   PaymentMethodResponse,
 } from '@cactus/shared';
 import { api, OrderListItem } from '../lib/api';
+import './styles/HoldOrdersPage.dashboard.css';
 
 type Filter =
   | 'ALL'
@@ -59,6 +66,7 @@ export function HoldOrdersPage() {
   const [loading, setLoading] = useState(true);
   const [workingId, setWorkingId] = useState('');
   const [payingId, setPayingId] = useState('');
+  const [creditingId, setCreditingId] = useState('');
 
   const [error, setError] = useState('');
   const [message, setMessage] = useState('');
@@ -74,6 +82,8 @@ export function HoldOrdersPage() {
   const [paymentMethodId, setPaymentMethodId] = useState('');
   const [cashRegisterId, setCashRegisterId] = useState('');
   const [paymentReference, setPaymentReference] = useState('');
+  const [creditNotes, setCreditNotes] = useState('');
+  const [selectedOrderId, setSelectedOrderId] = useState('');
 
   function loadOrders(): Promise<void> {
     setLoading(true);
@@ -104,7 +114,7 @@ export function HoldOrdersPage() {
 
       /*
        * Para CarWash/Taller tratamos de seleccionar automáticamente
-       * una caja que no pertenezca al Coffee Bar.
+       * una caja que no pertenezca al Punto de Venta.
        *
        * El operador todavía puede cambiarla manualmente.
        */
@@ -154,6 +164,47 @@ export function HoldOrdersPage() {
     });
   }, [orders, filter, query]);
 
+  const selectedOrder = useMemo(
+    () =>
+      orders.find((order) => order.id === selectedOrderId) ??
+      visibleOrders[0] ??
+      null,
+    [orders, selectedOrderId, visibleOrders],
+  );
+
+  useEffect(() => {
+    if (!selectedOrderId && visibleOrders[0]) {
+      setSelectedOrderId(visibleOrders[0].id);
+      return;
+    }
+
+    if (
+      selectedOrderId &&
+      !visibleOrders.some((order) => order.id === selectedOrderId)
+    ) {
+      setSelectedOrderId(visibleOrders[0]?.id ?? '');
+    }
+  }, [visibleOrders, selectedOrderId]);
+
+  const statusCounts = useMemo(
+    () => ({
+      ALL: orders.length,
+      WAITING: orders.filter(
+        (order) => order.operationalStatus === 'WAITING',
+      ).length,
+      IN_PROGRESS: orders.filter(
+        (order) => order.operationalStatus === 'IN_PROGRESS',
+      ).length,
+      SERVICES_COMPLETED: orders.filter(
+        (order) => order.operationalStatus === 'SERVICES_COMPLETED',
+      ).length,
+      READY_FOR_DELIVERY: orders.filter(
+        (order) => order.operationalStatus === 'READY_FOR_DELIVERY',
+      ).length,
+    }),
+    [orders],
+  );
+
   async function advance(order: OrderListItem): Promise<void> {
     const status = nextStatus[order.operationalStatus];
 
@@ -192,6 +243,20 @@ export function HoldOrdersPage() {
   async function payOrder(order: OrderListItem): Promise<void> {
     if (order.financialStatus === 'PAID') {
       setError('Esta orden ya está pagada.');
+      return;
+    }
+
+    if (order.financialStatus === 'CREDIT') {
+      setError(
+        'Esta orden ya fue autorizada a crédito y no puede cobrarse por este flujo.',
+      );
+      return;
+    }
+
+    if (order.financialStatus !== 'PENDING') {
+      setError(
+        'La orden no se encuentra disponible para cobro ordinario.',
+      );
       return;
     }
 
@@ -252,52 +317,127 @@ export function HoldOrdersPage() {
     }
   }
 
+  async function authorizeCredit(
+    order: OrderListItem,
+  ): Promise<void> {
+    if (order.financialStatus === 'CREDIT') {
+      setError('Esta orden ya está autorizada a crédito.');
+      return;
+    }
+
+    if (order.financialStatus !== 'PENDING') {
+      setError(
+        'Solo las órdenes financieramente pendientes pueden autorizarse a crédito.',
+      );
+      return;
+    }
+
+    const confirmed = window.confirm(
+      `¿Autorizar la orden ${order.orderNumber} a crédito por RD$ ${order.total.toFixed(2)}?`,
+    );
+
+    if (!confirmed) {
+      return;
+    }
+
+    setCreditingId(order.id);
+    setError('');
+    setMessage('');
+
+    try {
+      const result =
+        await api.authorizeOrderCredit(
+          order.id,
+          {
+            notes:
+              creditNotes.trim() ||
+              undefined,
+          },
+        );
+
+      setMessage(
+        `${result.orderNumber} autorizada a crédito por RD$ ${result.amount.toFixed(2)}. ` +
+          `Nuevo uso de crédito: RD$ ${result.newExposure.toFixed(2)} de RD$ ${result.creditLimit.toFixed(2)}.`,
+      );
+
+      setCreditNotes('');
+
+      await loadOrders();
+    } catch (reason) {
+      setError(
+        reason instanceof Error
+          ? reason.message
+          : 'No fue posible autorizar el crédito.',
+      );
+    } finally {
+      setCreditingId('');
+    }
+  }
+
   return (
-    <main className="operations-page">
-      <header className="operations-header">
-        <div>
-          <span className="brand">CACTUS</span>
-          <h1>Órdenes en HOLD</h1>
-          <p>Control operativo, cobro y entrega de vehículos.</p>
+    <main className="operations-page maintenance-page hold-orders-pro" style={{marginTop:"10px"}} >
+      <header className="hold-orders-pro__header ">
+        <div className="hold-orders-pro__header-main ">
+          <div className="hold-orders-pro__header-icon">
+            <Car size={24} strokeWidth={1.8} />
+          </div>
+
+          <div>
+            <h1>Órdenes en HOLD</h1>
+            <p>Gestiona y avanza las órdenes operativas del taller.</p>
+          </div>
         </div>
 
-        <div className="hold-header-actions">
+        <div className="hold-orders-pro__header-actions">
           <button
             type="button"
             className="secondary-button"
-            onClick={() => navigate(-1)}
+            onClick={() => navigate('/dashboard')}
           >
-            ← Volver
+            <House size={15} />
+            Menú principal
           </button>
 
           <button
             type="button"
             onClick={() => navigate('/pos')}
           >
+            <Plus size={15} />
             Nueva orden
+          </button>
+
+          <button
+            type="button"
+            className="secondary-button"
+            onClick={() => {
+              void loadOrders();
+              void loadPaymentConfiguration();
+            }}
+          >
+            <RefreshCw size={15} />
+            Actualizar
           </button>
         </div>
       </header>
 
-      <section className="operations-toolbar">
-        <div className="operations-search">
-          <Search size={19} />
-
+      <section className="hold-orders-pro__toolbar">
+        <div className="hold-orders-pro__search">
+          <Search size={17} />
           <input
             value={query}
             onChange={(event) => setQuery(event.target.value)}
-            placeholder="Buscar orden, cliente, vehículo o placa"
+            placeholder="Buscar por orden, cliente, vehículo o placa..."
           />
         </div>
 
-        <div className="operations-filters">
+        <div className="hold-orders-pro__filters">
           {(
             [
-              ['ALL', 'Todas'],
+              ['ALL', 'Todos'],
               ['WAITING', 'En espera'],
               ['IN_PROGRESS', 'En proceso'],
-              ['SERVICES_COMPLETED', 'Terminadas'],
-              ['READY_FOR_DELIVERY', 'Por entregar'],
+              ['SERVICES_COMPLETED', 'Servicios terminados'],
+              ['READY_FOR_DELIVERY', 'Listas para entregar'],
             ] as const
           ).map(([value, label]) => (
             <button
@@ -305,139 +445,200 @@ export function HoldOrdersPage() {
               key={value}
               className={
                 filter === value
-                  ? 'operations-filter operations-filter--active'
-                  : 'operations-filter'
+                  ? `hold-orders-pro__filter hold-orders-pro__filter--${value.toLowerCase()} active`
+                  : `hold-orders-pro__filter hold-orders-pro__filter--${value.toLowerCase()}`
               }
               onClick={() => setFilter(value)}
             >
-              {label}
+              <span>{label}</span>
+              <strong>{statusCounts[value]}</strong>
             </button>
           ))}
         </div>
       </section>
 
       {error ? (
-        <div className="operations-error">
+        <div className="maintenance-alert maintenance-alert--error">
           {error}
         </div>
       ) : null}
 
       {message ? (
-        <div className="operations-success">
+        <div className="maintenance-alert maintenance-alert--success">
           {message}
         </div>
       ) : null}
 
-      {loading ? (
-        <div className="operations-empty">
-          Cargando órdenes...
-        </div>
-      ) : null}
+      <section className="hold-orders-pro__content">
+        <div className="hold-orders-pro__main">
+          <div className="hold-orders-pro__section-heading">
+            <strong>{visibleOrders.length}</strong>
+            <span>
+              {visibleOrders.length === 1
+                ? 'orden encontrada'
+                : 'órdenes encontradas'}
+            </span>
+          </div>
 
-      {!loading && visibleOrders.length === 0 ? (
-        <div className="operations-empty">
-          No hay órdenes que coincidan con el filtro.
-        </div>
-      ) : null}
+          {loading ? (
+            <div className="operations-empty">
+              Cargando órdenes...
+            </div>
+          ) : null}
 
-      <section className="hold-grid">
-        {visibleOrders.map((order) => (
-          <article className="hold-card" key={order.id}>
-            <div className="hold-card__header">
-              <div>
-                <span className="hold-card__number">
-                  {order.orderNumber}
-                </span>
+          {!loading && visibleOrders.length === 0 ? (
+            <div className="operations-empty">
+              No hay órdenes que coincidan con el filtro.
+            </div>
+          ) : null}
 
-                <strong>{order.vehicle}</strong>
-
-                <small>
-                  {order.vehicleType}
-                  {order.plate ? ` · ${order.plate}` : ''}
-                </small>
-              </div>
-
-              <span
+          <div className="hold-orders-pro__grid">
+            {visibleOrders.map((order) => (
+              <article
                 className={
-                  `hold-status ` +
-                  `hold-status--${order.operationalStatus.toLowerCase()}`
+                  selectedOrder?.id === order.id
+                    ? 'hold-orders-pro__card selected'
+                    : 'hold-orders-pro__card'
                 }
+                key={order.id}
+                onClick={() => setSelectedOrderId(order.id)}
               >
-                {statusLabels[order.operationalStatus]}
-              </span>
+                <div className="hold-orders-pro__card-head">
+                  <div className="hold-orders-pro__order-title">
+                    <strong>{order.orderNumber}</strong>
+
+                    <span
+                      className={`hold-status hold-status--${order.operationalStatus.toLowerCase()}`}
+                    >
+                      {statusLabels[order.operationalStatus]}
+                    </span>
+                  </div>
+
+                  <time>
+                    {new Date(order.entryAt).toLocaleString(
+                      'es-DO',
+                      {
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        day: '2-digit',
+                        month: '2-digit',
+                        year: 'numeric',
+                      },
+                    )}
+                  </time>
+                </div>
+
+                <div className="hold-orders-pro__identity">
+                  <span>
+                    <UserRound size={15} />
+                    {order.customerAlias}
+                  </span>
+
+                  <span>
+                    <Car size={15} />
+                    {order.vehicle}
+                  </span>
+
+                  <span>
+                    <FileText size={15} />
+                    {order.plate ?? 'Sin placa'}
+                  </span>
+                </div>
+
+                <div className="hold-orders-pro__service-line">
+                  <span>
+                    <Wrench size={15} />
+                    {order.servicesCount}{' '}
+                    {order.servicesCount === 1
+                      ? 'servicio'
+                      : 'servicios'}
+                  </span>
+
+                  <strong>
+                    RD$ {order.total.toFixed(2)}
+                  </strong>
+                </div>
+
+                <div className="hold-orders-pro__card-actions">
+                  <button
+                    type="button"
+                    className="secondary-button"
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      navigate(`/orders/${order.id}`);
+                    }}
+                  >
+                    Ver detalle
+                  </button>
+
+                  <button
+                    type="button"
+                    className="secondary-button"
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      navigate(`/orders/${order.id}/tickets`);
+                    }}
+                  >
+                    <Printer size={15} />
+                    Imprimir ticket
+                  </button>
+
+                  {nextStatus[order.operationalStatus] ? (
+                    <button
+                      type="button"
+                      onClick={(event) => {
+                        event.stopPropagation();
+                        void advance(order);
+                      }}
+                      disabled={
+                        workingId === order.id ||
+                        payingId === order.id ||
+                        creditingId === order.id
+                      }
+                    >
+                      {order.operationalStatus === 'WAITING' ? (
+                        <Play size={15} />
+                      ) : (
+                        <Sparkles size={15} />
+                      )}
+
+                      {workingId === order.id
+                        ? 'Actualizando...'
+                        : nextActionLabel[order.operationalStatus]}
+                    </button>
+                  ) : null}
+                </div>
+              </article>
+            ))}
+          </div>
+        </div>
+
+        <aside className="hold-orders-pro__sidebar">
+          <section className="hold-orders-pro__side-card hold-orders-pro__payment-card">
+            <div className="hold-orders-pro__side-title">
+              <CircleDollarSign size={18} />
+              <h2>Cobrar orden</h2>
             </div>
 
-            <div className="hold-card__meta">
-              <div>
-                <UserRound size={17} />
-                <span>{order.customerAlias}</span>
-              </div>
+            {selectedOrder ? (
+              <>
+                <div className="hold-orders-pro__selected-order">
+                  <span>{selectedOrder.orderNumber}</span>
+                  <strong>
+                    RD$ {selectedOrder.total.toFixed(2)}
+                  </strong>
+                </div>
 
-              <div>
-                <Wrench size={17} />
-                <span>
-                  {order.servicesCount} servicios
-                </span>
-              </div>
+                <p className="muted">
+                  Estado financiero: {selectedOrder.financialStatus}
+                </p>
 
-              <div>
-                <UserRound size={17} />
-
-                <span>
-                  {order.employees.length > 0
-                    ? order.employees.join(', ')
-                    : 'Sin personal asignado'}
-                </span>
-              </div>
-
-              <div>
-                <Clock3 size={17} />
-
-                <span>
-                  {new Date(order.entryAt).toLocaleString(
-                    'es-DO',
-                    {
-                      hour: '2-digit',
-                      minute: '2-digit',
-                      day: '2-digit',
-                      month: '2-digit',
-                    },
-                  )}
-                </span>
-              </div>
-            </div>
-
-            <div className="hold-card__total">
-              <CircleDollarSign size={20} />
-              <span>Total</span>
-              <strong>
-                RD$ {order.total.toFixed(2)}
-              </strong>
-            </div>
-
-            <div className="hold-financial-status">
-              <strong>Estado financiero:</strong>
-
-              <span>
-                {order.financialStatus === 'PAID'
-                  ? 'Pagada'
-                  : order.financialStatus === 'CREDIT'
-                    ? 'Crédito'
-                    : 'Pendiente'}
-              </span>
-            </div>
-
-            {order.financialStatus !== 'PAID' ? (
-              <div className="hold-payment-box">
                 <label>
                   Método de pago
-
                   <select
                     value={paymentMethodId}
                     onChange={(event) =>
-                      setPaymentMethodId(
-                        event.target.value,
-                      )
+                      setPaymentMethodId(event.target.value)
                     }
                   >
                     <option value="">
@@ -457,13 +658,10 @@ export function HoldOrdersPage() {
 
                 <label>
                   Caja
-
                   <select
                     value={cashRegisterId}
                     onChange={(event) =>
-                      setCashRegisterId(
-                        event.target.value,
-                      )
+                      setCashRegisterId(event.target.value)
                     }
                   >
                     <option value="">
@@ -486,13 +684,10 @@ export function HoldOrdersPage() {
 
                 <label>
                   Referencia
-
                   <input
                     value={paymentReference}
                     onChange={(event) =>
-                      setPaymentReference(
-                        event.target.value,
-                      )
+                      setPaymentReference(event.target.value)
                     }
                     placeholder="Opcional"
                   />
@@ -500,72 +695,110 @@ export function HoldOrdersPage() {
 
                 <button
                   type="button"
-                  onClick={() => payOrder(order)}
-                  disabled={payingId === order.id}
-                >
-                  <CircleDollarSign size={17} />
-
-                  {payingId === order.id
-                    ? 'Cobrando...'
-                    : 'Cobrar orden'}
-                </button>
-              </div>
-            ) : (
-              <div className="operations-success">
-                Orden pagada
-              </div>
-            )}
-
-            <div className="hold-card__actions">
-              <button
-                type="button"
-                className="secondary-button"
-                onClick={() =>
-                  navigate(`/orders/${order.id}`)
-                }
-              >
-                Ver orden
-              </button>
-
-              <button
-                type="button"
-                className="secondary-button"
-                onClick={() =>
-                  navigate(
-                    `/orders/${order.id}/tickets`,
-                  )
-                }
-              >
-                <Printer size={17} />
-                Reimprimir
-              </button>
-
-              {nextStatus[order.operationalStatus] ? (
-                <button
-                  type="button"
-                  onClick={() => advance(order)}
+                  onClick={() => {
+                    void payOrder(selectedOrder);
+                  }}
                   disabled={
-                    workingId === order.id ||
-                    payingId === order.id
+                    selectedOrder.financialStatus !== 'PENDING' ||
+                    payingId === selectedOrder.id ||
+                    creditingId === selectedOrder.id
                   }
                 >
-                  {order.operationalStatus ===
-                  'WAITING' ? (
-                    <Play size={17} />
-                  ) : (
-                    <Sparkles size={17} />
-                  )}
+                  <CircleDollarSign size={15} />
 
-                  {workingId === order.id
-                    ? 'Actualizando...'
-                    : nextActionLabel[
-                        order.operationalStatus
-                      ]}
+                  {selectedOrder.financialStatus === 'PAID'
+                    ? 'Orden pagada'
+                    : selectedOrder.financialStatus === 'CREDIT'
+                      ? 'Orden a crédito'
+                      : payingId === selectedOrder.id
+                        ? 'Cobrando...'
+                        : 'Cobrar orden seleccionada'}
                 </button>
-              ) : null}
+
+                <div className="hold-orders-pro__credit-divider">
+                  <span>o autorizar a crédito</span>
+                </div>
+
+                <label>
+                  Observación de crédito
+                  <textarea
+                    value={creditNotes}
+                    onChange={(event) =>
+                      setCreditNotes(event.target.value)
+                    }
+                    placeholder="Opcional"
+                    rows={3}
+                    maxLength={255}
+                    disabled={
+                      selectedOrder.financialStatus !== 'PENDING' ||
+                      payingId === selectedOrder.id ||
+                      creditingId === selectedOrder.id
+                    }
+                  />
+                </label>
+
+                <button
+                  type="button"
+                  className="secondary-button"
+                  onClick={() => {
+                    void authorizeCredit(selectedOrder);
+                  }}
+                  disabled={
+                    selectedOrder.financialStatus !== 'PENDING' ||
+                    payingId === selectedOrder.id ||
+                    creditingId === selectedOrder.id
+                  }
+                >
+                  <FileText size={15} />
+
+                  {selectedOrder.financialStatus === 'CREDIT'
+                    ? 'Crédito autorizado'
+                    : creditingId === selectedOrder.id
+                      ? 'Autorizando crédito...'
+                      : 'Autorizar crédito'}
+                </button>
+              </>
+            ) : (
+              <p className="muted">
+                Selecciona una orden para habilitar el cobro.
+              </p>
+            )}
+          </section>
+
+          <section className="hold-orders-pro__side-card">
+            <div className="hold-orders-pro__side-title">
+              <ClipboardCheck size={18} />
+              <h2>Resumen rápido</h2>
             </div>
-          </article>
-        ))}
+
+            <div className="hold-orders-pro__stats">
+              <div>
+                <span>Total órdenes</span>
+                <strong>{orders.length}</strong>
+              </div>
+
+              <div>
+                <span>En espera</span>
+                <strong>{statusCounts.WAITING}</strong>
+              </div>
+
+              <div>
+                <span>En proceso</span>
+                <strong>{statusCounts.IN_PROGRESS}</strong>
+              </div>
+
+              <div>
+                <span>Servicios terminados</span>
+                <strong>{statusCounts.SERVICES_COMPLETED}</strong>
+              </div>
+
+              <div>
+                <span>Listas para entregar</span>
+                <strong>{statusCounts.READY_FOR_DELIVERY}</strong>
+              </div>
+            </div>
+          </section>
+        </aside>
       </section>
     </main>
   );

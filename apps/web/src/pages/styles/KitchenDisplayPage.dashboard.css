@@ -1,0 +1,575 @@
+/* ==========================================================
+   CACTUS ERP — KITCHEN DISPLAY / KDS
+   Local dashboard stylesheet
+   Scope: .kds-page
+   ========================================================== */
+
+.kds-page {
+  --kds-bg:#f4f7f9;
+  --kds-surface:#fff;
+  --kds-soft:#f8fafb;
+  --kds-border:#dce4e9;
+  --kds-border-strong:#c8d4dc;
+  --kds-text:#17232d;
+  --kds-muted:#667785;
+  --kds-blue:#496b84;
+  --kds-blue-strong:#31516c;
+  --kds-blue-soft:#eaf1f6;
+  --kds-amber:#8a651f;
+  --kds-amber-soft:#fff7e6;
+  --kds-orange:#a65c32;
+  --kds-orange-soft:#fff1e8;
+  --kds-green:#2f6b4d;
+  --kds-green-soft:#eaf5ee;
+  --kds-red:#9f443c;
+  --kds-red-soft:#fff1ef;
+  --kds-red-border:#e7bdb8;
+  --kds-shadow:0 1px 2px rgba(18,38,50,.05);
+  min-height:100vh;
+  padding:22px;
+  background:var(--kds-bg);
+  color:var(--kds-text);
+}
+
+.kds-page *,
+.kds-page *::before,
+.kds-page *::after { box-sizing:border-box; }
+
+.kds-page .kds-header {
+  max-width:1680px;
+  margin:0 auto 14px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:18px;
+  padding:18px 20px;
+  border:1px solid var(--kds-border);
+  border-radius:16px;
+  background:var(--kds-surface);
+  box-shadow:var(--kds-shadow);
+}
+
+.kds-page .kds-header h1 {
+  margin:4px 0;
+  display:flex;
+  align-items:center;
+  gap:9px;
+  color:var(--kds-text);
+  font-size:clamp(1.45rem,2vw,1.9rem);
+}
+
+.kds-page .kds-header p {
+  margin:0;
+  color:var(--kds-muted);
+  font-size:.84rem;
+}
+
+.kds-page .kds-header__actions {
+  display:flex;
+  align-items:center;
+  justify-content:flex-end;
+  flex-wrap:wrap;
+  gap:8px;
+}
+
+.kds-page .kds-header__actions select,
+.kds-page .kds-header__actions button {
+  min-height:40px !important;
+  border:1px solid var(--kds-border-strong) !important;
+  border-radius:9px !important;
+  box-shadow:none !important;
+  filter:none !important;
+}
+
+.kds-page .kds-header__actions select {
+  min-width:170px;
+  padding:8px 30px 8px 10px;
+  background:#fff;
+  color:var(--kds-text);
+}
+
+.kds-page .kds-header__actions button {
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  gap:7px !important;
+  padding:8px 12px !important;
+  background:#fff !important;
+  background-image:none !important;
+  color:#344c5e !important;
+  font-size:.76rem !important;
+  font-weight:800 !important;
+}
+
+.kds-page .kds-header__actions button:hover:not(:disabled) {
+  background:var(--kds-blue-soft) !important;
+  border-color:#b9ccd9 !important;
+  color:var(--kds-blue-strong) !important;
+}
+
+.kds-page .kds-sound-toggle--active,
+.kds-page .kds-auto-print-toggle--active {
+  background:var(--kds-blue-soft) !important;
+  border-color:#b9ccd9 !important;
+  color:var(--kds-blue-strong) !important;
+}
+
+.kds-page .kds-summary,
+.kds-page .kds-metrics {
+  max-width:1680px;
+  margin:0 auto 14px;
+}
+
+.kds-page .kds-summary {
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:10px;
+}
+
+.kds-page .kds-summary > * {
+  min-width:0;
+  padding:12px 14px;
+  border:1px solid var(--kds-border);
+  border-radius:11px;
+  background:#fff;
+  box-shadow:var(--kds-shadow);
+}
+
+.kds-page .kds-summary span {
+  color:var(--kds-muted);
+  font-size:.7rem;
+  font-weight:700;
+}
+
+.kds-page .kds-new-ticket-alert {
+  max-width:1680px;
+  margin:0 auto 12px;
+  padding:10px 12px;
+  border:1px solid #c9d9e4;
+  border-radius:10px;
+  background:var(--kds-blue-soft);
+  color:var(--kds-blue-strong);
+  font-size:.78rem;
+  font-weight:800;
+}
+
+.kds-page .kds-board {
+  max-width:1680px;
+  margin:0 auto;
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:14px;
+  align-items:start;
+}
+
+.kds-page .kds-column {
+  min-width:0;
+  min-height:300px;
+  padding:12px;
+  border:1px solid var(--kds-border);
+  border-radius:14px;
+  background:#fff;
+  box-shadow:var(--kds-shadow);
+}
+
+.kds-page .kds-column--pending {
+  border-top:4px solid #c99a3b;
+}
+.kds-page .kds-column--preparing {
+  border-top:4px solid #b96e3f;
+}
+.kds-page .kds-column--ready {
+  border-top:4px solid #5b9576;
+}
+
+.kds-page .kds-column__header {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  margin-bottom:10px;
+  padding:2px 2px 8px;
+  border-bottom:1px solid #edf1f3;
+}
+
+.kds-page .kds-column__header > div {
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+
+.kds-page .kds-column__header h2 {
+  margin:0;
+  color:var(--kds-text);
+  font-size:.95rem;
+}
+
+.kds-page .kds-column__header > strong {
+  min-width:30px;
+  padding:4px 8px;
+  border-radius:999px;
+  background:#eef3f6;
+  color:#415767;
+  text-align:center;
+  font-size:.72rem;
+}
+
+.kds-page .kds-column__tickets {
+  display:grid;
+  gap:10px;
+}
+
+.kds-page .kds-ticket {
+  display:grid;
+  gap:10px;
+  padding:13px;
+  border:1px solid #dfe7ec;
+  border-radius:12px;
+  background:#fbfcfd;
+  box-shadow:none;
+}
+
+.kds-page .kds-ticket--attention {
+  border-color:#e1c88f;
+  background:#fffdf7;
+}
+
+.kds-page .kds-ticket--urgent {
+  border-color:#dfaaa4;
+  background:#fffafa;
+}
+
+.kds-page .kds-ticket--new {
+  outline:2px solid rgba(73,107,132,.22);
+  outline-offset:2px;
+}
+
+.kds-page .kds-ticket__top {
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:12px;
+}
+
+.kds-page .kds-ticket__top > div {
+  min-width:0;
+  display:grid;
+  gap:3px;
+}
+
+.kds-page .kds-ticket__top > div > span {
+  color:var(--kds-blue-strong);
+  font-size:.74rem;
+  font-weight:900;
+}
+
+.kds-page .kds-ticket__elapsed,
+.kds-page .kds-ticket__customer,
+.kds-page .kds-ticket__station {
+  color:var(--kds-muted);
+  font-size:.72rem;
+}
+
+.kds-page .kds-ticket__timing {
+  display:flex;
+  align-items:center;
+  gap:6px;
+}
+
+.kds-page .kds-ticket__urgency {
+  display:inline-flex;
+  align-items:center;
+  width:max-content;
+  padding:3px 7px;
+  border-radius:999px;
+  font-size:.62rem;
+  font-weight:900;
+}
+
+.kds-page .kds-ticket__urgency--attention {
+  background:var(--kds-amber-soft);
+  color:var(--kds-amber);
+}
+
+.kds-page .kds-ticket__urgency--urgent {
+  background:var(--kds-red-soft);
+  color:var(--kds-red);
+}
+
+.kds-page .kds-ticket__items {
+  display:grid;
+  gap:0;
+  padding:5px 0;
+  border-top:1px dashed #d9e1e6;
+  border-bottom:1px dashed #d9e1e6;
+}
+
+.kds-page .kds-ticket-item {
+  display:grid;
+  grid-template-columns:minmax(0,1fr) auto;
+  align-items:center;
+  gap:10px;
+  padding:8px 0;
+  border-bottom:1px solid #edf1f3;
+}
+
+.kds-page .kds-ticket-item:last-child {
+  border-bottom:0;
+}
+
+.kds-page .kds-ticket-item__product {
+  min-width:0;
+  color:var(--kds-text);
+  font-size:.76rem;
+  font-weight:800;
+}
+
+.kds-page .kds-ticket-item__controls {
+  display:flex;
+  align-items:center;
+  justify-content:flex-end;
+  flex-wrap:wrap;
+  gap:6px;
+}
+
+.kds-page .kds-ticket-item__status {
+  display:inline-flex;
+  align-items:center;
+  padding:3px 7px;
+  border-radius:999px;
+  background:#eef3f6;
+  color:#53616a;
+  font-size:.61rem;
+  font-weight:900;
+}
+
+.kds-page .kds-ticket-item__status--preparing {
+  background:var(--kds-orange-soft);
+  color:var(--kds-orange);
+}
+
+.kds-page .kds-ticket-item__status--ready,
+.kds-page .kds-ticket-item__status--completed {
+  background:var(--kds-green-soft);
+  color:var(--kds-green);
+}
+
+.kds-page .kds-ticket-item__status--cancelled {
+  background:var(--kds-red-soft);
+  color:var(--kds-red);
+}
+
+.kds-page .kds-ticket-item__action,
+.kds-page .kds-ticket__actions > button:not(.secondary-button) {
+  min-height:34px !important;
+  padding:6px 10px !important;
+  border:1px solid #2563eb !important;
+  border-radius:8px !important;
+  background:#2563eb !important;
+  background-color:#2563eb !important;
+  background-image:none !important;
+  color:#fff !important;
+  box-shadow:none !important;
+  filter:none !important;
+  font-size:.68rem !important;
+  font-weight:800 !important;
+}
+
+.kds-page .kds-ticket-item__action:hover:not(:disabled),
+.kds-page .kds-ticket__actions > button:not(.secondary-button):hover:not(:disabled) {
+  background:#1d4ed8 !important;
+  background-color:#1d4ed8 !important;
+  border-color:#1d4ed8 !important;
+  color:#fff !important;
+}
+
+.kds-page .kds-ticket-item__cancel,
+.kds-page .kds-ticket__cancel {
+  min-height:34px !important;
+  padding:6px 10px !important;
+  border:1px solid var(--kds-red-border) !important;
+  border-radius:8px !important;
+  background:#fff !important;
+  background-image:none !important;
+  color:var(--kds-red) !important;
+  box-shadow:none !important;
+  filter:none !important;
+  font-size:.68rem !important;
+  font-weight:800 !important;
+}
+
+.kds-page .kds-ticket-item__cancel:hover:not(:disabled),
+.kds-page .kds-ticket__cancel:hover:not(:disabled) {
+  background:var(--kds-red-soft) !important;
+  border-color:#d99890 !important;
+}
+
+.kds-page .kds-ticket__print {
+  min-height:34px !important;
+  padding:6px 10px !important;
+  border:1px solid var(--kds-border-strong) !important;
+  border-radius:8px !important;
+  background:#fff !important;
+  color:var(--kds-blue-strong) !important;
+  box-shadow:none !important;
+  filter:none !important;
+}
+
+.kds-page .kds-ticket__actions {
+  display:flex;
+  align-items:center;
+  justify-content:flex-end;
+  flex-wrap:wrap;
+  gap:7px;
+}
+
+.kds-page .kds-ticket__notes {
+  padding:9px;
+  border:1px solid #eadab4;
+  border-radius:9px;
+  background:#fff9eb;
+  color:#735a20;
+  font-size:.76rem;
+  font-weight:700;
+}
+
+.kds-page .kds-ticket-item__cancellation {
+  padding:7px 8px;
+  border-radius:8px;
+  background:var(--kds-red-soft);
+  color:var(--kds-red);
+  font-size:.68rem;
+}
+
+.kds-page .kds-ticket-item--cancelled {
+  opacity:.72;
+}
+
+.kds-page .kds-empty {
+  padding:24px 12px;
+  border:1px dashed #d6dfe4;
+  border-radius:10px;
+  color:#7a8790;
+  text-align:center;
+  font-size:.72rem;
+}
+
+.kds-page .kds-metrics {
+  padding:14px;
+  border:1px solid var(--kds-border);
+  border-radius:14px;
+  background:#fff;
+  box-shadow:var(--kds-shadow);
+}
+
+.kds-page .kds-metrics__header,
+.kds-page .kds-station-metrics__heading,
+.kds-page .kds-station-metric__top {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+}
+
+.kds-page .kds-metrics__header h2 {
+  margin:0;
+  color:var(--kds-text);
+  font-size:1rem;
+}
+
+.kds-page .kds-metrics__header p,
+.kds-page .kds-metrics__scope,
+.kds-page .kds-station-metrics__heading span {
+  color:var(--kds-muted);
+  font-size:.7rem;
+}
+
+.kds-page .kds-metrics__cards {
+  display:grid;
+  grid-template-columns:repeat(5,minmax(0,1fr));
+  gap:9px;
+  margin-top:12px;
+}
+
+.kds-page .kds-metric-card,
+.kds-page .kds-station-metric {
+  padding:11px 12px;
+  border:1px solid var(--kds-border);
+  border-radius:10px;
+  background:var(--kds-soft);
+}
+
+.kds-page .kds-metric-card span {
+  color:var(--kds-muted);
+  font-size:.66rem;
+  font-weight:700;
+}
+
+.kds-page .kds-metric-card strong {
+  display:block;
+  margin-top:4px;
+  color:var(--kds-text);
+  font-size:.95rem;
+}
+
+.kds-page .kds-metric-card--alert {
+  border-color:var(--kds-red-border);
+  background:var(--kds-red-soft);
+}
+
+.kds-page .kds-metric-card--alert strong,
+.kds-page .kds-metric-danger {
+  color:var(--kds-red);
+}
+
+.kds-page .kds-station-metrics {
+  margin-top:14px;
+}
+
+.kds-page .kds-station-metrics__grid {
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:9px;
+  margin-top:9px;
+}
+
+.kds-page .kds-station-metric__values {
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:6px;
+  margin-top:8px;
+}
+
+@media (max-width:1100px) {
+  .kds-page .kds-board { grid-template-columns:1fr; }
+  .kds-page .kds-summary { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .kds-page .kds-metrics__cards { grid-template-columns:repeat(3,minmax(0,1fr)); }
+  .kds-page .kds-station-metrics__grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .kds-page .kds-header { align-items:stretch; flex-direction:column; }
+}
+
+@media (max-width:680px) {
+  .kds-page { padding:10px; }
+  .kds-page .kds-header__actions,
+  .kds-page .kds-ticket__actions,
+  .kds-page .kds-ticket-item__controls {
+    width:100%;
+  }
+  .kds-page .kds-header__actions {
+    display:grid;
+    grid-template-columns:1fr;
+  }
+  .kds-page .kds-header__actions select,
+  .kds-page .kds-header__actions button { width:100%; }
+  .kds-page .kds-summary,
+  .kds-page .kds-metrics__cards,
+  .kds-page .kds-station-metrics__grid {
+    grid-template-columns:1fr;
+  }
+  .kds-page .kds-ticket-item {
+    grid-template-columns:1fr;
+  }
+  .kds-page .kds-ticket-item__controls {
+    justify-content:flex-start;
+  }
+}

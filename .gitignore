@@ -8,3 +8,20 @@ coverage
 .idea
 .DS_Store
 packages/database/prisma/dev.db
+
+# Build / tooling
+.turbo/
+*.tsbuildinfo
+
+# Development backups
+*.bak
+*.bak-*
+
+# Local temporary files
+*.pending
+
+# Local ERP runtime uploads
+apps/api/uploads/
+
+# Local project backups
+backups/

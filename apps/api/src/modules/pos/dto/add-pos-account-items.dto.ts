@@ -1,12 +1,13 @@
-import { Type } from 'class-transformer';
 import {
-  ArrayMinSize,
+  Type } from 'class-transformer'; import {   ArrayMinSize,
   IsArray,
-  IsInt,
   IsNotEmpty,
+  IsNumber,
   IsString,
   Min,
   ValidateNested,
+  IsOptional,
+  MaxLength,
 } from 'class-validator';
 
 export class AddPosAccountItemDto {
@@ -14,9 +15,22 @@ export class AddPosAccountItemDto {
   @IsNotEmpty()
   productId!: string;
 
-  @IsInt()
-  @Min(1)
+  @IsNumber({
+    maxDecimalPlaces: 3,
+  })
+  @Min(0.001)
   quantity!: number;
+
+  @IsOptional()
+  @IsNumber({ maxDecimalPlaces: 2 })
+  @Min(0.01)
+  unitPrice?: number;
+
+  @IsOptional()
+  @IsString()
+  @IsNotEmpty()
+  @MaxLength(255)
+  priceOverrideReason?: string;
 }
 
 export class AddPosAccountItemsDto {

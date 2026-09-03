@@ -1,0 +1,74 @@
+/* CACTUS ERP — ORDER TICKETS / DASHBOARD ENTERPRISE V2 */
+.order-tickets-maintenance {
+  --ot-bg:#f4f7f9; --ot-surface:#fff; --ot-surface-soft:#f8fafb;
+  --ot-border:#dce4e9; --ot-border-strong:#c8d4dc;
+  --ot-text:#17232d; --ot-muted:#667785; --ot-green:#1f5c3f;
+  --ot-blue:#496b84; --ot-blue-soft:#eaf1f6;
+  --ot-hover:#eef4f8; --ot-hover-strong:#e4edf4;
+  --ot-hover-border:#b9ccd9; --ot-hover-text:#304b61;
+  --ot-red:#a33e3e; --ot-red-soft:#fde9e9;
+  min-height:100vh; padding:22px; background:var(--ot-bg); color:var(--ot-text);
+}
+.order-tickets-maintenance *{box-sizing:border-box}
+.order-tickets-maintenance .ticket-screen__toolbar{
+ display:flex;align-items:center;justify-content:space-between;gap:18px;
+ padding:18px 20px;border:1px solid var(--ot-border);border-radius:16px;
+ background:#fff!important;box-shadow:0 1px 2px rgba(18,38,50,.04)
+}
+.order-tickets-maintenance .maintenance-header__content{display:flex;align-items:center;gap:13px;min-width:0}
+.order-tickets-maintenance .maintenance-header__icon{width:46px;height:46px;flex:0 0 46px;display:grid;place-items:center;border-radius:12px;background:var(--ot-blue-soft)!important;color:var(--ot-blue)!important}
+.order-tickets-maintenance .maintenance-header__text h1{margin:0;color:var(--ot-text);font-size:clamp(1.45rem,2vw,1.9rem)}
+.order-tickets-maintenance .maintenance-header__text p{margin:5px 0 0;color:var(--ot-muted);font-size:.85rem}
+.order-tickets-maintenance__actions{display:flex;justify-content:flex-end;flex-wrap:wrap;gap:8px}
+.order-tickets-maintenance button{min-height:40px;padding:9px 12px;border:1px solid var(--ot-border-strong)!important;border-radius:10px;background:#fff!important;color:#344c5e!important;font:inherit;font-size:.83rem;font-weight:800;cursor:pointer;filter:none!important;box-shadow:none}
+.order-tickets-maintenance button svg{vertical-align:middle;margin-right:6px}
+.order-tickets-maintenance button:disabled{opacity:.55;cursor:not-allowed}
+.order-tickets-maintenance .order-tickets-maintenance__primary-action{border-color:var(--ot-green)!important;background:var(--ot-green)!important;color:#fff!important}
+.order-tickets-maintenance .maintenance-alert,.order-tickets-maintenance .operations-empty{margin-top:12px;padding:12px 14px;border-radius:10px}
+.order-tickets-maintenance .maintenance-alert--error{border:1px solid #efc8c8;background:var(--ot-red-soft);color:var(--ot-red)}
+.order-tickets-maintenance .operations-empty{border:1px dashed var(--ot-border-strong);background:#fff;color:var(--ot-muted);text-align:center}
+.order-tickets-maintenance__summary{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-top:14px}
+.order-tickets-maintenance__summary>div{min-width:0;display:grid;gap:4px;padding:12px 13px;border:1px solid var(--ot-border);border-radius:11px;background:#fff;box-shadow:0 1px 2px rgba(18,38,50,.03)}
+.order-tickets-maintenance__summary span{color:var(--ot-muted);font-size:.70rem}
+.order-tickets-maintenance__summary strong{overflow:hidden;color:var(--ot-text);font-size:.86rem;text-overflow:ellipsis;white-space:nowrap}
+.order-tickets-maintenance .ticket-pages{display:grid;grid-template-columns:repeat(auto-fit,minmax(380px,1fr));gap:16px;margin-top:16px;align-items:start}
+.order-tickets-maintenance .work-ticket{min-width:0;padding:20px;border:1px solid #9bb8cd;border-radius:14px;background:#fff!important;color:var(--ot-text);box-shadow:inset 3px 0 0 #6f94ad,0 1px 2px rgba(18,38,50,.04)}
+.order-tickets-maintenance .work-ticket:hover{background:#fff!important;border-color:#8eacbf;transform:none!important}
+.order-tickets-maintenance .work-ticket__top{display:flex;align-items:flex-start;justify-content:space-between;gap:14px}
+.order-tickets-maintenance .work-ticket__eyebrow{display:block;color:var(--ot-muted);font-size:.62rem;font-weight:900;letter-spacing:.13em}
+.order-tickets-maintenance .work-ticket__area{margin-top:5px;color:var(--ot-blue);font-size:.82rem;font-weight:900}
+.order-tickets-maintenance .work-ticket__code{max-width:55%;padding:5px 8px;border:1px solid #c6d5e0;border-radius:999px;background:var(--ot-blue-soft);color:#49637a;font-size:.68rem;overflow-wrap:anywhere;text-align:right}
+.order-tickets-maintenance .work-ticket>h1{margin:16px 0 12px;color:var(--ot-text);font-size:1.12rem}
+.order-tickets-maintenance .work-ticket__meta{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.order-tickets-maintenance .work-ticket__meta>div{min-width:0;display:grid;gap:3px;padding:9px 10px;border:1px solid #e5ebef;border-radius:9px;background:var(--ot-surface-soft)}
+.order-tickets-maintenance .work-ticket__meta span{color:var(--ot-muted);font-size:.68rem}
+.order-tickets-maintenance .work-ticket__meta strong{color:var(--ot-text);font-size:.78rem;word-break:normal;overflow-wrap:break-word}
+.order-tickets-maintenance .work-ticket__services{margin-top:14px}
+.order-tickets-maintenance .work-ticket__services h2{margin:0 0 8px;color:var(--ot-text);font-size:.9rem}
+.order-tickets-maintenance .work-ticket__line{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px solid #edf1f3}
+.order-tickets-maintenance .work-ticket__line:last-child{border-bottom:0}
+.order-tickets-maintenance .work-ticket__line>div{min-width:0;display:grid;gap:3px}
+.order-tickets-maintenance .work-ticket__line>div strong{color:var(--ot-text);font-size:.79rem}
+.order-tickets-maintenance .work-ticket__line span{color:var(--ot-muted);font-size:.68rem}
+.order-tickets-maintenance .work-ticket__line>strong{flex:0 0 auto;color:var(--ot-text);font-size:.80rem}
+.order-tickets-maintenance .work-ticket__total{display:flex;justify-content:space-between;gap:14px;margin-top:12px;padding:11px 12px;border:1px solid var(--ot-border);border-radius:9px;background:var(--ot-surface-soft)}
+.order-tickets-maintenance .work-ticket__total span{color:var(--ot-muted);font-size:.74rem}
+.order-tickets-maintenance .work-ticket__total strong{color:var(--ot-text);font-size:.88rem}
+.order-tickets-maintenance .work-ticket footer{margin-top:14px;padding-top:11px;border-top:1px dashed #d5dee4;color:var(--ot-muted)}
+.order-tickets-maintenance .work-ticket footer p{margin:0 0 4px;font-size:.71rem}
+.order-tickets-maintenance .work-ticket footer small{font-size:.65rem}
+.order-tickets-maintenance.order-tickets-maintenance button:hover:not(:disabled),.order-tickets-maintenance.order-tickets-maintenance button:focus-visible:not(:disabled){background:var(--ot-hover)!important;background-color:var(--ot-hover)!important;border-color:var(--ot-hover-border)!important;color:var(--ot-hover-text)!important;filter:none!important}
+.order-tickets-maintenance.order-tickets-maintenance .order-tickets-maintenance__primary-action:hover:not(:disabled){background:var(--ot-hover-strong)!important;background-color:var(--ot-hover-strong)!important;border-color:var(--ot-hover-border)!important;color:var(--ot-hover-text)!important}
+.order-tickets-loading{min-height:320px;display:grid;place-items:center;background:#f4f7f9;color:#667785;font-weight:700}
+@media(max-width:980px){.order-tickets-maintenance__summary{grid-template-columns:repeat(2,minmax(0,1fr))}.order-tickets-maintenance .ticket-screen__toolbar{align-items:flex-start;flex-direction:column}.order-tickets-maintenance__actions{justify-content:flex-start;width:100%}}
+@media(max-width:640px){.order-tickets-maintenance{padding:10px}.order-tickets-maintenance__summary,.order-tickets-maintenance .ticket-pages{grid-template-columns:1fr}.order-tickets-maintenance__actions{display:grid;grid-template-columns:1fr}.order-tickets-maintenance__actions button{width:100%}.order-tickets-maintenance .work-ticket__meta{grid-template-columns:1fr}.order-tickets-maintenance .work-ticket__line{align-items:flex-start;flex-direction:column}}
+@media print{
+ @page{margin:10mm}
+ .order-tickets-maintenance{padding:0!important;background:#fff!important;color:#000!important}
+ .order-tickets-maintenance .no-print{display:none!important}
+ .order-tickets-maintenance .ticket-pages{display:block!important;margin:0!important}
+ .order-tickets-maintenance .work-ticket{break-after:page;page-break-after:always;padding:0!important;border:0!important;border-radius:0!important;background:#fff!important;color:#000!important;box-shadow:none!important}
+ .order-tickets-maintenance .work-ticket:last-child{break-after:auto;page-break-after:auto}
+ .order-tickets-maintenance .work-ticket__code,.order-tickets-maintenance .work-ticket__meta>div,.order-tickets-maintenance .work-ticket__total{border-color:#bbb!important;background:#fff!important;color:#000!important}
+ .order-tickets-maintenance .work-ticket *,.order-tickets-maintenance .work-ticket__area,.order-tickets-maintenance .work-ticket__eyebrow{color:#000!important}
+}

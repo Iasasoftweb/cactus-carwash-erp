@@ -1,0 +1,615 @@
+/* CACTUS ERP — HOLD ORDERS / DASHBOARD ENTERPRISE V2 */
+.hold-orders-pro {
+  --ho-bg: #f4f7f9;
+  --ho-surface: #fff;
+  --ho-border: #dce4e9;
+  --ho-border-strong: #c8d4dc;
+  --ho-text: #17232d;
+  --ho-muted: #667785;
+  --ho-green: #1f5c3f;
+  --ho-hover: #eef4f8;
+  --ho-hover-strong: #e4edf4;
+  --ho-hover-border: #b9ccd9;
+  --ho-hover-text: #304b61;
+  --ho-blue-soft: #eaf1f6;
+  --ho-blue: #496b84;
+  --ho-amber-soft: #fff4d9;
+  --ho-amber: #8a651c;
+  --ho-red-soft: #fde9e9;
+  --ho-red: #a33e3e;
+  --ho-success-soft: #eaf5ee;
+  --ho-success: #2f6b4d;
+  margin-top: 10px !important;
+  padding: 22px;
+  background: var(--ho-bg);
+  color: var(--ho-text);
+}
+
+.hold-orders-pro * {
+  box-sizing: border-box
+}
+
+.hold-orders-pro__header,
+.hold-orders-pro__toolbar,
+.hold-orders-pro__side-card,
+.hold-orders-pro__card {
+  background: #fff !important;
+  border: 1px solid var(--ho-border);
+  box-shadow: 0 1px 2px rgba(18, 38, 50, .04)
+}
+
+.hold-orders-pro__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 20px 22px;
+  border-radius: 16px
+}
+
+.hold-orders-pro__header-main,
+.hold-orders-pro__header-actions,
+.hold-orders-pro__order-title,
+.hold-orders-pro__side-title,
+.hold-orders-pro__service-line {
+  display: flex;
+  align-items: center
+}
+
+.hold-orders-pro__header-main {
+  gap: 14px;
+  min-width: 0
+}
+
+.hold-orders-pro__header-icon {
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  flex: 0 0 46px;
+  border-radius: 12px;
+  background: var(--ho-blue-soft);
+  color: var(--ho-blue)
+}
+
+.hold-orders-pro h1 {
+  margin: 0;
+  font-size: clamp(1.55rem, 2vw, 2rem);
+  line-height: 1.1;
+  letter-spacing: -.025em;
+  color: var(--ho-text) !important;
+}
+
+.hold-orders-pro__header-main p {
+  margin: 6px 0 0;
+  color: var(--ho-muted);
+  font-size: .95rem
+}
+
+.hold-orders-pro__header-actions {
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 9px
+}
+
+.hold-orders-pro button {
+  min-height: 40px;
+  border: 1px solid var(--ho-border-strong) !important;
+  border-radius: 10px;
+  padding: 9px 13px;
+  background: #fff !important;
+  color: #344c5e !important;
+  font: inherit;
+  font-size: .9rem;
+  font-weight: 700;
+  line-height: 1;
+  cursor: pointer;
+  transition: background-color .15s, border-color .15s, color .15s, box-shadow .15s, transform .15s
+}
+
+.hold-orders-pro button svg {
+  vertical-align: middle;
+  margin-right: 6px
+}
+
+.hold-orders-pro button:disabled {
+  cursor: not-allowed;
+  opacity: .55
+}
+
+.hold-orders-pro__header-actions>button:not(.secondary-button),
+.hold-orders-pro__card-actions>button:not(.secondary-button),
+.hold-orders-pro__payment-card>button {
+  border-color: var(--ho-green) !important;
+  background: var(--ho-green) !important;
+  color: #fff !important
+}
+
+.hold-orders-pro__toolbar {
+  margin-top: 14px;
+  padding: 14px;
+  border-radius: 14px
+}
+
+.hold-orders-pro__search {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 44px;
+  padding: 0 13px;
+  border: 1px solid var(--ho-border);
+  border-radius: 10px;
+  background: #fff;
+  color: var(--ho-muted)
+}
+
+.hold-orders-pro__search:focus-within {
+  border-color: #91aabd;
+  box-shadow: 0 0 0 3px rgba(73, 107, 132, .1)
+}
+
+.hold-orders-pro__search input {
+  width: 100%;
+  min-width: 0;
+  border: 0 !important;
+  outline: 0;
+  background: transparent !important;
+  color: var(--ho-text);
+  font: inherit
+}
+
+.hold-orders-pro__filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px
+}
+
+.hold-orders-pro__filter {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 38px !important;
+  padding: 8px 11px !important
+}
+
+.hold-orders-pro__filter strong {
+  display: inline-grid;
+  place-items: center;
+  min-width: 24px;
+  height: 24px;
+  padding: 0 7px;
+  border-radius: 999px;
+  background: #edf2f5;
+  color: #536a7b;
+  font-size: .78rem
+}
+
+.hold-orders-pro__filter.active {
+  border-color: #9eb5c6 !important;
+  background: var(--ho-blue-soft) !important;
+  color: #304f67 !important
+}
+
+.hold-orders-pro__filter.active strong {
+  background: #dce8f0;
+  color: #304f67
+}
+
+.hold-orders-pro .maintenance-alert {
+  margin-top: 12px;
+  border-radius: 10px;
+  padding: 11px 13px;
+  border: 1px solid var(--ho-border);
+  background: #fff
+}
+
+.hold-orders-pro .maintenance-alert--error {
+  border-color: #efc8c8;
+  background: var(--ho-red-soft);
+  color: var(--ho-red)
+}
+
+.hold-orders-pro .maintenance-alert--success {
+  border-color: #c9dfd1;
+  background: var(--ho-success-soft);
+  color: var(--ho-success)
+}
+
+.hold-orders-pro__content {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(280px, 340px);
+  gap: 16px;
+  margin-top: 16px;
+  align-items: start
+}
+
+.hold-orders-pro__main {
+  min-width: 0
+}
+
+.hold-orders-pro__section-heading {
+  display: flex;
+  align-items: baseline;
+  gap: 7px;
+  margin: 0 0 10px 2px;
+  color: var(--ho-muted)
+}
+
+.hold-orders-pro__section-heading strong {
+  color: var(--ho-text);
+  font-size: 1.15rem
+}
+
+.hold-orders-pro .operations-empty {
+  padding: 34px 18px;
+  border: 1px dashed var(--ho-border-strong);
+  border-radius: 14px;
+  background: #fff;
+  color: var(--ho-muted);
+  text-align: center
+}
+
+.hold-orders-pro__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px
+}
+
+.hold-orders-pro__card {
+  min-width: 0;
+  padding: 16px;
+  border-radius: 14px;
+  cursor: pointer;
+  transition: background-color .15s, border-color .15s, box-shadow .15s, transform .15s
+}
+
+.hold-orders-pro__card:hover {
+  background: var(--ho-hover) !important;
+  border-color: var(--ho-hover-border);
+  box-shadow: 0 4px 14px rgba(27, 53, 68, .06);
+  transform: translateY(-1px)
+}
+
+.hold-orders-pro__card.selected {
+  background: var(--ho-blue-soft) !important;
+  border-color: #91aabd;
+  box-shadow: inset 3px 0 0 #6f8fa6
+}
+
+.hold-orders-pro__card.selected:hover {
+  background: #e1ebf2 !important;
+  border-color: #829fb3
+}
+
+.hold-orders-pro__card-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: flex-start
+}
+
+.hold-orders-pro__order-title {
+  flex-wrap: wrap;
+  gap: 8px
+}
+
+.hold-orders-pro__order-title>strong {
+  font-size: 1.02rem;
+  color: var(--ho-text)
+}
+
+.hold-orders-pro__card-head time {
+  flex: 0 0 auto;
+  color: var(--ho-muted);
+  font-size: .78rem
+}
+
+.hold-status {
+  display: inline-flex;
+  align-items: center;
+  min-height: 24px;
+  padding: 4px 8px;
+  border-radius: 999px;
+  background: #edf2f5;
+  color: #536a7b;
+  font-size: .73rem;
+  font-weight: 800
+}
+
+.hold-status--waiting {
+  background: var(--ho-amber-soft);
+  color: var(--ho-amber)
+}
+
+.hold-status--in_progress,
+.hold-status--received {
+  background: var(--ho-blue-soft);
+  color: var(--ho-blue)
+}
+
+.hold-status--services_completed {
+  background: #eef0f7;
+  color: #58617c
+}
+
+.hold-status--ready_for_delivery,
+.hold-status--delivered {
+  background: var(--ho-success-soft);
+  color: var(--ho-success)
+}
+
+.hold-status--cancelled {
+  background: var(--ho-red-soft);
+  color: var(--ho-red)
+}
+
+.hold-orders-pro__identity {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 15px
+}
+
+.hold-orders-pro__identity span {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  min-width: 0;
+  color: #4f6474;
+  font-size: .84rem;
+  overflow-wrap: anywhere
+}
+
+.hold-orders-pro__identity svg,
+.hold-orders-pro__service-line svg {
+  flex: 0 0 auto;
+  color: #7890a1
+}
+
+.hold-orders-pro__service-line {
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 14px;
+  padding-top: 13px;
+  border-top: 1px solid #edf1f3
+}
+
+.hold-orders-pro__service-line span {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: var(--ho-muted);
+  font-size: .85rem
+}
+
+.hold-orders-pro__service-line strong {
+  color: var(--ho-text);
+  font-size: .98rem
+}
+
+.hold-orders-pro__card-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin-top: 14px
+}
+
+.hold-orders-pro__card-actions button {
+  min-height: 36px;
+  padding: 8px 10px;
+  font-size: .82rem
+}
+
+.hold-orders-pro__sidebar {
+  display: grid;
+  gap: 12px;
+  position: sticky;
+  top: 16px
+}
+
+.hold-orders-pro__side-card {
+  padding: 16px;
+  border-radius: 14px
+}
+
+.hold-orders-pro__side-title {
+  gap: 8px;
+  margin-bottom: 14px;
+  color: #45657c
+}
+
+.hold-orders-pro__side-title h2 {
+  margin: 0;
+  color: var(--ho-text);
+  font-size: 1rem
+}
+
+.hold-orders-pro__selected-order {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 13px;
+  padding: 11px 12px;
+  border: 1px solid var(--ho-border);
+  border-radius: 10px;
+  background: #f8fafb
+}
+
+.hold-orders-pro__selected-order span {
+  color: var(--ho-muted);
+  font-size: .84rem
+}
+
+.hold-orders-pro__payment-card label {
+  display: grid;
+  gap: 6px;
+  margin-top: 11px;
+  color: #526777;
+  font-size: .8rem;
+  font-weight: 700
+}
+
+.hold-orders-pro__payment-card select,
+.hold-orders-pro__payment-card input {
+  width: 100%;
+  min-height: 41px;
+  border: 1px solid var(--ho-border-strong);
+  border-radius: 9px;
+  padding: 8px 10px;
+  background: #fff;
+  color: var(--ho-text);
+  font: inherit;
+  outline: none
+}
+
+.hold-orders-pro__payment-card select:focus,
+.hold-orders-pro__payment-card input:focus {
+  border-color: #91aabd;
+  box-shadow: 0 0 0 3px rgba(73, 107, 132, .1)
+}
+
+.hold-orders-pro__payment-card>button {
+  width: 100%;
+  margin-top: 14px
+}
+
+.hold-orders-pro__stats {
+  display: grid;
+  gap: 2px
+}
+
+.hold-orders-pro__stats>div {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 38px;
+  padding: 7px 2px;
+  border-bottom: 1px solid #edf1f3
+}
+
+.hold-orders-pro__stats>div:last-child {
+  border-bottom: 0
+}
+
+.hold-orders-pro__stats span {
+  color: var(--ho-muted);
+  font-size: .84rem
+}
+
+.hold-orders-pro__stats strong {
+  color: var(--ho-text);
+  font-size: .94rem
+}
+
+.hold-orders-pro .muted {
+  color: var(--ho-muted);
+  font-size: .86rem
+}
+
+/* FINAL HOVER POLICY — no green hover */
+.hold-orders-pro.hold-orders-pro button:hover:not(:disabled),
+.hold-orders-pro.hold-orders-pro button:focus-visible:not(:disabled) {
+  background: var(--ho-hover) !important;
+  background-color: var(--ho-hover) !important;
+  border-color: var(--ho-hover-border) !important;
+  color: var(--ho-hover-text) !important;
+  filter: none !important
+}
+
+.hold-orders-pro.hold-orders-pro .hold-orders-pro__header-actions>button:not(.secondary-button):hover:not(:disabled),
+.hold-orders-pro.hold-orders-pro .hold-orders-pro__card-actions>button:not(.secondary-button):hover:not(:disabled),
+.hold-orders-pro.hold-orders-pro .hold-orders-pro__payment-card>button:hover:not(:disabled) {
+  background: var(--ho-hover-strong) !important;
+  background-color: var(--ho-hover-strong) !important;
+  border-color: var(--ho-hover-border) !important;
+  color: var(--ho-hover-text) !important
+}
+
+.hold-orders-pro.hold-orders-pro .hold-orders-pro__filter.active:hover:not(:disabled) {
+  background: #dde8f0 !important;
+  background-color: #dde8f0 !important;
+  border-color: #91aabd !important;
+  color: #304f67 !important
+}
+
+.hold-orders-pro.hold-orders-pro button:active:not(:disabled) {
+  background: #dfe9f0 !important;
+  background-color: #dfe9f0 !important;
+  border-color: #a8bdcb !important;
+  color: #29465d !important
+}
+
+@media(max-width:1180px) {
+  .hold-orders-pro__content {
+    grid-template-columns: 1fr
+  }
+
+  .hold-orders-pro__sidebar {
+    position: static;
+    grid-template-columns: repeat(2, minmax(0, 1fr))
+  }
+}
+
+@media(max-width:900px) {
+  .hold-orders-pro {
+    padding: 14px
+  }
+
+  .hold-orders-pro__header {
+    align-items: flex-start;
+    flex-direction: column
+  }
+
+  .hold-orders-pro__header-actions {
+    width: 100%;
+    justify-content: flex-start
+  }
+
+  .hold-orders-pro__grid {
+    grid-template-columns: 1fr
+  }
+}
+
+@media(max-width:680px) {
+  .hold-orders-pro {
+    padding: 10px
+  }
+
+  .hold-orders-pro__header,
+  .hold-orders-pro__toolbar,
+  .hold-orders-pro__side-card,
+  .hold-orders-pro__card {
+    border-radius: 12px
+  }
+
+  .hold-orders-pro__header-actions,
+  .hold-orders-pro__filters,
+  .hold-orders-pro__card-actions {
+    display: grid;
+    grid-template-columns: 1fr;
+    width: 100%
+  }
+
+  .hold-orders-pro__header-actions button,
+  .hold-orders-pro__filters button,
+  .hold-orders-pro__card-actions button {
+    width: 100%
+  }
+
+  .hold-orders-pro__identity {
+    grid-template-columns: 1fr
+  }
+
+  .hold-orders-pro__sidebar {
+    grid-template-columns: 1fr
+  }
+
+  .hold-orders-pro__card-head,
+  .hold-orders-pro__service-line {
+    align-items: flex-start;
+    flex-direction: column
+  }
+}

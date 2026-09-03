@@ -8,6 +8,10 @@ import {
 export class CreateEmployeeDto {
   @IsString()
   @IsNotEmpty()
+  branchId!: string;
+
+  @IsString()
+  @IsNotEmpty()
   employeeNo!: string;
 
   @IsString()
