@@ -1,0 +1,3 @@
+ALTER TABLE `points_of_sale`
+  ADD COLUMN `ui_mode` ENUM('TOUCH', 'DESKTOP')
+  NOT NULL DEFAULT 'TOUCH';

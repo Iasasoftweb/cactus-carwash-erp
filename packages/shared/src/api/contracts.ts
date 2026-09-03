@@ -247,6 +247,10 @@ export type AddOrderServiceResponse = {
 };
 
 
+export type PosUiMode =
+  | 'TOUCH'
+  | 'DESKTOP';
+
 export type PointOfSaleResponse = {
   id: string;
   companyId: string;
@@ -255,6 +259,7 @@ export type PointOfSaleResponse = {
   code: string;
   name: string;
   description: string | null;
+  uiMode: PosUiMode;
   capabilities?: PosCapabilityResponse[];
 };
 
@@ -1726,11 +1731,14 @@ export type DashboardBranchOptionResponse = {
   id: string;
   code: string;
   name: string;
+  address: string | null;
+  phone: string | null;
 };
 
 export type DashboardContextResponse = {
   companyId: string;
   companyName: string;
+  companyTaxId: string | null;
   companyLogoUrl: string | null;
   currencyCode: string;
   currencySymbol: string;
@@ -2005,6 +2013,7 @@ export type LocationPointOfSaleResponse = {
   code: string;
   name: string;
   description: string | null;
+  uiMode: PosUiMode;
   active: boolean;
   createdAt: string;
   updatedAt: string;
@@ -2016,6 +2025,7 @@ export type CreateLocationPointOfSaleRequest = {
   code: string;
   name: string;
   description?: string | null;
+  uiMode?: PosUiMode;
   active?: boolean;
 };
 
@@ -2024,6 +2034,7 @@ export type UpdateLocationPointOfSaleRequest = {
   code?: string;
   name?: string;
   description?: string | null;
+  uiMode?: PosUiMode;
   active?: boolean;
 };
 

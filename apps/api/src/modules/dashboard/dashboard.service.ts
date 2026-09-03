@@ -45,6 +45,7 @@ export class DashboardService {
       select: {
         id: true,
         name: true,
+        taxId: true,
         logoUrl: true,
         currencyCode: true,
         currencySymbol: true,
@@ -62,6 +63,8 @@ export class DashboardService {
             id: true,
             code: true,
             name: true,
+            address: true,
+            phone: true,
           },
           orderBy: [
             { name: 'asc' },
@@ -78,6 +81,7 @@ export class DashboardService {
     return {
       companyId: company.id,
       companyName: company.name,
+      companyTaxId: company.taxId,
       companyLogoUrl: company.logoUrl,
       currencyCode: company.currencyCode,
       currencySymbol: company.currencySymbol,

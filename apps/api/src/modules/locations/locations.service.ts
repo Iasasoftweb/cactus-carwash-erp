@@ -31,6 +31,7 @@ type PointRow = {
   code: string;
   name: string;
   description: string | null;
+  uiMode: 'TOUCH' | 'DESKTOP';
   active: boolean;
   createdAt: Date;
   updatedAt: Date;
@@ -73,6 +74,7 @@ const pointSelect = {
   code: true,
   name: true,
   description: true,
+  uiMode: true,
   active: true,
   createdAt: true,
   updatedAt: true,
@@ -135,6 +137,7 @@ export class LocationsService {
       code: point.code,
       name: point.name,
       description: point.description,
+      uiMode: point.uiMode,
       active: point.active,
       createdAt: point.createdAt.toISOString(),
       updatedAt: point.updatedAt.toISOString(),
@@ -273,6 +276,7 @@ export class LocationsService {
               code,
               name,
               description,
+              uiMode: dto.uiMode ?? 'TOUCH',
               active: dto.active ?? true,
             },
             select: pointSelect,
@@ -292,6 +296,7 @@ export class LocationsService {
               code: point.code,
               name: point.name,
               description: point.description,
+              uiMode: point.uiMode,
               active: point.active,
             },
             ipAddress: actor.ipAddress,
@@ -383,6 +388,9 @@ export class LocationsService {
         ? dto.description?.trim() || null
         : existing.description;
 
+    const uiMode =
+      dto.uiMode ?? existing.uiMode;
+
     const active =
       dto.active ?? existing.active;
 
@@ -429,6 +437,7 @@ export class LocationsService {
               code,
               name,
               description,
+              uiMode,
               active,
             },
             select: pointSelect,
@@ -448,6 +457,7 @@ export class LocationsService {
               name: existing.name,
               description:
                 existing.description,
+              uiMode: existing.uiMode,
               active: existing.active,
             },
             newValues: {
@@ -455,6 +465,7 @@ export class LocationsService {
               code: point.code,
               name: point.name,
               description: point.description,
+              uiMode: point.uiMode,
               active: point.active,
             },
             ipAddress: actor.ipAddress,

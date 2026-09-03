@@ -1039,16 +1039,22 @@ enum SupplierPaymentStatus {
   CANCELLED
 }
 
+enum PosUiMode {
+  TOUCH
+  DESKTOP
+}
+
 model PointOfSale {
-  id          String   @id @default(uuid()) @db.Char(36)
-  companyId   String   @map("company_id") @db.Char(36)
-  branchId    String   @map("branch_id") @db.Char(36)
-  code        String   @db.VarChar(30)
-  name        String   @db.VarChar(120)
-  description String?  @db.VarChar(255)
-  active      Boolean  @default(true)
-  createdAt   DateTime @default(now()) @map("created_at")
-  updatedAt   DateTime @updatedAt @map("updated_at")
+  id          String    @id @default(uuid()) @db.Char(36)
+  companyId   String    @map("company_id") @db.Char(36)
+  branchId    String    @map("branch_id") @db.Char(36)
+  code        String    @db.VarChar(30)
+  name        String    @db.VarChar(120)
+  description String?   @db.VarChar(255)
+  uiMode      PosUiMode @default(TOUCH) @map("ui_mode")
+  active      Boolean   @default(true)
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
 
   company                Company                    @relation(fields: [companyId], references: [id])
   branch                 Branch                     @relation(fields: [branchId], references: [id])
@@ -1226,9 +1232,9 @@ model InventoryMovement {
 
   type InventoryMovementType
 
-  quantity      Decimal @db.Decimal(14, 3)
-  previousStock Decimal @map("previous_stock") @db.Decimal(14, 3)
-  newStock      Decimal @map("new_stock") @db.Decimal(14, 3)
+  quantity      Decimal  @db.Decimal(14, 3)
+  previousStock Decimal  @map("previous_stock") @db.Decimal(14, 3)
+  newStock      Decimal  @map("new_stock") @db.Decimal(14, 3)
   unitCost      Decimal? @map("unit_cost") @db.Decimal(14, 4)
   movementValue Decimal? @map("movement_value") @db.Decimal(16, 2)
 
@@ -1693,12 +1699,12 @@ model ProductBranch {
   createdAt      DateTime @default(now()) @map("created_at")
   updatedAt      DateTime @updatedAt @map("updated_at")
 
-  company      Company              @relation(fields: [companyId], references: [id], onDelete: Cascade)
-  branch       Branch               @relation(fields: [branchId], references: [id], onDelete: Cascade)
-  product      Product              @relation(fields: [productId], references: [id], onDelete: Cascade)
-  category     ProductCategory      @relation(fields: [categoryId], references: [id])
-  pointOfSales ProductPointOfSale[]
-  levelPrices  ProductBranchPrice[]
+  company             Company              @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  branch              Branch               @relation(fields: [branchId], references: [id], onDelete: Cascade)
+  product             Product              @relation(fields: [productId], references: [id], onDelete: Cascade)
+  category            ProductCategory      @relation(fields: [categoryId], references: [id])
+  pointOfSales        ProductPointOfSale[]
+  levelPrices         ProductBranchPrice[]
   inventoryCountItems InventoryCountItem[]
 
   @@unique([productId, branchId])
@@ -1708,18 +1714,18 @@ model ProductBranch {
 }
 
 model InventoryCount {
-  id             String               @id @default(uuid()) @db.Char(36)
-  companyId      String               @map("company_id") @db.Char(36)
-  branchId       String               @map("branch_id") @db.Char(36)
-  reference      String               @db.VarChar(50)
-  status         InventoryCountStatus @default(DRAFT)
-  notes          String?              @db.VarChar(255)
-  createdBy      String               @map("created_by") @db.VarChar(160)
-  confirmedBy    String?              @map("confirmed_by") @db.VarChar(160)
-  confirmedAt    DateTime?            @map("confirmed_at")
-  cancelledAt    DateTime?            @map("cancelled_at")
-  createdAt      DateTime             @default(now()) @map("created_at")
-  updatedAt      DateTime             @updatedAt @map("updated_at")
+  id          String               @id @default(uuid()) @db.Char(36)
+  companyId   String               @map("company_id") @db.Char(36)
+  branchId    String               @map("branch_id") @db.Char(36)
+  reference   String               @db.VarChar(50)
+  status      InventoryCountStatus @default(DRAFT)
+  notes       String?              @db.VarChar(255)
+  createdBy   String               @map("created_by") @db.VarChar(160)
+  confirmedBy String?              @map("confirmed_by") @db.VarChar(160)
+  confirmedAt DateTime?            @map("confirmed_at")
+  cancelledAt DateTime?            @map("cancelled_at")
+  createdAt   DateTime             @default(now()) @map("created_at")
+  updatedAt   DateTime             @updatedAt @map("updated_at")
 
   company Company              @relation(fields: [companyId], references: [id], onDelete: Cascade)
   branch  Branch               @relation(fields: [branchId], references: [id])

@@ -1,5 +1,6 @@
 import {
   IsBoolean,
+  IsIn,
   IsOptional,
   IsString,
   MaxLength,
@@ -25,6 +26,10 @@ export class CreateLocationPointDto {
   @IsString()
   @MaxLength(255)
   description?: string | null;
+
+  @IsOptional()
+  @IsIn(['TOUCH', 'DESKTOP'])
+  uiMode?: 'TOUCH' | 'DESKTOP';
 
   @IsOptional()
   @IsBoolean()

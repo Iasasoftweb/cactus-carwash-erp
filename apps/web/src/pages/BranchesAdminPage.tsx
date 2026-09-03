@@ -87,6 +87,7 @@ const EMPTY_POINT_FORM = {
   name: "",
   code: "",
   description: "",
+  uiMode: "TOUCH" as "TOUCH" | "DESKTOP",
   active: true,
 };
 
@@ -429,6 +430,7 @@ export function BranchesAdminPage() {
       name: point.name,
       code: point.code,
       description: point.description ?? "",
+      uiMode: point.uiMode,
       active: point.active,
     });
     setModal("point");
@@ -542,6 +544,7 @@ export function BranchesAdminPage() {
             description:
               pointForm.description.trim() ||
               null,
+            uiMode: pointForm.uiMode,
             active: pointForm.active,
           },
         );
@@ -556,6 +559,7 @@ export function BranchesAdminPage() {
           description:
             pointForm.description.trim() ||
             null,
+          uiMode: pointForm.uiMode,
           active: pointForm.active,
         });
         setMessage(
@@ -1337,6 +1341,75 @@ export function BranchesAdminPage() {
                     setPointForm({ ...pointForm, description })
                   }
                 />
+
+                <div className="maintenance-pos-ui-mode">
+                  <div className="maintenance-pos-ui-mode__heading">
+                    <strong>Modo de interfaz de ventas</strong>
+                    <small>
+                      Define la interfaz que utilizará este punto de venta.
+                    </small>
+                  </div>
+
+                  <div
+                    className="maintenance-pos-ui-mode__options"
+                    role="radiogroup"
+                    aria-label="Modo de interfaz de ventas"
+                  >
+                    <button
+                      type="button"
+                      role="radio"
+                      aria-checked={pointForm.uiMode === "TOUCH"}
+                      className={
+                        pointForm.uiMode === "TOUCH"
+                          ? "maintenance-pos-ui-mode__option maintenance-pos-ui-mode__option--selected"
+                          : "maintenance-pos-ui-mode__option"
+                      }
+                      onClick={() =>
+                        setPointForm({
+                          ...pointForm,
+                          uiMode: "TOUCH",
+                        })
+                      }
+                    >
+                      <span className="maintenance-pos-ui-mode__title">
+                        TOUCH
+                      </span>
+                      <span className="maintenance-pos-ui-mode__description">
+                        Pantalla táctil
+                      </span>
+                      <small>
+                        Botones amplios y operación optimizada para touch.
+                      </small>
+                    </button>
+
+                    <button
+                      type="button"
+                      role="radio"
+                      aria-checked={pointForm.uiMode === "DESKTOP"}
+                      className={
+                        pointForm.uiMode === "DESKTOP"
+                          ? "maintenance-pos-ui-mode__option maintenance-pos-ui-mode__option--selected"
+                          : "maintenance-pos-ui-mode__option"
+                      }
+                      onClick={() =>
+                        setPointForm({
+                          ...pointForm,
+                          uiMode: "DESKTOP",
+                        })
+                      }
+                    >
+                      <span className="maintenance-pos-ui-mode__title">
+                        ESCRITORIO
+                      </span>
+                      <span className="maintenance-pos-ui-mode__description">
+                        Teclado y scanner
+                      </span>
+                      <small>
+                        Interfaz compacta para tiendas, farmacias y ferreterías.
+                      </small>
+                    </button>
+                  </div>
+                </div>
               </div>
               {editingId ? (
                 <ActiveSwitch

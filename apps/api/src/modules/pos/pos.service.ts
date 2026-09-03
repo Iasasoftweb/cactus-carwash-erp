@@ -3381,6 +3381,7 @@ export class PosService {
       code: row.code,
       name: row.name,
       description: row.description,
+      uiMode: row.uiMode,
     }));
   }
 

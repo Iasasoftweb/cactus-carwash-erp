@@ -81,6 +81,7 @@ export class PricingController {
   @RequireAnyPermissions(
     ERP_PERMISSIONS.productView,
     ERP_PERMISSIONS.productManage,
+    ERP_PERMISSIONS.posPriceOverride,
   )
   productPricing(
     @Param('productId') productId: string,
