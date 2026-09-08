@@ -1,6 +1,7 @@
 import {
   AlertTriangle,
   Boxes,
+  Check,
   Link2,
   Save,
 } from 'lucide-react';
@@ -561,7 +562,7 @@ export function ProductAssignmentModals({
           }}
         >
           <section
-            className="maintenance-modal maintenance-modal--xl"
+            className="maintenance-modal maintenance-modal--xl bulk-assignment-modal"
             role="dialog"
             aria-modal="true"
             aria-labelledby="bulk-assignment-title"
@@ -589,15 +590,8 @@ export function ProductAssignmentModals({
               </button>
             </header>
 
-            <div className="maintenance-modal__body">
-              <div
-                style={{
-                  display: 'grid',
-                  gridTemplateColumns:
-                    'minmax(220px, 1fr) minmax(220px, 1fr)',
-                  gap: 12,
-                }}
-              >
+            <div className="maintenance-modal__body bulk-assignment-modal__body">
+              <div className="bulk-assignment-filters">
                 <label>
                   Punto de venta
                   <select
@@ -653,24 +647,11 @@ export function ProductAssignmentModals({
                 </label>
               </div>
 
-              <div
-                style={{
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  gap: 12,
-                  margin: '18px 0 12px',
-                  flexWrap: 'wrap',
-                }}
-              >
-                <label
-                  style={{
-                    display: 'inline-flex',
-                    gap: 8,
-                    alignItems: 'center',
-                  }}
-                >
+              <div className="bulk-assignment-selection-bar">
+                <label className="checkbox-label bulk-assignment-select-all">
                   <input
                     type="checkbox"
+                    className="checkbox-input"
                     checked={allVisibleSelected}
                     disabled={
                       loading ||
@@ -679,24 +660,37 @@ export function ProductAssignmentModals({
                     }
                     onChange={toggleAllVisible}
                   />
-                  <strong>
-                    Seleccionar todos los visibles
-                  </strong>
+
+                  <span
+                    className="checkbox-checkmark"
+                    aria-hidden="true"
+                  >
+                    <Check size={14} strokeWidth={3} />
+                  </span>
+
+                  <span className="bulk-assignment-select-all__text">
+                    <strong>
+                      Seleccionar todos los visibles
+                    </strong>
+
+                    <small>
+                      {filteredProducts.length} artículo
+                      {filteredProducts.length === 1 ? '' : 's'} mostrado
+                      {filteredProducts.length === 1 ? '' : 's'}
+                    </small>
+                  </span>
                 </label>
 
-                <strong>
-                  {selectedCount} seleccionado
-                  {selectedCount === 1 ? '' : 's'}
-                </strong>
+                <div className="bulk-assignment-selected-count">
+                  <strong>{selectedCount}</strong>
+                  <span>
+                    seleccionado
+                    {selectedCount === 1 ? '' : 's'}
+                  </span>
+                </div>
               </div>
 
-              <div
-                className="maintenance-table-wrap"
-                style={{
-                  maxHeight: 480,
-                  overflow: 'auto',
-                }}
-              >
+              <div className="maintenance-table-wrap bulk-assignment-table-wrap">
                 <table className="maintenance-table">
                   <thead>
                     <tr>
@@ -720,17 +714,34 @@ export function ProductAssignmentModals({
                         selectedIds.has(product.id);
 
                       return (
-                        <tr key={product.id}>
-                          <td>
-                            <input
-                              type="checkbox"
-                              aria-label={`Seleccionar ${product.name}`}
-                              checked={selected}
-                              disabled={bulkSaving}
-                              onChange={() =>
-                                toggleProduct(product.id)
-                              }
-                            />
+                        <tr
+                          key={product.id}
+                          className={
+                            selected
+                              ? 'row-selected bulk-assignment-row'
+                              : 'bulk-assignment-row'
+                          }
+                        >
+                          <td className="bulk-assignment-check-cell">
+                            <label className="checkbox-label bulk-assignment-row-check">
+                              <input
+                                type="checkbox"
+                                className="checkbox-input"
+                                aria-label={`Seleccionar ${product.name}`}
+                                checked={selected}
+                                disabled={bulkSaving}
+                                onChange={() =>
+                                  toggleProduct(product.id)
+                                }
+                              />
+
+                              <span
+                                className="checkbox-checkmark"
+                                aria-hidden="true"
+                              >
+                                <Check size={13} strokeWidth={3} />
+                              </span>
+                            </label>
                           </td>
 
                           <td>
@@ -754,9 +765,17 @@ export function ProductAssignmentModals({
                           </td>
 
                           <td>
-                            {product.trackInventory
-                              ? 'Controlado'
-                              : 'No controla'}
+                            <span
+                              className={
+                                product.trackInventory
+                                  ? 'bulk-assignment-status bulk-assignment-status--tracked'
+                                  : 'bulk-assignment-status'
+                              }
+                            >
+                              {product.trackInventory
+                                ? 'Controlado'
+                                : 'No controla'}
+                            </span>
                           </td>
 
                           <td>
@@ -780,10 +799,7 @@ export function ProductAssignmentModals({
                                   )
                                 }
                                 aria-label={`Existencia inicial de ${product.name}`}
-                                style={{
-                                  width: 130,
-                                  textAlign: 'right',
-                                }}
+                                className="bulk-assignment-stock-input"
                               />
                             ) : (
                               <span>—</span>
@@ -812,14 +828,17 @@ export function ProductAssignmentModals({
                 </table>
               </div>
 
-              <p style={{ marginTop: 14 }}>
-                La existencia inicial solo se aplicará
-                cuando el artículo controle inventario y
-                no tenga historial previo en la sucursal.
-              </p>
+              <div className="bulk-assignment-note">
+                <strong>Nota importante</strong>
+                <span>
+                  La existencia inicial solo se aplicará
+                  cuando el artículo controle inventario y
+                  no tenga historial previo en la sucursal.
+                </span>
+              </div>
             </div>
 
-            <footer className="maintenance-modal__footer">
+            <footer className="maintenance-modal__footer bulk-assignment-modal__footer">
               <button
                 type="button"
                 className="secondary-button"
