@@ -212,8 +212,19 @@ export class CashService {
                 userRoles: {
                   where: {
                     role: {
-                      code: "CASHIER",
                       active: true,
+                      permissions: {
+                        some: {
+                          permission: {
+                            code: {
+                              in: [
+                                "CASH_SESSION_OPERATE",
+                                "CASH_MANAGE",
+                              ],
+                            },
+                          },
+                        },
+                      },
                     },
                   },
                   select: { roleId: true },
@@ -228,9 +239,11 @@ export class CashService {
         !employee.user ||
         employee.user.status !== "ACTIVE" ||
         employee.user.userRoles.length === 0 ||
-        employee.user.branchAccessMode !== "ASSIGNED" ||
-        !employee.user.userBranches.some(
-          (row) => row.branchId === register.branchId,
+        (
+          employee.user.branchAccessMode === "ASSIGNED" &&
+          !employee.user.userBranches.some(
+            (row) => row.branchId === register.branchId,
+          )
         )
       ) {
         throw new BadRequestException(
