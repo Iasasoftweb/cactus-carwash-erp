@@ -1565,6 +1565,24 @@ export function ProductsAdminPage() {
               </button>
             </header>
 
+            {error ? (
+              <p
+                className="maintenance-alert maintenance-alert--error"
+                role="alert"
+              >
+                {error}
+              </p>
+            ) : null}
+
+            {error ? (
+              <p
+                className="maintenance-alert maintenance-alert--error"
+                role="alert"
+              >
+                {error}
+              </p>
+            ) : null}
+
             <form
               className="maintenance-modal__form"
               onSubmit={(event) => {

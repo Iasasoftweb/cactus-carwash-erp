@@ -7484,8 +7484,11 @@ async updateProductCategory(
         where: {
           id: dto.categoryId,
           companyId: actor.companyId,
-          branchId: point.branchId,
           active: true,
+          OR: [
+            { branchId: point.branchId },
+            { branchId: null },
+          ],
         },
       });
 
@@ -7683,7 +7686,10 @@ async updateProductCategory(
         where: {
           id: dto.categoryId,
           companyId: actor.companyId,
-          branchId: point.branchId,
+          OR: [
+            { branchId: point.branchId },
+            { branchId: null },
+          ],
         },
       });
 
