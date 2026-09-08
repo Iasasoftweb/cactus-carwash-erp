@@ -18,6 +18,10 @@ import type {
   PosFinancialConfigurationResponse,
 } from '@cactus/shared';
 import { api } from '../lib/api';
+import {
+  resolvePreferredPos,
+  savePreferredPos,
+} from '../lib/pos-preference';
 
 const BUSINESS_MODULES: Array<{
   value: BusinessModuleType;
@@ -110,6 +114,8 @@ export function BusinessConfigurationPage() {
   const [serviceChargeDineIn, setServiceChargeDineIn] = useState(true);
   const [serviceChargeTakeaway, setServiceChargeTakeaway] = useState(false);
   const [serviceChargeDirect, setServiceChargeDirect] = useState(false);
+  const [ticketPrintMode, setTicketPrintMode] =
+    useState<'DIRECT' | 'PREVIEW'>('PREVIEW');
   const [loading, setLoading] = useState(true);
   const [savingKey, setSavingKey] = useState('');
   const [error, setError] = useState('');
@@ -144,6 +150,7 @@ export function BusinessConfigurationPage() {
     setServiceChargeDineIn(row.serviceChargeDineIn);
     setServiceChargeTakeaway(row.serviceChargeTakeaway);
     setServiceChargeDirect(row.serviceChargeDirect);
+    setTicketPrintMode(row.ticketPrintMode);
   }
 
   async function loadConfiguration(
@@ -175,22 +182,28 @@ export function BusinessConfigurationPage() {
         setLoading(true);
         setError('');
 
-        const pointRows = await api.posPoints();
+        const [pointRows, authUser] = await Promise.all([
+          api.posPoints(),
+          api.authMe(),
+        ]);
 
         if (cancelled) return;
 
         setPoints(pointRows);
 
-        const firstPoint = pointRows[0];
+        const preferredPoint = resolvePreferredPos(
+          pointRows,
+          authUser.id,
+        );
 
-        if (!firstPoint) {
+        if (!preferredPoint) {
           throw new Error(
             'No existe un punto de venta configurado para administrar.',
           );
         }
 
-        setPointId(firstPoint.id);
-        await loadConfiguration(firstPoint);
+        setPointId(preferredPoint.id);
+        await loadConfiguration(preferredPoint);
       } catch (reason) {
         if (!cancelled) {
           setError(
@@ -225,6 +238,10 @@ export function BusinessConfigurationPage() {
 
     try {
       setLoading(true);
+
+      const authUser = await api.authMe();
+      savePreferredPos(authUser.id, point.id);
+
       await loadConfiguration(point);
     } catch (reason) {
       setError(
@@ -392,6 +409,7 @@ export function BusinessConfigurationPage() {
           serviceChargeDineIn,
           serviceChargeTakeaway,
           serviceChargeDirect,
+          ticketPrintMode,
         },
       );
 
@@ -750,6 +768,54 @@ export function BusinessConfigurationPage() {
               <small>DIRECT · Venta rápida sin consumo en mesa.</small>
             </span>
           </label>
+        </div>
+
+        <div className="settings-financial__print-policy">
+          <div>
+            <strong>Comportamiento del ticket después del cobro</strong>
+            <small>
+              Define cómo debe presentar CACTUS el ticket después de
+              completar correctamente el pago.
+            </small>
+          </div>
+
+          <div className="settings-financial__print-options">
+            <label>
+              <input
+                type="radio"
+                name="ticketPrintMode"
+                value="DIRECT"
+                checked={ticketPrintMode === 'DIRECT'}
+                onChange={() => setTicketPrintMode('DIRECT')}
+                disabled={loading || savingKey === 'financial'}
+              />
+              <span>
+                <strong>Impresión directa</strong>
+                <small>
+                  No muestra el preview de CACTUS y envía el ticket
+                  inmediatamente al flujo de impresión configurado.
+                </small>
+              </span>
+            </label>
+
+            <label>
+              <input
+                type="radio"
+                name="ticketPrintMode"
+                value="PREVIEW"
+                checked={ticketPrintMode === 'PREVIEW'}
+                onChange={() => setTicketPrintMode('PREVIEW')}
+                disabled={loading || savingKey === 'financial'}
+              />
+              <span>
+                <strong>Mostrar vista previa</strong>
+                <small>
+                  Presenta el ticket en pantalla antes de decidir si
+                  se imprime.
+                </small>
+              </span>
+            </label>
+          </div>
         </div>
 
         <div className="settings-financial__footer">

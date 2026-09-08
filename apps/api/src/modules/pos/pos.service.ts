@@ -947,6 +947,7 @@ export class PosService {
         serviceChargeDineIn: true,
         serviceChargeTakeaway: false,
         serviceChargeDirect: false,
+        ticketPrintMode: "PREVIEW" as const,
       };
     }
 
@@ -959,6 +960,7 @@ export class PosService {
       serviceChargeDineIn: row.serviceChargeDineIn,
       serviceChargeTakeaway: row.serviceChargeTakeaway,
       serviceChargeDirect: row.serviceChargeDirect,
+      ticketPrintMode: row.ticketPrintMode as "DIRECT" | "PREVIEW",
     };
   }
 
@@ -1014,6 +1016,7 @@ export class PosService {
           serviceChargeDineIn: dto.serviceChargeDineIn,
           serviceChargeTakeaway: dto.serviceChargeTakeaway,
           serviceChargeDirect: dto.serviceChargeDirect,
+          ticketPrintMode: dto.ticketPrintMode,
         },
         update: {
           taxesEnabled: dto.taxesEnabled,
@@ -1022,6 +1025,7 @@ export class PosService {
           serviceChargeDineIn: dto.serviceChargeDineIn,
           serviceChargeTakeaway: dto.serviceChargeTakeaway,
           serviceChargeDirect: dto.serviceChargeDirect,
+          ticketPrintMode: dto.ticketPrintMode,
         },
       });
 
@@ -1041,6 +1045,7 @@ export class PosService {
                 serviceChargeDineIn: previous.serviceChargeDineIn,
                 serviceChargeTakeaway: previous.serviceChargeTakeaway,
                 serviceChargeDirect: previous.serviceChargeDirect,
+                ticketPrintMode: previous.ticketPrintMode,
               }
             : undefined,
           newValues: {
@@ -1051,6 +1056,7 @@ export class PosService {
             serviceChargeDineIn: row.serviceChargeDineIn,
             serviceChargeTakeaway: row.serviceChargeTakeaway,
             serviceChargeDirect: row.serviceChargeDirect,
+            ticketPrintMode: row.ticketPrintMode,
           },
           ipAddress: actor.ipAddress,
         },
@@ -1065,6 +1071,7 @@ export class PosService {
         serviceChargeDineIn: row.serviceChargeDineIn,
         serviceChargeTakeaway: row.serviceChargeTakeaway,
         serviceChargeDirect: row.serviceChargeDirect,
+        ticketPrintMode: row.ticketPrintMode as "DIRECT" | "PREVIEW",
       };
     });
   }

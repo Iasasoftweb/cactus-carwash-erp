@@ -45,6 +45,10 @@ import type {
 } from '@cactus/shared';
 import { ERP_PERMISSIONS } from '@cactus/shared';
 import { api } from '../lib/api';
+import {
+  resolvePreferredPos,
+  savePreferredPos,
+} from '../lib/pos-preference';
 
 const API_ORIGIN =
   import.meta.env.VITE_API_URL?.replace(/\/api\/?$/, '') ??
@@ -243,14 +247,17 @@ function escapeHtml(value: string): string {
     .replaceAll("'", '&#039;');
 }
 
-function printPosTicket(params: {
+type PosTicketPrintParams = {
   business: PosPrintBusinessIdentity;
   title: string;
   reference: string;
   customerAlias: string;
   cashRegisterName: string;
+  cashierName: string;
   paymentMethodName: string;
   paymentReference?: string;
+  cashTendered?: number;
+  cashChange?: number;
   items: Array<{
     name: string;
     quantity: number;
@@ -264,15 +271,12 @@ function printPosTicket(params: {
   serviceChargeRate: number;
   serviceChargeAmount: number;
   total: number;
-}): void {
-  const popup = window.open('', '_blank', 'width=420,height=720');
+};
 
-  if (!popup) {
-    throw new Error(
-      'El navegador bloqueó la ventana de impresión. Permite ventanas emergentes para imprimir el ticket.',
-    );
-  }
-
+function buildPosTicketHtml(
+  params: PosTicketPrintParams,
+  autoPrint: boolean,
+): string {
   const rows = params.items
     .map(
       (item) => `
@@ -287,7 +291,7 @@ function printPosTicket(params: {
     )
     .join('');
 
-  popup.document.write(`
+  return `
     <!doctype html>
     <html lang="es">
       <head>
@@ -407,6 +411,7 @@ function printPosTicket(params: {
           <div><span>Referencia:</span><strong>${escapeHtml(params.reference)}</strong></div>
           <div><span>Cliente:</span><strong>${escapeHtml(params.customerAlias)}</strong></div>
           <div><span>Caja:</span><strong>${escapeHtml(params.cashRegisterName)}</strong></div>
+          <div><span>Cajero:</span><strong>${escapeHtml(params.cashierName)}</strong></div>
           <div><span>Método:</span><strong>${escapeHtml(params.paymentMethodName)}</strong></div>
           <div><span>Modalidad:</span><strong>${escapeHtml(saleModeLabel(params.saleMode))}</strong></div>
           ${
@@ -445,8 +450,93 @@ function printPosTicket(params: {
           </div>
         </div>
 
+        ${
+          params.cashTendered !== undefined ||
+          params.cashChange !== undefined
+            ? `
+              <div
+                class="cash-settlement"
+                style="
+                  margin-top: 6px;
+                  padding-top: 5px;
+                  border-top: 1px dashed #777;
+                  width: 100%;
+                  box-sizing: border-box;
+                "
+              >
+                ${
+                  params.cashTendered !== undefined
+                    ? `
+                      <div
+                        style="
+                          display: flex;
+                          justify-content: space-between;
+                          align-items: baseline;
+                          width: 100%;
+                          gap: 12px;
+                          padding: 2px 0;
+                          box-sizing: border-box;
+                        "
+                      >
+                        <span style="white-space: nowrap;">
+                          Efectivo recibido
+                        </span>
+
+                        <strong
+                          style="
+                            margin-left: auto;
+                            white-space: nowrap;
+                            text-align: right;
+                          "
+                        >
+                          RD$ ${params.cashTendered.toFixed(2)}
+                        </strong>
+                      </div>
+                    `
+                    : ''
+                }
+
+                ${
+                  params.cashChange !== undefined
+                    ? `
+                      <div
+                        style="
+                          display: flex;
+                          justify-content: space-between;
+                          align-items: baseline;
+                          width: 100%;
+                          gap: 12px;
+                          padding: 2px 0;
+                          box-sizing: border-box;
+                        "
+                      >
+                        <span style="white-space: nowrap;">
+                          Devolución
+                        </span>
+
+                        <strong
+                          style="
+                            margin-left: auto;
+                            white-space: nowrap;
+                            text-align: right;
+                          "
+                        >
+                          RD$ ${params.cashChange.toFixed(2)}
+                        </strong>
+                      </div>
+                    `
+                    : ''
+                }
+              </div>
+            `
+            : ''
+        }
+
         <footer><p>Gracias por su compra.</p></footer>
 
+        ${
+          autoPrint
+            ? `
         <script>
           window.addEventListener('load', function () {
             setTimeout(function () {
@@ -455,10 +545,24 @@ function printPosTicket(params: {
             }, 150);
           });
         </script>
+              `
+            : ''
+        }
       </body>
     </html>
-  `);
+  `;
+}
 
+function printPosTicket(params: PosTicketPrintParams): void {
+  const popup = window.open('', '_blank', 'width=420,height=720');
+
+  if (!popup) {
+    throw new Error(
+      'El navegador bloqueó la ventana de impresión. Permite ventanas emergentes para imprimir el ticket.',
+    );
+  }
+
+  popup.document.write(buildPosTicketHtml(params, true));
   popup.document.close();
 }
 
@@ -824,6 +928,135 @@ function inventoryStatus(
 
   return 'NORMAL';
 }
+
+function printPosTicketDirect(
+  params: PosTicketPrintParams,
+): void {
+  const iframe = document.createElement('iframe');
+
+  iframe.setAttribute('aria-hidden', 'true');
+  iframe.tabIndex = -1;
+
+  Object.assign(iframe.style, {
+    position: 'fixed',
+    right: '0',
+    bottom: '0',
+    width: '1px',
+    height: '1px',
+    border: '0',
+    opacity: '0',
+    pointerEvents: 'none',
+  });
+
+  iframe.onload = () => {
+    iframe.onload = null;
+
+    const frameWindow = iframe.contentWindow;
+
+    if (!frameWindow) {
+      iframe.remove();
+      return;
+    }
+
+    let cleaned = false;
+
+    const cleanup = () => {
+      if (cleaned) return;
+      cleaned = true;
+      iframe.remove();
+    };
+
+    frameWindow.addEventListener(
+      'afterprint',
+      cleanup,
+      { once: true },
+    );
+
+    window.setTimeout(cleanup, 10000);
+
+    try {
+      frameWindow.focus();
+      frameWindow.print();
+    } catch (error) {
+      cleanup();
+      throw error;
+    }
+  };
+
+  iframe.srcdoc = buildPosTicketHtml(params, false);
+  document.body.appendChild(iframe);
+}
+
+function PosTicketPreviewModal(props: {
+  ticket: PosTicketPrintParams | null;
+  onClose: () => void;
+  onPrint: () => void;
+}) {
+  const { ticket, onClose, onPrint } = props;
+
+  if (!ticket) return null;
+
+  return (
+    <div
+      className="pos-ticket-preview__backdrop"
+      role="presentation"
+      onMouseDown={(event) => {
+        if (event.target === event.currentTarget) {
+          onClose();
+        }
+      }}
+    >
+      <section
+        className="pos-ticket-preview"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="pos-ticket-preview-title"
+      >
+        <header className="pos-ticket-preview__header">
+          <div>
+            <span>TICKET</span>
+            <h2 id="pos-ticket-preview-title">
+              Vista previa
+            </h2>
+          </div>
+
+          <button
+            type="button"
+            className="secondary-button"
+            onClick={onClose}
+          >
+            Cerrar
+          </button>
+        </header>
+
+        <div className="pos-ticket-preview__body">
+          <iframe
+            title="Vista previa del ticket"
+            srcDoc={buildPosTicketHtml(ticket, false)}
+          />
+        </div>
+
+        <footer className="pos-ticket-preview__actions">
+          <button
+            type="button"
+            className="secondary-button"
+            onClick={onClose}
+          >
+            Cerrar sin imprimir
+          </button>
+
+          <button
+            type="button"
+            onClick={onPrint}
+          >
+            Imprimir ticket
+          </button>
+        </footer>
+      </section>
+    </div>
+  );
+}
+
 export function PosWorkspacePage() {
   const navigate = useNavigate();
 
@@ -997,7 +1230,10 @@ export function PosWorkspacePage() {
         setCanOverridePrice(
           authUser.permissions.includes(ERP_PERMISSIONS.posPriceOverride),
         );
-        const defaultPoint = pointRows[0];
+        const defaultPoint = resolvePreferredPos(
+          pointRows,
+          authUser.id,
+        );
 
         const defaultMethod =
           methodRows.find((method) => method.type === 'CASH') ??
@@ -1005,6 +1241,13 @@ export function PosWorkspacePage() {
           methodRows[0];
 
         setPoints(pointRows);
+
+        setTicketCashierName(
+          authUser.fullName ||
+            authUser.username ||
+            'Usuario',
+        );
+
         setPaymentMethods(methodRows);
         setCustomers(customerRows);
         setPointId(defaultPoint?.id ?? '');
@@ -1025,6 +1268,7 @@ export function PosWorkspacePage() {
       api.posAccounts(pointId),
       api.posCapabilities(pointId),
       api.posFinancialConfiguration(pointId),
+      api.cashRegisters(),
     ])
       .then(([
         registerRows,
@@ -1033,6 +1277,7 @@ export function PosWorkspacePage() {
         accountRows,
         capabilityRows,
         financialRow,
+        cashRegisterRows,
       ]) => {
         setRegisters(registerRows);
         setCategories(categoryRows);
@@ -1040,7 +1285,36 @@ export function PosWorkspacePage() {
         setAccounts(accountRows);
         setCapabilities(capabilityRows);
         setFinancialConfiguration(financialRow);
-        setRegisterId(registerRows[0]?.id ?? '');
+
+        const pointRegisterIds = new Set(
+          registerRows.map((register) => register.id),
+        );
+
+        const openRegisters = cashRegisterRows.filter(
+          (register) =>
+            pointRegisterIds.has(register.id) &&
+            register.openSession !== null,
+        );
+
+        setRegisterId((currentRegisterId) => {
+          const currentIsOpen = openRegisters.some(
+            (register) => register.id === currentRegisterId,
+          );
+
+          if (currentIsOpen) {
+            return currentRegisterId;
+          }
+
+          if (openRegisters.length === 1) {
+            return openRegisters[0].id;
+          }
+
+          if (openRegisters.length > 1) {
+            return '';
+          }
+
+          return registerRows[0]?.id ?? '';
+        });
       })
       .catch((reason: Error) => setError(reason.message))
       .finally(() => setCapabilitiesLoading(false));
@@ -1243,14 +1517,6 @@ export function PosWorkspacePage() {
     };
   }, [cart, financialConfiguration, saleMode]);
 
-  const cartTotal = cartFinancialPreview.total;
-
-  const cartLineCount = cart.length;
-  const cartQuantityTotal = cart.reduce(
-    (sum, item) => sum + item.quantity,
-    0,
-  );
-
   const selectedRegister = registers.find(
     (register) => register.id === registerId,
   );
@@ -1258,6 +1524,87 @@ export function PosWorkspacePage() {
   const selectedPaymentMethod = paymentMethods.find(
     (method) => method.id === paymentMethodId,
   );
+
+  const cartTotal = cartFinancialPreview.total;
+
+  const [paymentModalOpen, setPaymentModalOpen] = useState(false);
+  const [cashTenderedInput, setCashTenderedInput] = useState('');
+  const [pendingTicket, setPendingTicket] =
+    useState<PosTicketPrintParams | null>(null);
+
+  const [ticketCashierName, setTicketCashierName] =
+    useState('Usuario');
+
+  const paymentModalTotal = roundMoney(
+    selectedAccount
+      ? selectedAccount.total + cartTotal
+      : cartTotal,
+  );
+
+  const cashTendered =
+    Number(cashTenderedInput.replace(',', '.')) || 0;
+
+  const cashChange = roundMoney(
+    Math.max(0, cashTendered - paymentModalTotal),
+  );
+
+  const isCashPayment =
+    selectedPaymentMethod?.type === 'CASH';
+
+  const canConfirmPayment =
+    !saving &&
+    paymentModalTotal > 0 &&
+    (!isCashPayment || cashTendered >= paymentModalTotal);
+
+  function openPaymentModal(): void {
+    if (!paymentMethodId || !selectedPaymentMethod) {
+      setError('Selecciona un método de pago.');
+      return;
+    }
+
+    if (!selectedAccount && cart.length === 0) {
+      setError('Agrega al menos un artículo.');
+      return;
+    }
+
+    if (!selectedAccount && !registerId) {
+      setError('Selecciona una caja.');
+      return;
+    }
+
+    setCashTenderedInput(
+      selectedPaymentMethod.type === 'CASH'
+        ? paymentModalTotal.toFixed(2)
+        : '',
+    );
+    setError('');
+    setMessage('');
+    setPaymentModalOpen(true);
+  }
+
+  function closePaymentModal(): void {
+    if (saving) return;
+
+    setPaymentModalOpen(false);
+    setCashTenderedInput('');
+  }
+
+  async function confirmPaymentModal(): Promise<void> {
+    if (!canConfirmPayment) return;
+
+    if (selectedAccount) {
+      await paySelectedAccount();
+    } else {
+      await payNow();
+    }
+  }
+
+  const cartLineCount = cart.length;
+  const cartQuantityTotal = cart.reduce(
+    (sum, item) => sum + item.quantity,
+    0,
+  );
+
 
   function addProductQuantity(
     product: ProductResponse,
@@ -1623,7 +1970,7 @@ export function PosWorkspacePage() {
         }
 
         if (selectedAccount) {
-          void paySelectedAccount();
+          openPaymentModal();
           return;
         }
 
@@ -1632,7 +1979,7 @@ export function PosWorkspacePage() {
           return;
         }
 
-        void payNow();
+        openPaymentModal();
       }
     }
 
@@ -2076,6 +2423,36 @@ export function PosWorkspacePage() {
     }
   }
 
+  function handlePaidTicket(
+    ticket: PosTicketPrintParams,
+  ): void {
+    if (financialConfiguration?.ticketPrintMode === 'DIRECT') {
+      printPosTicketDirect(ticket);
+      return;
+    }
+
+    setPendingTicket(ticket);
+  }
+
+  function closeTicketPreview(): void {
+    setPendingTicket(null);
+  }
+
+  function printPendingTicket(): void {
+    if (!pendingTicket) return;
+
+    try {
+      printPosTicket(pendingTicket);
+      setPendingTicket(null);
+    } catch (reason) {
+      setError(
+        reason instanceof Error
+          ? reason.message
+          : 'No fue posible imprimir el ticket.',
+      );
+    }
+  }
+
   async function payNow(): Promise<void> {
     if (!pointId || cart.length === 0) {
       setError('Agrega al menos un artículo.');
@@ -2121,15 +2498,24 @@ export function PosWorkspacePage() {
         })),
       });
 
-      printPosTicket({
+      handlePaidTicket({
         business: printBusinessIdentity,
         title: 'TICKET DE VENTA',
         reference: result.reference,
         customerAlias: result.customerAlias ?? ticketAlias,
         cashRegisterName:
           selectedRegister?.name ?? 'Caja POS',
+        cashierName: ticketCashierName,
         paymentMethodName: selectedPaymentMethod.name,
         paymentReference: ticketPaymentReference,
+        cashTendered:
+          selectedPaymentMethod.type === 'CASH'
+            ? cashTendered
+            : undefined,
+        cashChange:
+          selectedPaymentMethod.type === 'CASH'
+            ? cashChange
+            : undefined,
         saleMode: result.saleMode,
         subtotal: result.subtotal,
         taxAmount: result.taxAmount,
@@ -2145,6 +2531,8 @@ export function PosWorkspacePage() {
         total: result.total,
       });
 
+      setPaymentModalOpen(false);
+      setCashTenderedInput('');
       setMessage(result.message);
       resetSale();
     } catch (reason) {
@@ -2165,6 +2553,7 @@ export function PosWorkspacePage() {
     }
 
     setSelectedAccount(account);
+    setRegisterId(account.cashRegisterId ?? '');
     setCustomerId(account.customerId ?? '');
     setCustomerAlias(account.customerAlias);
     setTableReference(account.tableReference ?? '');
@@ -2316,7 +2705,7 @@ export function PosWorkspacePage() {
         paymentReference: ticketPaymentReference,
       });
 
-      printPosTicket({
+      handlePaidTicket({
         business: printBusinessIdentity,
         title: 'TICKET DE PAGO',
         reference: paidAccount.reference,
@@ -2325,8 +2714,17 @@ export function PosWorkspacePage() {
           paidAccount.cashRegisterName ??
           selectedRegister?.name ??
           'Caja POS',
+        cashierName: ticketCashierName,
         paymentMethodName: selectedPaymentMethod.name,
         paymentReference: ticketPaymentReference,
+        cashTendered:
+          selectedPaymentMethod.type === 'CASH'
+            ? cashTendered
+            : undefined,
+        cashChange:
+          selectedPaymentMethod.type === 'CASH'
+            ? cashChange
+            : undefined,
         saleMode: paidAccount.saleMode,
         subtotal: paidAccount.subtotal,
         taxAmount: paidAccount.taxAmount,
@@ -2342,6 +2740,8 @@ export function PosWorkspacePage() {
         total: paidAccount.total,
       });
 
+      setPaymentModalOpen(false);
+      setCashTenderedInput('');
       setMessage('Cuenta pagada correctamente.');
       resetSale();
       loadAccounts(pointId);
@@ -3292,9 +3692,7 @@ export function PosWorkspacePage() {
                     <button
                       type="button"
                       className="touch-pos-v1__pay"
-                      onClick={() => {
-                        void paySelectedAccount();
-                      }}
+                      onClick={openPaymentModal}
                       disabled={saving}
                     >
                       Cobrar cuenta
@@ -3316,9 +3714,7 @@ export function PosWorkspacePage() {
                     <button
                       type="button"
                       className="touch-pos-v1__pay"
-                      onClick={() => {
-                        void payNow();
-                      }}
+                      onClick={openPaymentModal}
                       disabled={
                         saving || cart.length === 0
                       }
@@ -3363,6 +3759,143 @@ export function PosWorkspacePage() {
             </aside>
           </div>
         )}
+
+        {paymentModalOpen ? (
+          <div
+            className="pos-payment-modal__backdrop"
+            role="presentation"
+            onMouseDown={(event) => {
+              if (event.target === event.currentTarget) {
+                closePaymentModal();
+              }
+            }}
+          >
+            <section
+              className="pos-payment-modal"
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="pos-payment-modal-title"
+            >
+              <div className="pos-payment-modal__header">
+                <div>
+                  <span>COBRO</span>
+                  <h2 id="pos-payment-modal-title">
+                    Realizar pago
+                  </h2>
+                </div>
+
+                <button
+                  type="button"
+                  className="secondary-button"
+                  onClick={closePaymentModal}
+                  disabled={saving}
+                >
+                  Cerrar
+                </button>
+              </div>
+
+              <div className="pos-payment-modal__summary">
+                <div>
+                  <span>Total a pagar</span>
+                  <strong>
+                    RD$ {paymentModalTotal.toFixed(2)}
+                  </strong>
+                </div>
+
+                <div>
+                  <span>Forma de pago</span>
+                  <strong>
+                    {selectedPaymentMethod?.name ?? '—'}
+                  </strong>
+                </div>
+              </div>
+
+              {isCashPayment ? (
+                <>
+                  <label className="pos-payment-modal__cash">
+                    <span>Efectivo recibido</span>
+                    <div>
+                      <span>RD$</span>
+                      <input
+                        autoFocus
+                        type="text"
+                        inputMode="decimal"
+                        value={cashTenderedInput}
+                        onChange={(event) => {
+                          const value = event.target.value;
+
+                          if (/^\d*[.,]?\d{0,2}$/.test(value)) {
+                            setCashTenderedInput(value);
+                          }
+                        }}
+                        onKeyDown={(event) => {
+                          if (
+                            event.key === 'Enter' &&
+                            canConfirmPayment
+                          ) {
+                            event.preventDefault();
+                            void confirmPaymentModal();
+                          }
+                        }}
+                        disabled={saving}
+                        aria-label="Efectivo recibido"
+                      />
+                    </div>
+                  </label>
+
+                  <div
+                    className={
+                      cashTendered >= paymentModalTotal
+                        ? 'pos-payment-modal__change pos-payment-modal__change--ready'
+                        : 'pos-payment-modal__change'
+                    }
+                  >
+                    <span>Devolución</span>
+                    <strong>
+                      RD$ {cashChange.toFixed(2)}
+                    </strong>
+                  </div>
+
+                  {cashTendered < paymentModalTotal ? (
+                    <p className="pos-payment-modal__pending">
+                      Faltan RD${' '}
+                      {roundMoney(
+                        paymentModalTotal - cashTendered,
+                      ).toFixed(2)}
+                    </p>
+                  ) : null}
+                </>
+              ) : (
+                <div className="pos-payment-modal__non-cash">
+                  El cobro se registrará con{' '}
+                  <strong>{selectedPaymentMethod?.name}</strong>.
+                </div>
+              )}
+
+              <div className="pos-payment-modal__actions">
+                <button
+                  type="button"
+                  className="secondary-button"
+                  onClick={closePaymentModal}
+                  disabled={saving}
+                >
+                  Cancelar
+                </button>
+
+                <button
+                  type="button"
+                  className="pos-payment-modal__confirm"
+                  onClick={() => {
+                    void confirmPaymentModal();
+                  }}
+                  disabled={!canConfirmPayment}
+                >
+                  {saving ? 'Procesando...' : 'Realizar pago'}
+                </button>
+              </div>
+            </section>
+          </div>
+        ) : null}
 
         {priceOverrideProduct ? (
           <div
@@ -4722,7 +5255,7 @@ export function PosWorkspacePage() {
                   type="button"
                   className="pay-now-button"
                   onClick={() => {
-                    void paySelectedAccount();
+                    openPaymentModal();
                   }}
                   disabled={saving}
                 >
@@ -4749,7 +5282,7 @@ export function PosWorkspacePage() {
                 <button
                   type="button"
                   onClick={() => {
-                    void payNow();
+                    openPaymentModal();
                   }}
                   disabled={saving || cart.length === 0}
                 >
@@ -4879,6 +5412,143 @@ export function PosWorkspacePage() {
                 </div>
               </>
             ) : null}
+          </section>
+        </div>
+      ) : null}
+
+      {paymentModalOpen ? (
+        <div
+          className="pos-payment-modal__backdrop"
+          role="presentation"
+          onMouseDown={(event) => {
+            if (event.target === event.currentTarget) {
+              closePaymentModal();
+            }
+          }}
+        >
+          <section
+            className="pos-payment-modal"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="pos-payment-modal-title"
+          >
+            <div className="pos-payment-modal__header">
+              <div>
+                <span>COBRO</span>
+                <h2 id="pos-payment-modal-title">
+                  Realizar pago
+                </h2>
+              </div>
+
+              <button
+                type="button"
+                className="secondary-button"
+                onClick={closePaymentModal}
+                disabled={saving}
+              >
+                Cerrar
+              </button>
+            </div>
+
+            <div className="pos-payment-modal__summary">
+              <div>
+                <span>Total a pagar</span>
+                <strong>
+                  RD$ {paymentModalTotal.toFixed(2)}
+                </strong>
+              </div>
+
+              <div>
+                <span>Forma de pago</span>
+                <strong>
+                  {selectedPaymentMethod?.name ?? '—'}
+                </strong>
+              </div>
+            </div>
+
+            {isCashPayment ? (
+              <>
+                <label className="pos-payment-modal__cash">
+                  <span>Efectivo recibido</span>
+                  <div>
+                    <span>RD$</span>
+                    <input
+                      autoFocus
+                      type="text"
+                      inputMode="decimal"
+                      value={cashTenderedInput}
+                      onChange={(event) => {
+                        const value = event.target.value;
+
+                        if (/^\d*[.,]?\d{0,2}$/.test(value)) {
+                          setCashTenderedInput(value);
+                        }
+                      }}
+                      onKeyDown={(event) => {
+                        if (
+                          event.key === 'Enter' &&
+                          canConfirmPayment
+                        ) {
+                          event.preventDefault();
+                          void confirmPaymentModal();
+                        }
+                      }}
+                      disabled={saving}
+                      aria-label="Efectivo recibido"
+                    />
+                  </div>
+                </label>
+
+                <div
+                  className={
+                    cashTendered >= paymentModalTotal
+                      ? 'pos-payment-modal__change pos-payment-modal__change--ready'
+                      : 'pos-payment-modal__change'
+                  }
+                >
+                  <span>Devolución</span>
+                  <strong>
+                    RD$ {cashChange.toFixed(2)}
+                  </strong>
+                </div>
+
+                {cashTendered < paymentModalTotal ? (
+                  <p className="pos-payment-modal__pending">
+                    Faltan RD${' '}
+                    {roundMoney(
+                      paymentModalTotal - cashTendered,
+                    ).toFixed(2)}
+                  </p>
+                ) : null}
+              </>
+            ) : (
+              <div className="pos-payment-modal__non-cash">
+                El cobro se registrará con{' '}
+                <strong>{selectedPaymentMethod?.name}</strong>.
+              </div>
+            )}
+
+            <div className="pos-payment-modal__actions">
+              <button
+                type="button"
+                className="secondary-button"
+                onClick={closePaymentModal}
+                disabled={saving}
+              >
+                Cancelar
+              </button>
+
+              <button
+                type="button"
+                className="pos-payment-modal__confirm"
+                onClick={() => {
+                  void confirmPaymentModal();
+                }}
+                disabled={!canConfirmPayment}
+              >
+                {saving ? 'Procesando...' : 'Realizar pago'}
+              </button>
+            </div>
           </section>
         </div>
       ) : null}

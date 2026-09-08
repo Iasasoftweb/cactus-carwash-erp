@@ -1,5 +1,6 @@
 import {
   IsBoolean,
+  IsIn,
   IsNumber,
   Max,
   Min,
@@ -27,4 +28,7 @@ export class UpdatePosFinancialConfigurationDto {
 
   @IsBoolean()
   serviceChargeDirect!: boolean;
+
+  @IsIn(['DIRECT', 'PREVIEW'])
+  ticketPrintMode!: 'DIRECT' | 'PREVIEW';
 }

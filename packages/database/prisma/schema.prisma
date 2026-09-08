@@ -1090,6 +1090,8 @@ model PosFinancialConfiguration {
   serviceChargeTakeaway Boolean @default(false) @map("service_charge_takeaway")
   serviceChargeDirect   Boolean @default(false) @map("service_charge_direct")
 
+  ticketPrintMode String @default("PREVIEW") @map("ticket_print_mode") @db.VarChar(16)
+
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 

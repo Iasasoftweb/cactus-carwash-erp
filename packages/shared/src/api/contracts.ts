@@ -309,6 +309,8 @@ export type PosCapabilityResponse = {
   enabled: boolean;
 };
 
+export type PosTicketPrintMode = 'DIRECT' | 'PREVIEW';
+
 export type PosFinancialConfigurationResponse = {
   id: string | null;
   pointOfSaleId: string;
@@ -318,6 +320,7 @@ export type PosFinancialConfigurationResponse = {
   serviceChargeDineIn: boolean;
   serviceChargeTakeaway: boolean;
   serviceChargeDirect: boolean;
+  ticketPrintMode: PosTicketPrintMode;
 };
 
 export type UpdatePosFinancialConfigurationRequest = {
@@ -327,6 +330,7 @@ export type UpdatePosFinancialConfigurationRequest = {
   serviceChargeDineIn: boolean;
   serviceChargeTakeaway: boolean;
   serviceChargeDirect: boolean;
+  ticketPrintMode: PosTicketPrintMode;
 };
 
 export type UpdateBusinessModuleRequest = {
