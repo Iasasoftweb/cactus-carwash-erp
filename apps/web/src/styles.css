@@ -49692,43 +49692,6 @@ html body .desktop-pos-v1
 }
 
 
-/* POS payment ticket policy */
-.settings-financial__print-policy {
-  display: grid;
-  gap: 12px;
-  padding: 16px;
-  margin-top: 18px;
-  border: 1px solid var(--border-color, #dfe3e8);
-  border-radius: 12px;
-}
-
-.settings-financial__print-policy > div {
-  display: grid;
-  gap: 4px;
-}
-
-.settings-financial__print-policy small {
-  display: block;
-  opacity: 0.72;
-}
-
-.settings-financial__print-policy > label {
-  display: flex;
-  align-items: flex-start;
-  gap: 10px;
-  cursor: pointer;
-}
-
-.settings-financial__print-policy > label > input {
-  flex: 0 0 auto;
-  margin-top: 3px;
-}
-
-.settings-financial__print-policy > label > span {
-  display: grid;
-  gap: 3px;
-}
-
 /* =========================================================
    CONFIGURACIÓN FINANCIERA · POLÍTICA DE IMPRESIÓN
    ========================================================= */
