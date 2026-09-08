@@ -40,6 +40,10 @@ import type {
 } from "@cactus/shared";
 
 import { api } from "../lib/api";
+import {
+  ProductAssignmentModals,
+  type ProductAssignmentMode,
+} from "../components/ProductAssignmentModals";
 
 const PAGE_SIZE = 10;
 
@@ -260,6 +264,9 @@ function capabilityEnabled(
 }
 
 export function ProductsAdminPage() {
+  const [assignmentMode, setAssignmentMode] =
+    useState<ProductAssignmentMode>(null);
+
   const navigate = useNavigate();
 
   const [points, setPoints] = useState<PointOfSaleResponse[]>([]);
@@ -1169,11 +1176,21 @@ export function ProductsAdminPage() {
             <button
               type="button"
               className="secondary-button"
-              onClick={() => navigate("/admin/products/assign")}
+              onClick={() => setAssignmentMode("bulk")}
+              disabled={saving || loading}
+            >
+              <Boxes size={16} />
+              Asignar varios
+            </button>
+
+            <button
+              type="button"
+              className="secondary-button"
+              onClick={() => setAssignmentMode("detail")}
               disabled={saving || loading}
             >
               <PackagePlus size={16} />
-              Asignar existente
+              Asignación detallada
             </button>
 
             <button
@@ -2449,6 +2466,15 @@ export function ProductsAdminPage() {
           </section>
         </div>
       ) : null}
+      <ProductAssignmentModals
+        mode={assignmentMode}
+        onClose={() => setAssignmentMode(null)}
+        onCompleted={async () => {
+          if (pointId) {
+            await loadCatalog(pointId);
+          }
+        }}
+      />
     </main>
   );
 }

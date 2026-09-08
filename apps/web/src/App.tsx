@@ -39,7 +39,6 @@ import { ModuleRouteGuard } from "./routes/ModuleRouteGuard";
 import { PermissionRouteGuard } from "./routes/PermissionRouteGuard";
 import { PlatformAdminRouteGuard } from "./routes/PlatformAdminRouteGuard";
 import { ProtectedRoute } from "./routes/ProtectedRoute";
-import { ProductAssignmentsPage } from "./pages/ProductAssignmentsPage";
 import { PriceLevelsPage } from "./pages/PriceLevelsPage";
 import { ProductPricingPage } from "./pages/ProductPricingPage";
 
@@ -231,15 +230,20 @@ export function App() {
             path="/admin/purchases/orders/:id"
             element={<PurchaseOrderDetailPage />}
           />
-          <Route path="/admin/products" element={<ProductsAdminPage />} />
           <Route
-            path="/admin/products/:id/inventory"
-            element={<InventoryMovementsPage />}
-          />
-          <Route
-            path="/admin/inventory/replenishment"
-            element={<InventoryReplenishmentPage />}
-          />
+            element={
+              <PermissionRouteGuard
+                anyOf={[
+                  ERP_PERMISSIONS.productManage,
+                ]}
+              />
+            }
+          >
+            <Route
+              path="/admin/products"
+              element={<ProductsAdminPage />}
+            />
+          </Route>
 
           <Route
             element={
@@ -251,6 +255,14 @@ export function App() {
               />
             }
           >
+            <Route
+              path="/admin/products/:id/inventory"
+              element={<InventoryMovementsPage />}
+            />
+            <Route
+              path="/admin/inventory/replenishment"
+              element={<InventoryReplenishmentPage />}
+            />
             <Route
               path="/admin/inventory/overview"
               element={<InventoryOverviewPage />}
@@ -284,10 +296,6 @@ export function App() {
           <Route
             path="/admin/business-configuration"
             element={<BusinessConfigurationPage />}
-          />
-          <Route
-            path="/admin/products/assign"
-            element={<ProductAssignmentsPage />}
           />
         </Route>
 

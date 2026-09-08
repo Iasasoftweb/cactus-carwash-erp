@@ -1,5 +1,7 @@
 import type {
   AssignProductToPointRequest,
+  BulkAssignProductsToPointRequest,
+  BulkAssignProductsToPointResponse,
   AuthLoginRequest,
   AuthLoginResponse,
   AuthUserResponse,
@@ -658,6 +660,14 @@ export const api = {
     payload: AssignProductToPointRequest,
   ) =>
     request<ProductResponse>(`/pos/products/${productId}/assign`, {
+      method: "POST",
+      body: JSON.stringify(payload),
+    }),
+
+  bulkAssignProductsToPoint: (
+    payload: BulkAssignProductsToPointRequest,
+  ) =>
+    request<BulkAssignProductsToPointResponse>("/pos/products/bulk-assign", {
       method: "POST",
       body: JSON.stringify(payload),
     }),

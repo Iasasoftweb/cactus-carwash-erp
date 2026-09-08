@@ -72,6 +72,7 @@ import { UpdatePosCapabilityDto } from "./dto/update-pos-capability.dto";
 import { UpdatePosFinancialConfigurationDto } from "./dto/update-pos-financial-configuration.dto";
 import { UpdatePosProfitabilityPolicyDto } from "./dto/update-pos-profitability-policy.dto";
 import { AssignProductToPointDto } from "./dto/assign-product-to-point.dto";
+import { BulkAssignProductsToPointDto } from "./dto/bulk-assign-products-to-point.dto";
 import type {
   KitchenHistoryResponse,
   KitchenMetricsResponse,
@@ -810,6 +811,24 @@ export class PosController {
       username: request.user.username,
       branchAccessMode: request.user.branchAccessMode,
       branchIds: request.user.branchIds,
+      ipAddress: request.ip ?? null,
+    });
+  }
+
+  @UseGuards(JwtAuthGuard, PermissionsGuard)
+  @RequireAnyPermissions(ERP_PERMISSIONS.productManage)
+  @Post("products/bulk-assign")
+  bulkAssignProductsToPoint(
+    @Body() dto: BulkAssignProductsToPointDto,
+    @Req() request: PosAuthenticatedRequest,
+  ) {
+    return this.posService.bulkAssignProductsToPoint(dto, {
+      userId: request.user.id,
+      companyId: request.user.companyId,
+      username: request.user.username,
+      branchAccessMode: request.user.branchAccessMode,
+      branchIds: request.user.branchIds,
+      permissions: request.user.permissions,
       ipAddress: request.ip ?? null,
     });
   }

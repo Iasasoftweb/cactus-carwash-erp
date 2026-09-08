@@ -35,6 +35,7 @@ import type {
 } from "@cactus/shared";
 import { AddPosAccountItemsDto } from "./dto/add-pos-account-items.dto";
 import { AssignProductToPointDto } from "./dto/assign-product-to-point.dto";
+import { BulkAssignProductsToPointDto } from "./dto/bulk-assign-products-to-point.dto";
 import { CreateDirectPosPaymentDto } from "./dto/create-direct-pos-payment.dto";
 import { CreatePosMovementDto } from "./dto/create-pos-movement.dto";
 import { OpenPosAccountDto } from "./dto/open-pos-account.dto";
@@ -3763,7 +3764,10 @@ export class PosService {
           branchConfigurations: {
             some: {
               pointOfSales: {
-                some: { pointOfSaleId },
+                some: {
+                  pointOfSaleId,
+                  active: true,
+                },
               },
             },
           },
@@ -3818,10 +3822,197 @@ export class PosService {
     });
   }
 
+async bulkAssignProductsToPoint(
+  dto: BulkAssignProductsToPointDto,
+  actor: PosBranchAccessActor,
+): Promise<{
+  requested: number;
+  assigned: number;
+  inventoryInitialized: number;
+  failed: number;
+  errors: Array<{ productId: string; message: string }>;
+}> {
+  const requestedProducts = new Map<string, number>();
+
+  for (const item of dto.products) {
+    if (!requestedProducts.has(item.productId)) {
+      requestedProducts.set(
+        item.productId,
+        item.initialStock ?? 0,
+      );
+    }
+  }
+
+  const productIds = [...requestedProducts.keys()];
+
+  if (productIds.length === 0) {
+    throw new BadRequestException(
+      "Debes seleccionar al menos un producto.",
+    );
+  }
+
+  const point = await this.prisma.pointOfSale.findFirst({
+    where: {
+      id: dto.pointOfSaleId,
+      companyId: actor.companyId,
+      ...(!this.canManageAllCompanyBranches(actor) &&
+      actor.branchAccessMode === "ASSIGNED"
+        ? {
+            branchId: {
+              in: actor.branchIds,
+            },
+          }
+        : {}),
+      active: true,
+    },
+    select: {
+      id: true,
+      branchId: true,
+    },
+  });
+
+  if (!point) {
+    throw new NotFoundException(
+      "Punto de venta no encontrado.",
+    );
+  }
+
+  const products = await this.prisma.product.findMany({
+    where: {
+      id: { in: productIds },
+      companyId: actor.companyId,
+      active: true,
+    },
+    select: {
+      id: true,
+      price: true,
+      unitCost: true,
+      minimumStock: true,
+      trackInventory: true,
+      branchConfigurations: {
+        where: {
+          branchId: point.branchId,
+        },
+        select: {
+          price: true,
+          minimumPrice: true,
+          unitCost: true,
+          minimumStock: true,
+          trackInventory: true,
+        },
+        take: 1,
+      },
+    },
+  });
+
+  const productMap = new Map(
+    products.map((product) => [product.id, product]),
+  );
+
+  let assigned = 0;
+  let inventoryInitialized = 0;
+
+  const errors: Array<{
+    productId: string;
+    message: string;
+  }> = [];
+
+  for (const productId of productIds) {
+    const product = productMap.get(productId);
+    const initialStock =
+      requestedProducts.get(productId) ?? 0;
+
+    if (!product) {
+      errors.push({
+        productId,
+        message:
+          "Producto activo no encontrado en la empresa.",
+      });
+      continue;
+    }
+
+    const branch = product.branchConfigurations[0];
+
+    const price = Number(
+      branch?.price ?? product.price,
+    );
+
+    const minimumPrice = Number(
+      branch?.minimumPrice ??
+        branch?.price ??
+        product.price,
+    );
+
+    const effectiveUnitCost =
+      branch?.unitCost ?? product.unitCost;
+
+    const unitCost =
+      effectiveUnitCost === null
+        ? null
+        : Number(effectiveUnitCost);
+
+    const trackInventory =
+      branch?.trackInventory ??
+      product.trackInventory;
+
+    const minimumStock = trackInventory
+      ? Number(
+          branch?.minimumStock ??
+            product.minimumStock,
+        )
+      : 0;
+
+    try {
+      await this.assignProductToPoint(
+        productId,
+        {
+          pointOfSaleId: dto.pointOfSaleId,
+          preparationStationId: null,
+          price,
+          minimumPrice,
+          unitCost,
+          stockQuantity: 0,
+          minimumStock,
+          trackInventory,
+        },
+        actor,
+        {
+          initialStock,
+        },
+      );
+
+      assigned += 1;
+
+      if (initialStock > 0) {
+        inventoryInitialized += 1;
+      }
+    } catch (reason) {
+      errors.push({
+        productId,
+        message:
+          reason instanceof Error
+            ? reason.message
+            : "No fue posible asignar el producto.",
+      });
+    }
+  }
+
+  return {
+    requested: productIds.length,
+    assigned,
+    inventoryInitialized,
+    failed: errors.length,
+    errors,
+  };
+}
+
 async assignProductToPoint(
   productId: string,
   dto: AssignProductToPointDto,
   actor: PosBranchAccessActor,
+  options?: {
+    initialStock?: number;
+  },
 ): Promise<ProductResponse> {
   if (dto.stockQuantity > 0) {
     throw new BadRequestException(
@@ -3987,6 +4178,152 @@ async assignProductToPoint(
         active: true,
       },
     });
+
+    const initialStock =
+      options?.initialStock ?? 0;
+
+    if (
+      !Number.isFinite(initialStock) ||
+      initialStock < 0
+    ) {
+      throw new BadRequestException(
+        "La existencia inicial no puede ser negativa.",
+      );
+    }
+
+    if (initialStock > 0) {
+      if (!branch.trackInventory) {
+        throw new BadRequestException(
+          "No puedes establecer existencia inicial para un producto que no controla inventario.",
+        );
+      }
+
+      /*
+       * Serializa la inicialización contra ventas,
+       * ajustes, transferencias y otras escrituras
+       * concurrentes sobre el mismo ProductBranch.
+       */
+      const lockedBranch = await tx.$queryRaw<
+        Array<{
+          id: string;
+        }>
+      >`
+        SELECT id
+        FROM product_branches
+        WHERE id = ${branch.id}
+          AND company_id = ${actor.companyId}
+        FOR UPDATE
+      `;
+
+      if (lockedBranch.length === 0) {
+        throw new NotFoundException(
+          "Producto no encontrado en la sucursal.",
+        );
+      }
+
+      const currentBranch =
+        await tx.productBranch.findUniqueOrThrow({
+          where: {
+            id: branch.id,
+          },
+        });
+
+      const previousStock = Number(
+        currentBranch.stockQuantity,
+      );
+
+      if (previousStock !== 0) {
+        throw new BadRequestException(
+          "La existencia inicial solo puede establecerse cuando la existencia actual es cero.",
+        );
+      }
+
+      const movementCount =
+        await tx.inventoryMovement.count({
+          where: {
+            companyId: actor.companyId,
+            branchId: point.branchId,
+            productId: product.id,
+          },
+        });
+
+      if (movementCount > 0) {
+        throw new BadRequestException(
+          "El producto ya tiene historial de inventario en esta sucursal. Utiliza una entrada, ajuste o transferencia.",
+        );
+      }
+
+      await tx.productBranch.update({
+        where: {
+          id: currentBranch.id,
+        },
+        data: {
+          stockQuantity: initialStock,
+        },
+      });
+
+      const initialMovement =
+        await tx.inventoryMovement.create({
+          data: {
+            companyId: actor.companyId,
+            branchId: point.branchId,
+            pointOfSaleId: point.id,
+            productId: product.id,
+
+            type: "INITIAL",
+
+            quantity: initialStock,
+            previousStock: 0,
+            newStock: initialStock,
+
+            unitCost: currentBranch.unitCost,
+
+            movementValue:
+              currentBranch.unitCost === null
+                ? null
+                : roundMoney(
+                    initialStock *
+                      Number(currentBranch.unitCost),
+                  ),
+
+            referenceType:
+              "PRODUCT_BULK_ASSIGNMENT",
+
+            referenceNumber: null,
+
+            note:
+              "Existencia inicial por asignación masiva de artículo.",
+
+            createdBy: actor.username,
+          },
+        });
+
+      await tx.auditLog.create({
+        data: {
+          companyId: actor.companyId,
+          userId: actor.userId,
+          action: "INITIALIZE_PRODUCT_STOCK",
+          entityType: "INVENTORY_MOVEMENT",
+          entityId: initialMovement.id,
+          reason:
+            "Existencia inicial por asignación masiva de artículo.",
+          oldValues: {
+            productId: product.id,
+            branchId: point.branchId,
+            stockQuantity: 0,
+          },
+          newValues: {
+            productId: product.id,
+            branchId: point.branchId,
+            pointOfSaleId: point.id,
+            type: "INITIAL",
+            quantity: initialStock,
+            stockQuantity: initialStock,
+          },
+          ipAddress: actor.ipAddress,
+        },
+      });
+    }
 
     await tx.auditLog.create({
       data: {

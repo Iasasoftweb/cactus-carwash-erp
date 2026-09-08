@@ -450,6 +450,27 @@ export type AssignProductToPointRequest = {
   trackInventory: boolean;
 };
 
+export type BulkAssignProductItem = {
+  productId: string;
+  initialStock?: number;
+};
+
+export type BulkAssignProductsToPointRequest = {
+  pointOfSaleId: string;
+  products: BulkAssignProductItem[];
+};
+
+export type BulkAssignProductsToPointResponse = {
+  requested: number;
+  assigned: number;
+  inventoryInitialized: number;
+  failed: number;
+  errors: Array<{
+    productId: string;
+    message: string;
+  }>;
+};
+
 export type PriceLevelResponse = {
   id: string;
   companyId: string;
