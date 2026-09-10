@@ -30,6 +30,7 @@ export const ERP_PERMISSIONS = {
   orderFinancialManage: 'ORDER_FINANCIAL_MANAGE',
 
   posOperate: 'POS_OPERATE',
+  posSaleVoid: 'POS_SALE_VOID',
   posHoldManage: 'POS_HOLD_MANAGE',
   posPriceOverride: 'POS_PRICE_OVERRIDE',
   posKitchenView: 'POS_KITCHEN_VIEW',

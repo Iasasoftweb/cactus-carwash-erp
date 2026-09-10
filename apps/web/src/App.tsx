@@ -28,6 +28,7 @@ import { OrderDetailPage } from "./pages/OrderDetailPage";
 import { OrderTicketsPage } from "./pages/OrderTicketsPage";
 import { PosExecutiveDashboardPage } from "./pages/PosExecutiveDashboardPage";
 import { PosSalesReportPage } from "./pages/PosSalesReportPage";
+import { IssuedSalesDocumentsPage } from "./pages/IssuedSalesDocumentsPage";
 import { PosWorkspacePage } from "./pages/PosWorkspacePage";
 import { ProductsAdminPage } from "./pages/ProductsAdminPage";
 import { PurchaseOrderDetailPage } from "./pages/PurchaseOrderDetailPage";
@@ -129,6 +130,10 @@ export function App() {
               <Route
                 path="/admin/reports/pos-sales"
                 element={<PosSalesReportPage />}
+              />
+              <Route
+                path="/admin/sales/issued-documents"
+                element={<IssuedSalesDocumentsPage />}
               />
             </Route>
           </Route>

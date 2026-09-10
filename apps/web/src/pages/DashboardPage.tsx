@@ -293,13 +293,25 @@ export function DashboardPage() {
               ) : null}
 
               {canViewPosReports ? (
-                <button
-                  type="button"
-                  onClick={() => navigate("/admin/reports/pos-sales")}
-                >
-                  <ReceiptText size={17} />
-                  <span>Reportes POS</span>
-                </button>
+                <>
+                  <button
+                    type="button"
+                    onClick={() => navigate("/admin/reports/pos-sales")}
+                  >
+                    <ReceiptText size={17} />
+                    <span>Reportes POS</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() =>
+                      navigate("/admin/sales/issued-documents")
+                    }
+                  >
+                    <ReceiptText size={17} />
+                    <span>Facturas emitidas</span>
+                  </button>
+                </>
               ) : null}
             </div>
           ) : null}

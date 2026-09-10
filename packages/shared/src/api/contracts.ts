@@ -919,6 +919,98 @@ export type PosSalesTransactionsReportResponse = {
   transactions: PosSalesTransactionResponse[];
 };
 
+export type PosIssuedSalesDocumentSource =
+  | 'POS_DIRECT'
+  | 'POS_ACCOUNT';
+
+export type PosIssuedSalesDocumentStatus =
+  | 'ISSUED'
+  | 'VOIDED';
+
+export type PosIssuedSalesDocumentVoidResponse = {
+  id: string;
+  source: PosIssuedSalesDocumentSource;
+  sourceId: string;
+  reference: string;
+  status: 'VOIDED';
+  reason: string;
+  total: number;
+  voidedAt: string;
+  voidedByUsername: string;
+};
+
+export type PosIssuedSalesDocumentItemResponse = {
+  id: string;
+  productId: string;
+  productName: string;
+  quantity: number;
+  unitPrice: number;
+  lineSubtotal: number;
+  lineTax: number;
+  lineTotal: number;
+};
+
+export type PosIssuedSalesDocumentPaymentResponse = {
+  id: string;
+  paymentMethodId: string;
+  paymentMethodName: string;
+  amount: number;
+  reference: string | null;
+  paidAt: string;
+};
+
+export type PosIssuedSalesDocumentSummaryResponse = {
+  status: PosIssuedSalesDocumentStatus;
+  voidedAt: string | null;
+  voidReason: string | null;
+  voidedByUsername: string | null;
+  id: string;
+  source: PosIssuedSalesDocumentSource;
+  reference: string;
+  pointOfSaleId: string;
+  branchId: string;
+  pointOfSaleName: string;
+  customerAlias: string | null;
+  saleMode: PosSaleMode;
+  paymentMethodId: string | null;
+  paymentMethodName: string | null;
+  subtotal: number;
+  taxAmount: number;
+  serviceChargeAmount: number;
+  total: number;
+  issuedAt: string;
+};
+
+export type PosIssuedSalesDocumentListResponse = {
+  dateFrom: string;
+  dateTo: string;
+  generatedAt: string;
+  documents: PosIssuedSalesDocumentSummaryResponse[];
+};
+
+export type PosIssuedSalesDocumentDetailResponse = {
+  status: PosIssuedSalesDocumentStatus;
+  voidedAt: string | null;
+  voidReason: string | null;
+  voidedByUsername: string | null;
+  id: string;
+  source: PosIssuedSalesDocumentSource;
+  reference: string;
+  pointOfSaleId: string;
+  branchId: string;
+  pointOfSaleName: string;
+  customerAlias: string | null;
+  saleMode: PosSaleMode;
+  subtotal: number;
+  taxAmount: number;
+  serviceChargeAmount: number;
+  total: number;
+  issuedAt: string;
+  items: PosIssuedSalesDocumentItemResponse[];
+  payments: PosIssuedSalesDocumentPaymentResponse[];
+};
+
+
 export type PosAccountStatus = 'OPEN' | 'PAID' | 'CANCELLED';
 
 export type PosAccountItemResponse = {

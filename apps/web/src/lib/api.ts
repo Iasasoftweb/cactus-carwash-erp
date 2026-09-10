@@ -98,6 +98,9 @@ import type {
   PosFinancialConfigurationResponse,
   PosDailySalesReportResponse,
   PosSalesTransactionsReportResponse,
+  PosIssuedSalesDocumentListResponse,
+  PosIssuedSalesDocumentDetailResponse,
+  PosIssuedSalesDocumentSource,
   PosSalesComparisonResponse,
   PosSalesTrendResponse,
   PosProfitabilityReportResponse,
@@ -150,6 +153,7 @@ import type {
   UpdateCustomerPriceLevelRequest,
   UpdatePriceLevelRequest,
   UpdateProductPricingRequest,
+  PosIssuedSalesDocumentVoidResponse,
 } from "@cactus/shared";
 import { clearAuthSession, getAccessToken } from "./authStorage";
 
@@ -1145,6 +1149,45 @@ export const api = {
       `/pos/reports/sales-transactions?${params.toString()}`,
     );
   },
+
+  posIssuedSalesDocuments: (
+    dateFrom?: string,
+    dateTo?: string,
+    pointOfSaleId?: string,
+  ) => {
+    const params = new URLSearchParams();
+
+    if (dateFrom) params.set("dateFrom", dateFrom);
+    if (dateTo) params.set("dateTo", dateTo);
+    if (pointOfSaleId) params.set("pointOfSaleId", pointOfSaleId);
+
+    const query = params.toString();
+
+    return request<PosIssuedSalesDocumentListResponse>(
+      `/pos/issued-sales-documents${query ? `?${query}` : ""}`,
+    );
+  },
+
+  posIssuedSalesDocument: (
+    source: PosIssuedSalesDocumentSource,
+    id: string,
+  ) =>
+    request<PosIssuedSalesDocumentDetailResponse>(
+      `/pos/issued-sales-documents/${encodeURIComponent(source)}/${encodeURIComponent(id)}`,
+    ),
+
+  posVoidIssuedSalesDocument: (
+    source: PosIssuedSalesDocumentSource,
+    id: string,
+    reason: string,
+  ) =>
+    request<PosIssuedSalesDocumentVoidResponse>(
+      `/pos/issued-sales-documents/${encodeURIComponent(source)}/${encodeURIComponent(id)}/void`,
+      {
+        method: "POST",
+        body: JSON.stringify({ reason }),
+      },
+    ),
 
   posDailySalesReport: (
     pointOfSaleId: string,

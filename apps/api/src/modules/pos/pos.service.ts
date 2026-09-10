@@ -1,8 +1,10 @@
 import {
   BadRequestException,
+  ConflictException,
   ForbiddenException,
   Injectable,
   NotFoundException,
+  InternalServerErrorException,
 } from "@nestjs/common";
 import { Prisma, PrismaService } from "@cactus/database";
 import { ERP_PERMISSIONS } from "@cactus/shared";
@@ -20,6 +22,10 @@ import type {
   PosFinancialConfigurationResponse,
   PosDailySalesReportResponse,
   PosSalesTransactionsReportResponse,
+  PosIssuedSalesDocumentDetailResponse,
+  PosIssuedSalesDocumentListResponse,
+  PosIssuedSalesDocumentSource,
+  PosIssuedSalesDocumentVoidResponse,
   PosSalesComparisonResponse,
   PosSalesTrendResponse,
   PosProfitabilityReportResponse,
@@ -1377,8 +1383,58 @@ export class PosService {
       }),
     ]);
 
-    const directIds = directSales.map((sale) => sale.id);
-    const accountIds = accountSales.map((sale) => sale.id);
+    const saleVoids = await this.prisma.posSaleVoid.findMany({
+      where: {
+        companyId: access.companyId,
+        pointOfSaleId,
+        OR: [
+          ...(directSales.length > 0
+            ? [
+                {
+                  sourceType: "POS_DIRECT",
+                  sourceId: {
+                    in: directSales.map((sale) => sale.id),
+                  },
+                },
+              ]
+            : []),
+          ...(accountSales.length > 0
+            ? [
+                {
+                  sourceType: "POS_ACCOUNT",
+                  sourceId: {
+                    in: accountSales.map((sale) => sale.id),
+                  },
+                },
+              ]
+            : []),
+        ],
+      },
+      select: {
+        sourceType: true,
+        sourceId: true,
+      },
+    });
+
+    const voidedSourceKeys = new Set(
+      saleVoids.map(
+        (saleVoid) =>
+          `${saleVoid.sourceType}:${saleVoid.sourceId}`,
+      ),
+    );
+
+    const validDirectSales = directSales.filter(
+      (sale) =>
+        !voidedSourceKeys.has(`POS_DIRECT:${sale.id}`),
+    );
+
+    const validAccountSales = accountSales.filter(
+      (sale) =>
+        !voidedSourceKeys.has(`POS_ACCOUNT:${sale.id}`),
+    );
+
+    const directIds = validDirectSales.map((sale) => sale.id);
+    const accountIds = validAccountSales.map((sale) => sale.id);
 
     const paymentOr: Prisma.PaymentWhereInput[] = [];
 
@@ -1517,7 +1573,7 @@ export class PosService {
     };
 
     const sales: Sale[] = [
-      ...directSales.map((sale) => ({
+      ...validDirectSales.map((sale) => ({
         sourceKey: `POS_DIRECT:${sale.id}`,
         lines: sale.items.map((item) => ({
           netRevenue: roundMoney(
@@ -1530,7 +1586,7 @@ export class PosService {
         })),
       })),
 
-      ...accountSales.map((sale) => ({
+      ...validAccountSales.map((sale) => ({
         sourceKey: `POS_ACCOUNT:${sale.id}`,
         lines: sale.items.map((item) => ({
           netRevenue: roundMoney(
@@ -2065,12 +2121,46 @@ export class PosService {
       cursor.setDate(cursor.getDate() + 1);
     }
 
+    const saleVoids = await this.prisma.posSaleVoid.findMany({
+      where: {
+        companyId: access.companyId,
+        pointOfSaleId,
+        OR: [
+          {
+            sourceType: "POS_DIRECT",
+          },
+          {
+            sourceType: "POS_ACCOUNT",
+          },
+        ],
+      },
+      select: {
+        sourceType: true,
+        sourceId: true,
+      },
+    });
+
+    const voidedDirectIds = saleVoids
+      .filter((saleVoid) => saleVoid.sourceType === "POS_DIRECT")
+      .map((saleVoid) => saleVoid.sourceId);
+
+    const voidedAccountIds = saleVoids
+      .filter((saleVoid) => saleVoid.sourceType === "POS_ACCOUNT")
+      .map((saleVoid) => saleVoid.sourceId);
+
     const [directItems, accountItems] = await Promise.all([
       this.prisma.posMovementItem.findMany({
         where: {
           movement: {
             pointOfSaleId,
             type: "DIRECT_SALE",
+            ...(voidedDirectIds.length > 0
+              ? {
+                  id: {
+                    notIn: voidedDirectIds,
+                  },
+                }
+              : {}),
             createdAt: {
               gte: from,
               lte: to,
@@ -2095,6 +2185,13 @@ export class PosService {
           account: {
             pointOfSaleId,
             status: "PAID",
+            ...(voidedAccountIds.length > 0
+              ? {
+                  id: {
+                    notIn: voidedAccountIds,
+                  },
+                }
+              : {}),
             paidAt: {
               gte: from,
               lte: to,
@@ -2131,14 +2228,24 @@ export class PosService {
             : Number(item.costTotal),
       })),
 
-      ...accountItems.map((item) => ({
-        date: formatDate(item.account.paidAt ?? new Date(0)),
-        netRevenue: roundMoney(Number(item.quantity) * Number(item.unitPrice)),
-        costTotal:
-          item.unitCost === null || item.costTotal === null
-            ? null
-            : Number(item.costTotal),
-      })),
+      ...accountItems.map((item) => {
+        if (!item.account.paidAt) {
+          throw new InternalServerErrorException(
+            "Se encontró una cuenta pagada sin fecha de pago.",
+          );
+        }
+
+        return {
+          date: formatDate(item.account.paidAt),
+          netRevenue: roundMoney(
+            Number(item.quantity) * Number(item.unitPrice),
+          ),
+          costTotal:
+            item.unitCost === null || item.costTotal === null
+              ? null
+              : Number(item.costTotal),
+        };
+      }),
     ];
 
     const rowsByDate = new Map<string, TrendLine[]>();
@@ -2307,12 +2414,46 @@ export class PosService {
       );
     }
 
+    const saleVoids = await this.prisma.posSaleVoid.findMany({
+      where: {
+        companyId: access.companyId,
+        pointOfSaleId,
+        OR: [
+          {
+            sourceType: "POS_DIRECT",
+          },
+          {
+            sourceType: "POS_ACCOUNT",
+          },
+        ],
+      },
+      select: {
+        sourceType: true,
+        sourceId: true,
+      },
+    });
+
+    const voidedDirectIds = saleVoids
+      .filter((saleVoid) => saleVoid.sourceType === "POS_DIRECT")
+      .map((saleVoid) => saleVoid.sourceId);
+
+    const voidedAccountIds = saleVoids
+      .filter((saleVoid) => saleVoid.sourceType === "POS_ACCOUNT")
+      .map((saleVoid) => saleVoid.sourceId);
+
     const [directItems, accountItems] = await Promise.all([
       this.prisma.posMovementItem.findMany({
         where: {
           movement: {
             pointOfSaleId,
             type: "DIRECT_SALE",
+            ...(voidedDirectIds.length > 0
+              ? {
+                  id: {
+                    notIn: voidedDirectIds,
+                  },
+                }
+              : {}),
             createdAt: {
               gte: from,
               lte: to,
@@ -2347,6 +2488,13 @@ export class PosService {
           account: {
             pointOfSaleId,
             status: "PAID",
+            ...(voidedAccountIds.length > 0
+              ? {
+                  id: {
+                    notIn: voidedAccountIds,
+                  },
+                }
+              : {}),
             paidAt: {
               gte: from,
               lte: to,
@@ -3005,6 +3153,78 @@ export class PosService {
       });
     }
 
+    const saleVoids = await this.prisma.posSaleVoid.findMany({
+      where: {
+        companyId: access.companyId,
+        OR: [
+          ...(directSales.length > 0
+            ? [
+                {
+                  sourceType: "POS_DIRECT",
+                  sourceId: {
+                    in: directSales.map((sale) => sale.id),
+                  },
+                },
+              ]
+            : []),
+          ...(accountSales.length > 0
+            ? [
+                {
+                  sourceType: "POS_ACCOUNT",
+                  sourceId: {
+                    in: accountSales.map((sale) => sale.id),
+                  },
+                },
+              ]
+            : []),
+        ],
+      },
+      select: {
+        sourceType: true,
+        sourceId: true,
+        reason: true,
+        voidedAt: true,
+        voidedByUsername: true,
+      },
+    });
+
+    const voidBySource = new Map(
+      saleVoids.map((saleVoid) => [
+        `${saleVoid.sourceType}:${saleVoid.sourceId}`,
+        saleVoid,
+      ]),
+    );
+
+    const validDirectSales = directSales.filter(
+      (sale) =>
+        !voidBySource.has(`POS_DIRECT:${sale.id}`),
+    );
+
+    const validAccountSales = accountSales.filter(
+      (sale) =>
+        !voidBySource.has(`POS_ACCOUNT:${sale.id}`),
+    );
+
+    sourceOr.length = 0;
+
+    if (validDirectSales.length > 0) {
+      sourceOr.push({
+        sourceType: "POS_DIRECT",
+        sourceId: {
+          in: validDirectSales.map((sale) => sale.id),
+        },
+      });
+    }
+
+    if (validAccountSales.length > 0) {
+      sourceOr.push({
+        sourceType: "POS_ACCOUNT",
+        sourceId: {
+          in: validAccountSales.map((sale) => sale.id),
+        },
+      });
+    }
+
     const payments =
       sourceOr.length > 0
         ? await this.prisma.payment.findMany({
@@ -3028,7 +3248,7 @@ export class PosService {
     }
 
     const transactions = [
-      ...directSales.map((sale) => {
+      ...validDirectSales.map((sale) => {
         const payment = paymentBySource.get(`POS_DIRECT:${sale.id}`);
 
         return {
@@ -3048,7 +3268,7 @@ export class PosService {
           paidAt: sale.createdAt.toISOString(),
         };
       }),
-      ...accountSales.map((sale) => {
+      ...validAccountSales.map((sale) => {
         const payment = paymentBySource.get(`POS_ACCOUNT:${sale.id}`);
 
         return {
@@ -3065,7 +3285,15 @@ export class PosService {
           taxAmount: Number(sale.taxAmount),
           serviceChargeAmount: Number(sale.serviceChargeAmount),
           total: Number(sale.total),
-          paidAt: sale.paidAt?.toISOString() ?? new Date(0).toISOString(),
+          paidAt: (() => {
+            if (!sale.paidAt) {
+              throw new InternalServerErrorException(
+                `La cuenta pagada ${sale.reference} no tiene fecha de pago.`,
+              );
+            }
+
+            return sale.paidAt.toISOString();
+          })(),
         };
       }),
     ].sort(
@@ -3081,6 +3309,1186 @@ export class PosService {
       transactions,
     };
   }
+
+  async issuedSalesDocuments(
+    access: PosBranchAccessContext,
+    dateFrom?: string,
+    dateTo?: string,
+    pointOfSaleId?: string,
+  ): Promise<PosIssuedSalesDocumentListResponse> {
+    const parseDate = (value: string | undefined, endOfDay: boolean): Date => {
+      if (!value) {
+        const now = new Date();
+        now.setHours(
+          endOfDay ? 23 : 0,
+          endOfDay ? 59 : 0,
+          endOfDay ? 59 : 0,
+          endOfDay ? 999 : 0,
+        );
+        return now;
+      }
+
+      const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value);
+
+      if (!match) {
+        throw new BadRequestException(
+          "Las fechas deben tener formato YYYY-MM-DD.",
+        );
+      }
+
+      const year = Number(match[1]);
+      const month = Number(match[2]);
+      const day = Number(match[3]);
+
+      const result = new Date(
+        year,
+        month - 1,
+        day,
+        endOfDay ? 23 : 0,
+        endOfDay ? 59 : 0,
+        endOfDay ? 59 : 0,
+        endOfDay ? 999 : 0,
+      );
+
+      if (
+        result.getFullYear() !== year ||
+        result.getMonth() !== month - 1 ||
+        result.getDate() !== day
+      ) {
+        throw new BadRequestException("La fecha indicada no es válida.");
+      }
+
+      return result;
+    };
+
+    const from = parseDate(dateFrom, false);
+    const to = parseDate(dateTo ?? dateFrom, true);
+
+    if (from > to) {
+      throw new BadRequestException(
+        "La fecha inicial no puede ser posterior a la fecha final.",
+      );
+    }
+
+    const formatDate = (value: Date): string =>
+      `${value.getFullYear()}-${String(value.getMonth() + 1).padStart(
+        2,
+        "0",
+      )}-${String(value.getDate()).padStart(2, "0")}`;
+
+    const pointFilter: Prisma.PointOfSaleWhereInput = {
+      ...this.pointWhere(access),
+      ...(pointOfSaleId ? { id: pointOfSaleId } : {}),
+    };
+
+    const points = await this.prisma.pointOfSale.findMany({
+      where: pointFilter,
+      select: {
+        id: true,
+        name: true,
+        branchId: true,
+      },
+    });
+
+    if (pointOfSaleId && points.length === 0) {
+      throw new NotFoundException("Punto de venta no encontrado.");
+    }
+
+    if (points.length === 0) {
+      return {
+        dateFrom: formatDate(from),
+        dateTo: formatDate(to),
+        generatedAt: new Date().toISOString(),
+        documents: [],
+      };
+    }
+
+    const pointIds = points.map((point) => point.id);
+    const pointById = new Map(
+      points.map((point) => [point.id, point] as const),
+    );
+
+    const [directSales, accountSales] = await Promise.all([
+      this.prisma.posMovement.findMany({
+        where: {
+          pointOfSaleId: { in: pointIds },
+          type: "DIRECT_SALE",
+          createdAt: {
+            gte: from,
+            lte: to,
+          },
+        },
+        select: {
+          id: true,
+          reference: true,
+          pointOfSaleId: true,
+          customerAlias: true,
+          saleMode: true,
+          subtotal: true,
+          taxAmount: true,
+          serviceChargeAmount: true,
+          total: true,
+          createdAt: true,
+        },
+      }),
+      this.prisma.posAccount.findMany({
+        where: {
+          pointOfSaleId: { in: pointIds },
+          status: "PAID",
+          paidAt: {
+            gte: from,
+            lte: to,
+          },
+        },
+        select: {
+          id: true,
+          reference: true,
+          pointOfSaleId: true,
+          customerAlias: true,
+          saleMode: true,
+          subtotal: true,
+          taxAmount: true,
+          serviceChargeAmount: true,
+          total: true,
+          paidAt: true,
+        },
+      }),
+    ]);
+
+    const invalidPaidAccount = accountSales.find(
+      (sale) => sale.paidAt === null,
+    );
+
+    if (invalidPaidAccount) {
+      throw new InternalServerErrorException(
+        `La cuenta pagada ${invalidPaidAccount.reference} no tiene fecha de pago.`,
+      );
+    }
+
+    const sourceOr: Prisma.PaymentWhereInput[] = [];
+
+    if (directSales.length > 0) {
+      sourceOr.push({
+        sourceType: "POS_DIRECT",
+        sourceId: {
+          in: directSales.map((sale) => sale.id),
+        },
+      });
+    }
+
+    if (accountSales.length > 0) {
+      sourceOr.push({
+        sourceType: "POS_ACCOUNT",
+        sourceId: {
+          in: accountSales.map((sale) => sale.id),
+        },
+      });
+    }
+
+    const saleVoids =
+      sourceOr.length > 0
+        ? await this.prisma.posSaleVoid.findMany({
+            where: {
+              companyId: access.companyId,
+              OR: [
+                ...(directSales.length > 0
+                  ? [
+                      {
+                        sourceType: "POS_DIRECT",
+                        sourceId: {
+                          in: directSales.map((sale) => sale.id),
+                        },
+                      },
+                    ]
+                  : []),
+                ...(accountSales.length > 0
+                  ? [
+                      {
+                        sourceType: "POS_ACCOUNT",
+                        sourceId: {
+                          in: accountSales.map((sale) => sale.id),
+                        },
+                      },
+                    ]
+                  : []),
+              ],
+            },
+            select: {
+              sourceType: true,
+              sourceId: true,
+              reason: true,
+              voidedAt: true,
+              voidedByUsername: true,
+            },
+          })
+        : [];
+
+    const voidBySource = new Map(
+      saleVoids.map((saleVoid) => [
+        `${saleVoid.sourceType}:${saleVoid.sourceId}`,
+        saleVoid,
+      ]),
+    );
+
+    const payments =
+      sourceOr.length > 0
+        ? await this.prisma.payment.findMany({
+            where: {
+              OR: sourceOr,
+            },
+            select: {
+              paymentMethodId: true,
+              sourceType: true,
+              sourceId: true,
+              method: {
+                select: {
+                  name: true,
+                },
+              },
+            },
+            orderBy: {
+              receivedAt: "asc",
+            },
+          })
+        : [];
+
+    const paymentBySource = new Map<
+      string,
+      {
+        paymentMethodId: string;
+        paymentMethodName: string;
+      }
+    >();
+
+    for (const payment of payments) {
+      if (!payment.sourceType || !payment.sourceId) {
+        continue;
+      }
+
+      const key = `${payment.sourceType}:${payment.sourceId}`;
+
+      if (!paymentBySource.has(key)) {
+        paymentBySource.set(key, {
+          paymentMethodId: payment.paymentMethodId,
+          paymentMethodName: payment.method.name,
+        });
+      }
+    }
+
+    const documents: PosIssuedSalesDocumentListResponse["documents"] = [
+      ...directSales.map((sale) => {
+        const point = pointById.get(sale.pointOfSaleId);
+
+        if (!point) {
+          throw new InternalServerErrorException(
+            "El documento tiene un punto de venta inválido.",
+          );
+        }
+
+        const payment = paymentBySource.get(
+          `POS_DIRECT:${sale.id}`,
+        );
+
+        const saleVoid = voidBySource.get(
+          `POS_DIRECT:${sale.id}`,
+        );
+
+        return {
+          status: saleVoid ? "VOIDED" as const : "ISSUED" as const,
+          voidedAt: saleVoid?.voidedAt.toISOString() ?? null,
+          voidReason: saleVoid?.reason ?? null,
+          voidedByUsername: saleVoid?.voidedByUsername ?? null,
+          id: sale.id,
+          source: "POS_DIRECT" as const,
+          reference: sale.reference,
+          pointOfSaleId: point.id,
+          branchId: point.branchId,
+          pointOfSaleName: point.name,
+          customerAlias: sale.customerAlias,
+          saleMode: sale.saleMode,
+          paymentMethodId: payment?.paymentMethodId ?? null,
+          paymentMethodName: payment?.paymentMethodName ?? null,
+          subtotal: Number(sale.subtotal),
+          taxAmount: Number(sale.taxAmount),
+          serviceChargeAmount: Number(sale.serviceChargeAmount),
+          total: Number(sale.total),
+          issuedAt: sale.createdAt.toISOString(),
+        };
+      }),
+      ...accountSales.map((sale) => {
+        const point = pointById.get(sale.pointOfSaleId);
+
+        if (!point) {
+          throw new InternalServerErrorException(
+            "El documento tiene un punto de venta inválido.",
+          );
+        }
+
+        if (!sale.paidAt) {
+          throw new InternalServerErrorException(
+            `La cuenta pagada ${sale.reference} no tiene fecha de pago.`,
+          );
+        }
+
+        const payment = paymentBySource.get(
+          `POS_ACCOUNT:${sale.id}`,
+        );
+
+        const saleVoid = voidBySource.get(
+          `POS_ACCOUNT:${sale.id}`,
+        );
+
+        return {
+          status: saleVoid ? "VOIDED" as const : "ISSUED" as const,
+          voidedAt: saleVoid?.voidedAt.toISOString() ?? null,
+          voidReason: saleVoid?.reason ?? null,
+          voidedByUsername: saleVoid?.voidedByUsername ?? null,
+          id: sale.id,
+          source: "POS_ACCOUNT" as const,
+          reference: sale.reference,
+          pointOfSaleId: point.id,
+          branchId: point.branchId,
+          pointOfSaleName: point.name,
+          customerAlias: sale.customerAlias,
+          saleMode: sale.saleMode,
+          paymentMethodId: payment?.paymentMethodId ?? null,
+          paymentMethodName: payment?.paymentMethodName ?? null,
+          subtotal: Number(sale.subtotal),
+          taxAmount: Number(sale.taxAmount),
+          serviceChargeAmount: Number(sale.serviceChargeAmount),
+          total: Number(sale.total),
+          issuedAt: sale.paidAt.toISOString(),
+        };
+      }),
+    ].sort(
+      (a, b) =>
+        new Date(b.issuedAt).getTime() -
+        new Date(a.issuedAt).getTime(),
+    );
+
+    return {
+      dateFrom: formatDate(from),
+      dateTo: formatDate(to),
+      generatedAt: new Date().toISOString(),
+      documents,
+    };
+  }
+
+  async issuedSalesDocument(
+    source: PosIssuedSalesDocumentSource,
+    id: string,
+    access: PosBranchAccessContext,
+  ): Promise<PosIssuedSalesDocumentDetailResponse> {
+    if (!id) {
+      throw new BadRequestException("Debe indicar el documento.");
+    }
+
+    if (source !== "POS_DIRECT" && source !== "POS_ACCOUNT") {
+      throw new BadRequestException(
+        "El origen del documento no es válido.",
+      );
+    }
+
+    if (source === "POS_DIRECT") {
+      const sale = await this.prisma.posMovement.findFirst({
+        where: {
+          id,
+          type: "DIRECT_SALE",
+          pointOfSale: this.pointWhere(access),
+        },
+        select: {
+          id: true,
+          reference: true,
+          customerAlias: true,
+          saleMode: true,
+          subtotal: true,
+          taxAmount: true,
+          serviceChargeAmount: true,
+          total: true,
+          createdAt: true,
+          pointOfSale: {
+            select: {
+              id: true,
+              name: true,
+              branchId: true,
+            },
+          },
+          items: {
+            orderBy: {
+              id: "asc",
+            },
+            select: {
+              id: true,
+              productId: true,
+              quantity: true,
+              unitPrice: true,
+              taxAmount: true,
+              lineTotal: true,
+              product: {
+                select: {
+                  name: true,
+                },
+              },
+            },
+          },
+        },
+      });
+
+      if (!sale) {
+        throw new NotFoundException("Factura emitida no encontrada.");
+      }
+
+      const payments = await this.prisma.payment.findMany({
+        where: {
+          sourceType: "POS_DIRECT",
+          sourceId: sale.id,
+        },
+        include: {
+          method: true,
+        },
+        orderBy: {
+          receivedAt: "asc",
+        },
+      });
+
+      const saleVoid = await this.prisma.posSaleVoid.findUnique({
+        where: {
+          sourceType_sourceId: {
+            sourceType: "POS_DIRECT",
+            sourceId: sale.id,
+          },
+        },
+        select: {
+          reason: true,
+          voidedAt: true,
+          voidedByUsername: true,
+        },
+      });
+
+      return {
+        status: saleVoid ? "VOIDED" : "ISSUED",
+        voidedAt: saleVoid?.voidedAt.toISOString() ?? null,
+        voidReason: saleVoid?.reason ?? null,
+        voidedByUsername: saleVoid?.voidedByUsername ?? null,
+        id: sale.id,
+        source: "POS_DIRECT",
+        reference: sale.reference,
+        pointOfSaleId: sale.pointOfSale.id,
+        branchId: sale.pointOfSale.branchId,
+        pointOfSaleName: sale.pointOfSale.name,
+        customerAlias: sale.customerAlias,
+        saleMode: sale.saleMode,
+        subtotal: Number(sale.subtotal),
+        taxAmount: Number(sale.taxAmount),
+        serviceChargeAmount: Number(sale.serviceChargeAmount),
+        total: Number(sale.total),
+        issuedAt: sale.createdAt.toISOString(),
+        items: sale.items.map((item) => ({
+          id: item.id,
+          productId: item.productId,
+          productName: item.product.name,
+          quantity: Number(item.quantity),
+          unitPrice: Number(item.unitPrice),
+          lineSubtotal: roundMoney(
+            Number(item.lineTotal) - Number(item.taxAmount),
+          ),
+          lineTax: Number(item.taxAmount),
+          lineTotal: Number(item.lineTotal),
+        })),
+        payments: payments.map((payment) => ({
+          id: payment.id,
+          paymentMethodId: payment.paymentMethodId,
+          paymentMethodName: payment.method.name,
+          amount: Number(payment.amount),
+          reference: payment.reference,
+          paidAt: payment.receivedAt.toISOString(),
+        })),
+      };
+    }
+
+    const account = await this.prisma.posAccount.findFirst({
+      where: {
+        id,
+        status: "PAID",
+        pointOfSale: this.pointWhere(access),
+      },
+      select: {
+        id: true,
+        reference: true,
+        customerAlias: true,
+        saleMode: true,
+        subtotal: true,
+        taxAmount: true,
+        serviceChargeAmount: true,
+        total: true,
+        paidAt: true,
+        pointOfSale: {
+          select: {
+            id: true,
+            name: true,
+            branchId: true,
+          },
+        },
+        items: {
+          orderBy: {
+            createdAt: "asc",
+          },
+          select: {
+            id: true,
+            productId: true,
+            quantity: true,
+            unitPrice: true,
+            taxAmount: true,
+            lineTotal: true,
+            product: {
+              select: {
+                name: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    if (!account) {
+      throw new NotFoundException("Factura emitida no encontrada.");
+    }
+
+    if (!account.paidAt) {
+      throw new InternalServerErrorException(
+        `La cuenta pagada ${account.reference} no tiene fecha de pago.`,
+      );
+    }
+
+    const payments = await this.prisma.payment.findMany({
+      where: {
+        sourceType: "POS_ACCOUNT",
+        sourceId: account.id,
+      },
+      include: {
+        method: true,
+      },
+      orderBy: {
+        receivedAt: "asc",
+      },
+    });
+
+    const saleVoid = await this.prisma.posSaleVoid.findUnique({
+      where: {
+        sourceType_sourceId: {
+          sourceType: "POS_ACCOUNT",
+          sourceId: account.id,
+        },
+      },
+      select: {
+        reason: true,
+        voidedAt: true,
+        voidedByUsername: true,
+      },
+    });
+
+    return {
+      status: saleVoid ? "VOIDED" : "ISSUED",
+      voidedAt: saleVoid?.voidedAt.toISOString() ?? null,
+      voidReason: saleVoid?.reason ?? null,
+      voidedByUsername: saleVoid?.voidedByUsername ?? null,
+      id: account.id,
+      source: "POS_ACCOUNT",
+      reference: account.reference,
+      pointOfSaleId: account.pointOfSale.id,
+      branchId: account.pointOfSale.branchId,
+      pointOfSaleName: account.pointOfSale.name,
+      customerAlias: account.customerAlias,
+      saleMode: account.saleMode,
+      subtotal: Number(account.subtotal),
+      taxAmount: Number(account.taxAmount),
+      serviceChargeAmount: Number(account.serviceChargeAmount),
+      total: Number(account.total),
+      issuedAt: account.paidAt.toISOString(),
+      items: account.items.map((item) => ({
+        id: item.id,
+        productId: item.productId,
+        productName: item.product.name,
+        quantity: Number(item.quantity),
+        unitPrice: Number(item.unitPrice),
+        lineSubtotal: roundMoney(
+          Number(item.lineTotal) - Number(item.taxAmount),
+        ),
+        lineTax: Number(item.taxAmount),
+        lineTotal: Number(item.lineTotal),
+      })),
+      payments: payments.map((payment) => ({
+        id: payment.id,
+        paymentMethodId: payment.paymentMethodId,
+        paymentMethodName: payment.method.name,
+        amount: Number(payment.amount),
+        reference: payment.reference,
+        paidAt: payment.receivedAt.toISOString(),
+      })),
+    };
+  }
+
+
+  async voidIssuedSalesDocument(
+    source: PosIssuedSalesDocumentSource,
+    id: string,
+    reason: string,
+    actor: PosBranchAccessActor,
+  ): Promise<PosIssuedSalesDocumentVoidResponse> {
+    if (!id) {
+      throw new BadRequestException("Debe indicar el documento.");
+    }
+
+    if (source !== "POS_DIRECT" && source !== "POS_ACCOUNT") {
+      throw new BadRequestException(
+        "El origen del documento no es válido.",
+      );
+    }
+
+    const normalizedReason = reason?.trim();
+
+    if (!normalizedReason || normalizedReason.length < 3) {
+      throw new BadRequestException(
+        "Debe indicar un motivo de anulación válido.",
+      );
+    }
+
+    if (normalizedReason.length > 255) {
+      throw new BadRequestException(
+        "El motivo de anulación no puede exceder 255 caracteres.",
+      );
+    }
+
+    try {
+      return await this.prisma.$transaction(async (tx) => {
+        const sale =
+          source === "POS_DIRECT"
+            ? await tx.posMovement.findFirst({
+                where: {
+                  id,
+                  type: "DIRECT_SALE",
+                  pointOfSale: this.pointWhere(actor),
+                },
+                select: {
+                  id: true,
+                  reference: true,
+                  total: true,
+                  pointOfSaleId: true,
+                  pointOfSale: {
+                    select: {
+                      branchId: true,
+                    },
+                  },
+                },
+              })
+            : await tx.posAccount.findFirst({
+                where: {
+                  id,
+                  status: "PAID",
+                  pointOfSale: this.pointWhere(actor),
+                },
+                select: {
+                  id: true,
+                  reference: true,
+                  total: true,
+                  pointOfSaleId: true,
+                  pointOfSale: {
+                    select: {
+                      branchId: true,
+                    },
+                  },
+                },
+              });
+
+        if (!sale) {
+          throw new NotFoundException(
+            "Factura emitida no encontrada.",
+          );
+        }
+
+        const existingVoid = await tx.posSaleVoid.findUnique({
+          where: {
+            sourceType_sourceId: {
+              sourceType: source,
+              sourceId: sale.id,
+            },
+          },
+          select: {
+            id: true,
+          },
+        });
+
+        if (existingVoid) {
+          throw new ConflictException(
+            "La factura ya se encuentra anulada.",
+          );
+        }
+
+        const payments = await tx.payment.findMany({
+          where: {
+            sourceType: source,
+            sourceId: sale.id,
+          },
+          select: {
+            id: true,
+            amount: true,
+            cashSessionId: true,
+            method: {
+              select: {
+                type: true,
+              },
+            },
+            cashSession: {
+              select: {
+                id: true,
+                status: true,
+                cashRegisterId: true,
+                cashRegister: {
+                  select: {
+                    branchId: true,
+                  },
+                },
+              },
+            },
+          },
+          orderBy: {
+            receivedAt: "asc",
+          },
+        });
+
+        const cashPayments = payments.filter(
+          (payment) => payment.method.type === "CASH",
+        );
+
+        /*
+         * Validamos toda la topología de caja antes de ejecutar
+         * cualquier efecto compensatorio.
+         */
+        const cashByRegister = new Map<
+          string,
+          {
+            amount: Prisma.Decimal;
+            originalSessionIds: Set<string>;
+          }
+        >();
+
+        for (const payment of cashPayments) {
+          if (!payment.cashSessionId || !payment.cashSession) {
+            throw new InternalServerErrorException(
+              "El pago en efectivo no tiene una sesión de caja asociada.",
+            );
+          }
+
+          if (
+            payment.cashSession.cashRegister.branchId !==
+            sale.pointOfSale.branchId
+          ) {
+            throw new InternalServerErrorException(
+              "La caja del pago no corresponde a la sucursal de la venta.",
+            );
+          }
+
+          const cashRegisterId =
+            payment.cashSession.cashRegisterId;
+
+          const current = cashByRegister.get(cashRegisterId);
+
+          if (current) {
+            current.amount = current.amount.plus(payment.amount);
+            current.originalSessionIds.add(
+              payment.cashSessionId,
+            );
+          } else {
+            cashByRegister.set(cashRegisterId, {
+              amount: new Prisma.Decimal(payment.amount),
+              originalSessionIds: new Set([
+                payment.cashSessionId,
+              ]),
+            });
+          }
+        }
+
+        /*
+         * Una misma venta POS normalmente tiene un solo pago.
+         * Si los datos históricos muestran efectivo distribuido entre
+         * varias sesiones de la misma caja, no inferimos cómo devolverlo.
+         */
+        for (const cashGroup of cashByRegister.values()) {
+          if (cashGroup.originalSessionIds.size !== 1) {
+            throw new InternalServerErrorException(
+              "La venta tiene pagos en efectivo asociados a múltiples sesiones de la misma caja.",
+            );
+          }
+        }
+
+        /*
+         * Primero determinamos y bloqueamos las sesiones que recibirán
+         * la devolución. Si la sesión histórica ya cerró, la devolución
+         * debe ir a una sesión OPEN de la MISMA caja.
+         */
+        const cashReversalTargets: Array<{
+          cashRegisterId: string;
+          cashSessionId: string;
+          amount: Prisma.Decimal;
+        }> = [];
+
+        const sortedCashGroups = [...cashByRegister.entries()].sort(
+          ([left], [right]) => left.localeCompare(right),
+        );
+
+        for (const [cashRegisterId, cashGroup] of sortedCashGroups) {
+          const originalSessionId = [
+            ...cashGroup.originalSessionIds,
+          ][0];
+
+          if (!originalSessionId) {
+            throw new InternalServerErrorException(
+              "No se pudo determinar la sesión de caja original.",
+            );
+          }
+
+          await tx.$queryRaw`
+            SELECT id
+            FROM cash_sessions
+            WHERE id = ${originalSessionId}
+            FOR UPDATE
+          `;
+
+          const originalSession =
+            await tx.cashSession.findUnique({
+              where: {
+                id: originalSessionId,
+              },
+              select: {
+                id: true,
+                status: true,
+                cashRegisterId: true,
+              },
+            });
+
+          if (
+            !originalSession ||
+            originalSession.cashRegisterId !== cashRegisterId
+          ) {
+            throw new InternalServerErrorException(
+              "La sesión de caja original no es válida.",
+            );
+          }
+
+          let targetSessionId: string;
+
+          if (originalSession.status === "OPEN") {
+            targetSessionId = originalSession.id;
+          } else {
+            const openSession =
+              await tx.cashSession.findFirst({
+                where: {
+                  cashRegisterId,
+                  status: "OPEN",
+                },
+                select: {
+                  id: true,
+                },
+                orderBy: {
+                  openedAt: "desc",
+                },
+              });
+
+            if (!openSession) {
+              throw new BadRequestException(
+                "Debe abrir la caja correspondiente para registrar la devolución en efectivo.",
+              );
+            }
+
+            await tx.$queryRaw`
+              SELECT id
+              FROM cash_sessions
+              WHERE id = ${openSession.id}
+              FOR UPDATE
+            `;
+
+            const lockedOpenSession =
+              await tx.cashSession.findUnique({
+                where: {
+                  id: openSession.id,
+                },
+                select: {
+                  id: true,
+                  status: true,
+                  cashRegisterId: true,
+                },
+              });
+
+            if (
+              !lockedOpenSession ||
+              lockedOpenSession.status !== "OPEN" ||
+              lockedOpenSession.cashRegisterId !== cashRegisterId
+            ) {
+              throw new BadRequestException(
+                "Debe abrir la caja correspondiente para registrar la devolución en efectivo.",
+              );
+            }
+
+            targetSessionId = lockedOpenSession.id;
+          }
+
+          cashReversalTargets.push({
+            cashRegisterId,
+            cashSessionId: targetSessionId,
+            amount: cashGroup.amount,
+          });
+        }
+
+        /*
+         * El UNIQUE(source_type, source_id) funciona además como la
+         * barrera final contra doble anulación concurrente.
+         */
+        const saleVoid = await tx.posSaleVoid.create({
+          data: {
+            companyId: actor.companyId,
+            branchId: sale.pointOfSale.branchId,
+            pointOfSaleId: sale.pointOfSaleId,
+            sourceType: source,
+            sourceId: sale.id,
+            reference: sale.reference,
+            reason: normalizedReason,
+            total: sale.total,
+            voidedByUserId: actor.userId,
+            voidedByUsername: actor.username,
+          },
+        });
+
+        /*
+         * Restauramos inventario desde los movimientos SALE originales,
+         * no desde los items agregados de la cuenta.
+         */
+        const inventorySales =
+          await tx.inventoryMovement.findMany({
+            where: {
+              companyId: actor.companyId,
+              branchId: sale.pointOfSale.branchId,
+              pointOfSaleId: sale.pointOfSaleId,
+              type: "SALE",
+              referenceType: source,
+              referenceId: sale.id,
+            },
+            select: {
+              id: true,
+              productId: true,
+              quantity: true,
+              unitCost: true,
+              movementValue: true,
+              createdAt: true,
+            },
+            orderBy: [
+              {
+                createdAt: "asc",
+              },
+              {
+                id: "asc",
+              },
+            ],
+          });
+
+        const inventoryProductIds = [
+          ...new Set(
+            inventorySales.map(
+              (movement) => movement.productId,
+            ),
+          ),
+        ].sort();
+
+        /*
+         * Bloqueo estable por producto para que dos anulaciones
+         * concurrentes no pierdan incrementos de existencia.
+         */
+        for (const productId of inventoryProductIds) {
+          const lockedRows = await tx.$queryRaw<
+            Array<{ id: string }>
+          >`
+            SELECT id
+            FROM product_branches
+            WHERE company_id = ${actor.companyId}
+              AND branch_id = ${sale.pointOfSale.branchId}
+              AND product_id = ${productId}
+            FOR UPDATE
+          `;
+
+          if (lockedRows.length !== 1) {
+            throw new InternalServerErrorException(
+              "No se encontró la configuración de inventario del producto en la sucursal.",
+            );
+          }
+        }
+
+        const productBranches =
+          inventoryProductIds.length > 0
+            ? await tx.productBranch.findMany({
+                where: {
+                  companyId: actor.companyId,
+                  branchId: sale.pointOfSale.branchId,
+                  productId: {
+                    in: inventoryProductIds,
+                  },
+                },
+                select: {
+                  id: true,
+                  productId: true,
+                  stockQuantity: true,
+                },
+              })
+            : [];
+
+        const productBranchByProductId = new Map(
+          productBranches.map((branchProduct) => [
+            branchProduct.productId,
+            {
+              id: branchProduct.id,
+              stockQuantity: new Prisma.Decimal(
+                branchProduct.stockQuantity,
+              ),
+            },
+          ]),
+        );
+
+        for (const originalMovement of inventorySales) {
+          const branchProduct =
+            productBranchByProductId.get(
+              originalMovement.productId,
+            );
+
+          if (!branchProduct) {
+            throw new InternalServerErrorException(
+              "No se encontró la configuración de inventario necesaria para revertir la venta.",
+            );
+          }
+
+          const previousStock =
+            branchProduct.stockQuantity;
+
+          const newStock = previousStock.plus(
+            originalMovement.quantity,
+          );
+
+          await tx.productBranch.update({
+            where: {
+              id: branchProduct.id,
+            },
+            data: {
+              stockQuantity: newStock,
+            },
+          });
+
+          await tx.inventoryMovement.create({
+            data: {
+              companyId: actor.companyId,
+              branchId: sale.pointOfSale.branchId,
+              pointOfSaleId: sale.pointOfSaleId,
+              productId: originalMovement.productId,
+              type: "RETURN_IN",
+              quantity: originalMovement.quantity,
+              previousStock,
+              newStock,
+              unitCost: originalMovement.unitCost,
+              movementValue:
+                originalMovement.movementValue,
+              referenceType: "POS_VOID",
+              referenceId: saleVoid.id,
+              referenceNumber: sale.reference,
+              note: `Anulación ${sale.reference}: ${normalizedReason}`.slice(0, 255),
+              createdBy: actor.username,
+            },
+          });
+
+          branchProduct.stockQuantity = newStock;
+        }
+
+        /*
+         * Pago original y movimiento SALE se preservan.
+         * La devolución de efectivo se registra como compensación
+         * negativa sobre una sesión OPEN de la misma caja.
+         */
+        let cashReversed = new Prisma.Decimal(0);
+
+        for (const reversal of cashReversalTargets) {
+          if (reversal.amount.lte(0)) {
+            continue;
+          }
+
+          await tx.cashMovement.create({
+            data: {
+              cashSessionId: reversal.cashSessionId,
+              type: "ADJUSTMENT",
+              amount: reversal.amount.negated(),
+              description:
+                `Anulación ${sale.reference}: devolución de efectivo.`,
+              externalReference: sale.reference,
+              referenceType: "POS_VOID",
+              referenceId: saleVoid.id,
+            },
+          });
+
+          cashReversed = cashReversed.plus(
+            reversal.amount,
+          );
+        }
+
+        await tx.auditLog.create({
+          data: {
+            companyId: actor.companyId,
+            userId: actor.userId,
+            action: "VOID_POS_SALE",
+            entityType:
+              source === "POS_DIRECT"
+                ? "POS_MOVEMENT"
+                : "POS_ACCOUNT",
+            entityId: sale.id,
+            reason: normalizedReason,
+            oldValues: {
+              status: "ISSUED",
+              total: Number(sale.total),
+            },
+            newValues: {
+              status: "VOIDED",
+              voidId: saleVoid.id,
+              voidedAt: saleVoid.voidedAt.toISOString(),
+              pointOfSaleId: sale.pointOfSaleId,
+              inventoryMovementsRestored:
+                inventorySales.length,
+              cashReversed: Number(cashReversed),
+            },
+            ipAddress: actor.ipAddress,
+          },
+        });
+
+        return {
+          id: saleVoid.id,
+          source,
+          sourceId: sale.id,
+          reference: sale.reference,
+          status: "VOIDED",
+          reason: saleVoid.reason,
+          total: Number(saleVoid.total),
+          voidedAt: saleVoid.voidedAt.toISOString(),
+          voidedByUsername:
+            saleVoid.voidedByUsername,
+        };
+      });
+    } catch (error) {
+      if (
+        error instanceof
+          Prisma.PrismaClientKnownRequestError &&
+        error.code === "P2002"
+      ) {
+        throw new ConflictException(
+          "La factura ya se encuentra anulada.",
+        );
+      }
+
+      throw error;
+    }
+  }
+
 
   async dailySalesReport(
     pointOfSaleId: string,
@@ -3210,9 +4618,59 @@ export class PosService {
       }),
     ]);
 
-    const directIds = directSales.map((sale) => sale.id);
+    const saleVoids = await this.prisma.posSaleVoid.findMany({
+      where: {
+        companyId: access.companyId,
+        pointOfSaleId,
+        OR: [
+          ...(directSales.length > 0
+            ? [
+                {
+                  sourceType: "POS_DIRECT",
+                  sourceId: {
+                    in: directSales.map((sale) => sale.id),
+                  },
+                },
+              ]
+            : []),
+          ...(accountSales.length > 0
+            ? [
+                {
+                  sourceType: "POS_ACCOUNT",
+                  sourceId: {
+                    in: accountSales.map((sale) => sale.id),
+                  },
+                },
+              ]
+            : []),
+        ],
+      },
+      select: {
+        sourceType: true,
+        sourceId: true,
+      },
+    });
 
-    const accountIds = accountSales.map((sale) => sale.id);
+    const voidedSourceKeys = new Set(
+      saleVoids.map(
+        (saleVoid) =>
+          `${saleVoid.sourceType}:${saleVoid.sourceId}`,
+      ),
+    );
+
+    const validDirectSales = directSales.filter(
+      (sale) =>
+        !voidedSourceKeys.has(`POS_DIRECT:${sale.id}`),
+    );
+
+    const validAccountSales = accountSales.filter(
+      (sale) =>
+        !voidedSourceKeys.has(`POS_ACCOUNT:${sale.id}`),
+    );
+
+    const directIds = validDirectSales.map((sale) => sale.id);
+
+    const accountIds = validAccountSales.map((sale) => sale.id);
 
     const paymentOr: Prisma.PaymentWhereInput[] = [];
 
@@ -3255,14 +4713,14 @@ export class PosService {
     };
 
     const rows: SaleRow[] = [
-      ...directSales.map((sale) => ({
+      ...validDirectSales.map((sale) => ({
         saleMode: sale.saleMode,
         subtotal: Number(sale.subtotal),
         taxAmount: Number(sale.taxAmount),
         serviceChargeAmount: Number(sale.serviceChargeAmount),
         total: Number(sale.total),
       })),
-      ...accountSales.map((sale) => ({
+      ...validAccountSales.map((sale) => ({
         saleMode: sale.saleMode,
         subtotal: Number(sale.subtotal),
         taxAmount: Number(sale.taxAmount),
@@ -3334,8 +4792,8 @@ export class PosService {
       generatedAt: new Date().toISOString(),
 
       salesCount: rows.length,
-      directSalesCount: directSales.length,
-      accountSalesCount: accountSales.length,
+      directSalesCount: validDirectSales.length,
+      accountSalesCount: validAccountSales.length,
 
       subtotal: totalMoney(rows.map((row) => row.subtotal)),
       taxAmount: totalMoney(rows.map((row) => row.taxAmount)),

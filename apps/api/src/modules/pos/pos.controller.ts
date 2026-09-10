@@ -34,6 +34,10 @@ import type {
   PosFinancialConfigurationResponse,
   PosDailySalesReportResponse,
   PosSalesTransactionsReportResponse,
+  PosIssuedSalesDocumentDetailResponse,
+  PosIssuedSalesDocumentListResponse,
+  PosIssuedSalesDocumentSource,
+  PosIssuedSalesDocumentVoidResponse,
   PosSalesComparisonResponse,
   PosSalesTrendResponse,
   PosProfitabilityReportResponse,
@@ -79,6 +83,7 @@ import type {
   KitchenTicketResponse,
   KitchenTicketStatusValue,
 } from "./kitchen-ticket.types";
+import { VoidIssuedSalesDocumentDto } from "./dto/void-issued-sales-document.dto";
 import { PosService } from "./pos.service";
 import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
 import { PermissionsGuard } from "../auth/guards/permissions.guard";
@@ -1179,4 +1184,61 @@ export class PosController {
       permissions: request.user.permissions,
     });
   }
+  @UseGuards(JwtAuthGuard, PermissionsGuard)
+  @RequireAnyPermissions(POS_REPORTING_PERMISSIONS.viewSalesReport)
+  @Get("issued-sales-documents")
+  issuedSalesDocuments(
+    @Query("dateFrom") dateFrom: string | undefined,
+    @Query("dateTo") dateTo: string | undefined,
+    @Query("pointOfSaleId") pointOfSaleId: string | undefined,
+    @Req() request: PosAuthenticatedRequest,
+  ): Promise<PosIssuedSalesDocumentListResponse> {
+    return this.posService.issuedSalesDocuments(
+      request.user,
+      dateFrom,
+      dateTo,
+      pointOfSaleId,
+    );
+  }
+
+  @UseGuards(JwtAuthGuard, PermissionsGuard)
+  @RequireAnyPermissions(POS_REPORTING_PERMISSIONS.viewSalesReport)
+  @Get("issued-sales-documents/:source/:id")
+  issuedSalesDocument(
+    @Param("source") source: PosIssuedSalesDocumentSource,
+    @Param("id") id: string,
+    @Req() request: PosAuthenticatedRequest,
+  ): Promise<PosIssuedSalesDocumentDetailResponse> {
+    return this.posService.issuedSalesDocument(
+      source,
+      id,
+      request.user,
+    );
+  }
+
+  @UseGuards(JwtAuthGuard, PermissionsGuard)
+  @RequireAnyPermissions(ERP_PERMISSIONS.posSaleVoid)
+  @Post("issued-sales-documents/:source/:id/void")
+  voidIssuedSalesDocument(
+    @Param("source") source: PosIssuedSalesDocumentSource,
+    @Param("id") id: string,
+    @Body() dto: VoidIssuedSalesDocumentDto,
+    @Req() request: PosAuthenticatedRequest,
+  ): Promise<PosIssuedSalesDocumentVoidResponse> {
+    return this.posService.voidIssuedSalesDocument(
+      source,
+      id,
+      dto.reason,
+      {
+        userId: request.user.id,
+        companyId: request.user.companyId,
+        username: request.user.username,
+        branchAccessMode: request.user.branchAccessMode,
+        branchIds: request.user.branchIds,
+        permissions: request.user.permissions,
+        ipAddress: request.ip ?? null,
+      },
+    );
+  }
+
 }
