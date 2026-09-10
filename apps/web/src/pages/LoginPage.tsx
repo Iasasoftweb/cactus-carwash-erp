@@ -1,41 +1,48 @@
 import {
   FormEvent,
   useState,
-} from 'react';
+} from "react";
 import {
+  ArrowRight,
+  BarChart3,
+  Boxes,
   Eye,
   EyeOff,
   LockKeyhole,
+  ReceiptText,
+  ShieldCheck,
   UserRound,
-} from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
-import { api } from '../lib/api';
+  UsersRound,
+} from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { api } from "../lib/api";
 import {
   clearAuthSession,
   saveAuthSession,
-} from '../lib/authStorage';
+} from "../lib/authStorage";
+import "./LoginPageV2.css";
 
 export function LoginPage() {
   const navigate = useNavigate();
 
   const [username, setUsername] =
-    useState('admin');
+    useState("admin");
 
   const [password, setPassword] =
-    useState('admin123');
+    useState("admin123");
 
   const [showPassword, setShowPassword] =
     useState(false);
 
   const [error, setError] =
-    useState('');
+    useState("");
 
   const [submitting, setSubmitting] =
     useState(false);
 
   async function handleSubmit(
     event: FormEvent<HTMLFormElement>,
-  ) {
+  ): Promise<void> {
     event.preventDefault();
 
     const normalizedUsername =
@@ -46,13 +53,13 @@ export function LoginPage() {
       !password
     ) {
       setError(
-        'Ingresa usuario y contraseña.',
+        "Ingresa usuario y contraseña.",
       );
       return;
     }
 
     setSubmitting(true);
-    setError('');
+    setError("");
     clearAuthSession();
 
     try {
@@ -66,7 +73,7 @@ export function LoginPage() {
       saveAuthSession(session);
 
       navigate(
-        '/dashboard',
+        "/dashboard",
         {
           replace: true,
         },
@@ -75,7 +82,7 @@ export function LoginPage() {
       setError(
         reason instanceof Error
           ? reason.message
-          : 'No fue posible iniciar sesión.',
+          : "No fue posible iniciar sesión.",
       );
     } finally {
       setSubmitting(false);
@@ -83,156 +90,378 @@ export function LoginPage() {
   }
 
   return (
-    <main className="auth-shell auth-shell--modern">
-      <section className="login-card login-card--modern">
-        <div className="login-brand-panel">
-          <img
-            src="/images/cactuspos.png"
-            alt="Cactus POS"
-            className="login-brand-logo"
-          />
+    <main className="login-v2-page">
+      <div
+        className="login-v2-dots"
+        aria-hidden="true"
+      >
+        <span />
+        <span />
+        <span />
+        <span />
+        <span />
+        <span />
+      </div>
 
-          <div className="login-brand-caption">
-            <span>ERP · Punto de Venta</span>
-            <small>
-              Operación, control y gestión en una sola plataforma.
-            </small>
+      <section className="login-v2-shell">
+        <aside className="login-v2-brand">
+          <div className="login-v2-logo-image-wrap">
+            <div className="login-v2-real-brand">
+              <div
+                className="login-v2-real-cactus"
+                aria-hidden="true"
+              >
+                <img
+                  src="/images/cactuspos.png"
+                  alt=""
+                />
+              </div>
+
+              <div className="login-v2-real-brand-text">
+                <div className="login-v2-real-brand-name">
+                  <span className="login-v2-real-cactus-name">
+                    Cactus
+                  </span>
+
+                  <span className="login-v2-real-pos">
+                    POS
+                  </span>
+                </div>
+
+                <div className="login-v2-real-subtitle">
+                  ERP · PUNTO DE VENTA
+                </div>
+              </div>
+            </div>
           </div>
-        </div>
 
-        <div className="login-content">
-          <header className="login-heading">
-            <div>
-              <p className="eyebrow">
-                ACCESO SEGURO
-              </p>
+          <div className="login-v2-copy">
+            <h1>
+              Tu negocio
+              <br />
+              <strong>
+                en buenas manos
+              </strong>
+            </h1>
 
-              <h1>Bienvenido</h1>
+            <p>
+              Facturación, inventario,
+              clientes y mucho más,
+              <br />
+              en una sola plataforma.
+            </p>
+          </div>
 
-              <p className="muted">
-                Ingresa tus credenciales para continuar.
-              </p>
+          <div
+            className="login-v2-art login-v2-art--new"
+            aria-hidden="true"
+          >
+            <div className="login-pos-scene">
+              <div className="login-pos-orbit login-pos-orbit--one" />
+              <div className="login-pos-orbit login-pos-orbit--two" />
+
+              <div className="login-pos-terminal">
+                <div className="login-pos-screen">
+                  <div className="login-pos-screen-top">
+                    <span />
+                    <i />
+                  </div>
+
+                  <div className="login-pos-dashboard">
+                    <div className="login-pos-dashboard-main">
+                      <span />
+                      <span />
+                      <span />
+                    </div>
+
+                    <div className="login-pos-dashboard-side">
+                      <strong />
+                      <strong />
+                    </div>
+                  </div>
+
+                  <div className="login-pos-total">
+                    <span>TOTAL</span>
+                    <strong>$1,250</strong>
+                  </div>
+                </div>
+
+                <div className="login-pos-terminal-neck" />
+                <div className="login-pos-terminal-base" />
+              </div>
+
+              <div className="login-pos-receipt">
+                <div className="login-pos-receipt-head">
+                  <span>C</span>
+                </div>
+
+                <i />
+                <i />
+                <i />
+                <i />
+
+                <strong />
+              </div>
+
+              <div className="login-pos-person">
+                <div className="login-pos-person-hair" />
+                <div className="login-pos-person-head" />
+
+                <div className="login-pos-person-body">
+                  <span>+</span>
+                </div>
+
+                <div className="login-pos-person-arm" />
+              </div>
+
+              <div className="login-pos-badge">
+                <span>✓</span>
+
+                <div>
+                  <strong>Venta lista</strong>
+                  <small>Proceso completado</small>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="login-v2-features">
+            <div className="login-v2-feature">
+              <ReceiptText
+                size={25}
+                strokeWidth={1.8}
+              />
+
+              <span>
+                Facturación
+                <strong>Rápida</strong>
+              </span>
             </div>
 
-            <span className="login-status">
-              Sistema disponible
-            </span>
-          </header>
+            <div className="login-v2-feature">
+              <Boxes
+                size={25}
+                strokeWidth={1.8}
+              />
 
-          <form
-            className="login-form"
-            onSubmit={(event) => {
-              void handleSubmit(event);
-            }}
-          >
-            <label className="login-field">
-              <span>Usuario</span>
+              <span>
+                Inventario
+                <strong>Inteligente</strong>
+              </span>
+            </div>
 
-              <div className="login-input-wrap">
-                <UserRound
-                  size={18}
-                  aria-hidden="true"
-                />
+            <div className="login-v2-feature">
+              <UsersRound
+                size={25}
+                strokeWidth={1.8}
+              />
 
-                <input
-                  value={username}
-                  onChange={(event) =>
-                    setUsername(
-                      event.target.value,
-                    )
-                  }
-                  autoComplete="username"
-                  placeholder="Ingresa tu usuario"
-                  disabled={submitting}
-                />
-              </div>
-            </label>
+              <span>
+                Clientes
+                <strong>
+                  Siempre Contigo
+                </strong>
+              </span>
+            </div>
 
-            <label className="login-field">
-              <span>Contraseña</span>
+            <div className="login-v2-feature">
+              <BarChart3
+                size={25}
+                strokeWidth={1.8}
+              />
 
-              <div className="login-input-wrap">
-                <LockKeyhole
-                  size={18}
-                  aria-hidden="true"
-                />
+              <span>
+                Reportes
+                <strong>
+                  en Tiempo Real
+                </strong>
+              </span>
+            </div>
+          </div>
+        </aside>
 
-                <input
-                  type={
-                    showPassword
-                      ? 'text'
-                      : 'password'
-                  }
-                  value={password}
-                  onChange={(event) =>
-                    setPassword(
-                      event.target.value,
-                    )
-                  }
-                  autoComplete="current-password"
-                  placeholder="Ingresa tu contraseña"
-                  disabled={submitting}
-                />
+        <section className="login-v2-auth">
+          <div className="login-v2-version">
+            <strong>Cactus POS</strong>
+            <span>v1.9.1</span>
+            <i />
+          </div>
 
-                <button
-                  type="button"
-                  className="login-password-toggle"
-                  onClick={() =>
-                    setShowPassword(
-                      (current) => !current,
-                    )
-                  }
-                  aria-label={
-                    showPassword
-                      ? 'Ocultar contraseña'
-                      : 'Mostrar contraseña'
-                  }
-                  title={
-                    showPassword
-                      ? 'Ocultar contraseña'
-                      : 'Mostrar contraseña'
-                  }
-                >
-                  {showPassword ? (
-                    <EyeOff size={17} />
-                  ) : (
-                    <Eye size={17} />
-                  )}
-                </button>
-              </div>
-            </label>
+          <div className="login-v2-auth-inner">
+            <header className="login-v2-header">
+              <h2>
+                Iniciar sesión
+              </h2>
 
-            {error ? (
-              <div
-                className="login-error"
-                role="alert"
-              >
-                {error}
-              </div>
-            ) : null}
+              <p>
+                Ingresa tus credenciales
+                para continuar.
+              </p>
+            </header>
 
-            <button
-              type="submit"
-              className="login-submit"
-              disabled={submitting}
+            <form
+              className="login-v2-form"
+              onSubmit={(event) => {
+                void handleSubmit(event);
+              }}
             >
-              {submitting
-                ? 'Validando acceso...'
-                : 'Entrar al sistema'}
-            </button>
-          </form>
+              <label className="login-v2-label">
+                <span>Usuario</span>
 
-          <footer className="login-footer">
-            <span>
-              Cactus POS
-            </span>
+                <div className="login-v2-field">
+                  <UserRound
+                    size={21}
+                    aria-hidden="true"
+                  />
 
-            <small>
-              Acceso autorizado únicamente para usuarios registrados.
-            </small>
-          </footer>
-        </div>
+                  <input
+                    type="text"
+                    value={username}
+                    onChange={(event) =>
+                      setUsername(
+                        event.target.value,
+                      )
+                    }
+                    autoComplete="username"
+                    placeholder="Ingresa tu usuario"
+                    disabled={submitting}
+                    required
+                  />
+                </div>
+              </label>
+
+              <label className="login-v2-label">
+                <span>Contraseña</span>
+
+                <div className="login-v2-field login-v2-password">
+                  <LockKeyhole
+                    size={21}
+                    aria-hidden="true"
+                  />
+
+                  <input
+                    type={
+                      showPassword
+                        ? "text"
+                        : "password"
+                    }
+                    value={password}
+                    onChange={(event) =>
+                      setPassword(
+                        event.target.value,
+                      )
+                    }
+                    autoComplete="current-password"
+                    placeholder="Ingresa tu contraseña"
+                    disabled={submitting}
+                    required
+                  />
+
+                  <button
+                    type="button"
+                    className="login-v2-eye"
+                    onClick={() =>
+                      setShowPassword(
+                        (current) =>
+                          !current,
+                      )
+                    }
+                    disabled={submitting}
+                    aria-label={
+                      showPassword
+                        ? "Ocultar contraseña"
+                        : "Mostrar contraseña"
+                    }
+                    title={
+                      showPassword
+                        ? "Ocultar contraseña"
+                        : "Mostrar contraseña"
+                    }
+                  >
+                    {showPassword ? (
+                      <EyeOff size={21} />
+                    ) : (
+                      <Eye size={21} />
+                    )}
+                  </button>
+                </div>
+              </label>
+
+              {error ? (
+                <div
+                  className="login-v2-error"
+                  role="alert"
+                >
+                  {error}
+                </div>
+              ) : null}
+
+              <button
+                type="submit"
+                className="login-v2-submit"
+                disabled={submitting}
+              >
+                <span>
+                  {submitting
+                    ? "Validando acceso..."
+                    : "Entrar al sistema"}
+                </span>
+
+                {!submitting ? (
+                  <ArrowRight
+                    size={23}
+                    aria-hidden="true"
+                  />
+                ) : null}
+              </button>
+            </form>
+
+            <div className="login-v2-divider">
+              <span />
+              <small>
+                ACCESO SEGURO
+              </small>
+              <span />
+            </div>
+
+            <div className="login-v2-security">
+              <ShieldCheck
+                size={27}
+                aria-hidden="true"
+              />
+
+              <p>
+                Acceso autorizado únicamente
+                <br />
+                para usuarios registrados.
+              </p>
+            </div>
+          </div>
+        </section>
       </section>
+
+      <footer className="login-v2-footer">
+        <div>
+          <strong>
+            Cactus POS
+          </strong>
+
+          <span>
+            ERP · PUNTO DE VENTA
+          </span>
+        </div>
+
+        <div className="login-v2-footer-right">
+          <p>
+            Operación, control y gestión
+            en una sola plataforma.
+          </p>
+
+          <small className="login-v2-copyright">
+            Iasasoft 2026 · Todos los derechos reservados
+          </small>
+        </div>
+      </footer>
     </main>
   );
 }
