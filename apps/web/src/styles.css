@@ -2467,10 +2467,26 @@ button:disabled {
 }
 @media print {
   body { background: white; }
-  body > * { visibility: hidden; }
+
+  /*
+   * Legacy ticket isolation.
+   * Scope the visibility reset only to pages that actually
+   * render .print-ticket so other printable modules are not hidden.
+   */
+  body:has(.print-ticket) > * {
+    visibility: hidden;
+  }
+
   .print-ticket,
-  .print-ticket * { visibility: visible; }
-  .print-ticket { position: absolute; left: 0; top: 0; }
+  .print-ticket * {
+    visibility: visible;
+  }
+
+  .print-ticket {
+    position: absolute;
+    left: 0;
+    top: 0;
+  }
 }
 @media (max-width: 800px) {
   .admin-page__grid { grid-template-columns: 1fr; }
