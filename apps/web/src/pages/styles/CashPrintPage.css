@@ -92,3 +92,37 @@
     box-shadow: none;
   }
 }
+
+/* =========================================================
+   CASH PRINT — LEGACY GLOBAL VISIBILITY FIX
+   styles.css contains a legacy print rule that hides
+   body > * and only restores .print-ticket.
+   CashPrintPage uses .cash-print, so restore its render tree.
+   ========================================================= */
+
+@media print {
+  body:has(.cash-print) > * {
+    visibility: visible !important;
+  }
+
+  body:has(.cash-print) .cash-print,
+  body:has(.cash-print) .cash-print * {
+    visibility: visible !important;
+  }
+
+  body:has(.cash-print) .cash-print {
+    display: block !important;
+    position: static !important;
+
+    width: 80mm !important;
+    max-width: 80mm !important;
+
+    margin: 0 !important;
+    padding: 6mm !important;
+
+    opacity: 1 !important;
+    color: #111 !important;
+    background: #fff !important;
+    box-shadow: none !important;
+  }
+}
