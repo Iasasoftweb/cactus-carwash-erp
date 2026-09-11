@@ -1,8 +1,12 @@
-/* CACTUS ERP — CASH PRINT */
+/* CACTUS ERP — CASH PRINT
+   POS80 physical roll / 72mm printable area */
+
 .cash-print {
-  width: min(80mm, 100%);
-  margin: 0 auto;
-  padding: 10mm 7mm;
+  box-sizing: border-box;
+  width: 72mm;
+  max-width: 72mm;
+  margin: 0;
+  padding: 2mm 3mm;
   background: #fff;
   color: #111;
   font-family:
@@ -12,7 +16,7 @@
     Monaco,
     Consolas,
     monospace;
-  font-size: 12px;
+  font-size: 14px;
   line-height: 1.35;
 }
 
@@ -31,11 +35,13 @@
 
 .cash-print__header h1 {
   margin: 0 0 8px;
-  font-size: 16px;
+  font-size: 18px;
+  font-weight: 800;
 }
 
 .cash-print__header p {
   margin: 2px 0;
+  font-size: 13px;
 }
 
 .cash-print__section,
@@ -50,11 +56,9 @@
 
 .cash-print__row {
   display: grid;
-  grid-template-columns:
-    minmax(0, 1fr)
-    auto;
-  gap: 12px;
-  padding: 4px 0;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 3mm;
+  padding: 1.5mm 0;
   align-items: start;
 }
 
@@ -66,41 +70,30 @@
 .cash-print__row strong {
   text-align: right;
   white-space: nowrap;
+  font-weight: 800;
 }
 
 .cash-print__row--total {
   margin-top: 4px;
   padding-top: 8px;
   border-top: 1px solid #222;
-  font-size: 13px;
+  font-size: 15px;
 }
 
 @media print {
   @page {
+    size: 72mm 250mm;
     margin: 0;
   }
 
   html,
   body {
+    width: 72mm !important;
+    margin: 0 !important;
+    padding: 0 !important;
     background: #fff !important;
   }
 
-  .cash-print {
-    width: 80mm;
-    margin: 0;
-    padding: 6mm;
-    box-shadow: none;
-  }
-}
-
-/* =========================================================
-   CASH PRINT — LEGACY GLOBAL VISIBILITY FIX
-   styles.css contains a legacy print rule that hides
-   body > * and only restores .print-ticket.
-   CashPrintPage uses .cash-print, so restore its render tree.
-   ========================================================= */
-
-@media print {
   body:has(.cash-print) > * {
     visibility: visible !important;
   }
@@ -111,18 +104,7 @@
   }
 
   body:has(.cash-print) .cash-print {
-    display: block !important;
     position: static !important;
-
-    width: 80mm !important;
-    max-width: 80mm !important;
-
-    margin: 0 !important;
-    padding: 6mm !important;
-
-    opacity: 1 !important;
-    color: #111 !important;
-    background: #fff !important;
     box-shadow: none !important;
   }
 }

@@ -13,7 +13,7 @@ import './styles/CashPrintPage.css';
 export function CashPrintPage() {
   const {
     id = '',
-    document = 'summary',
+    document: documentType = 'summary',
   } = useParams();
 
   const [
@@ -26,6 +26,25 @@ export function CashPrintPage() {
 
   const [error, setError] =
     useState('');
+
+  useEffect(() => {
+    const style = document.createElement('style');
+    style.setAttribute('data-cash-print-page', 'true');
+    style.textContent = `
+      @media print {
+        @page {
+          size: 72mm 250mm;
+          margin: 0;
+        }
+      }
+    `;
+
+    document.head.appendChild(style);
+
+    return () => {
+      style.remove();
+    };
+  }, []);
 
   useEffect(() => {
     if (!id) {
@@ -50,7 +69,7 @@ export function CashPrintPage() {
           id,
           {
             documentType:
-              document === 'detail'
+              documentType === 'detail'
                 ? 'SALES_DETAIL'
                 : 'CLOSING_SUMMARY',
             reprint:
@@ -82,7 +101,7 @@ export function CashPrintPage() {
     };
   }, [
     id,
-    document,
+    documentType,
   ]);
 
   if (error) {
@@ -103,7 +122,7 @@ export function CashPrintPage() {
 
   const { session } = report;
 
-  if (document === 'detail') {
+  if (documentType === 'detail') {
     return (
       <main className="cash-print">
         <header className="cash-print__header">
