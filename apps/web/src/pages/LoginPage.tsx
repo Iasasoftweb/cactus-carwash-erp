@@ -26,10 +26,10 @@ export function LoginPage() {
   const navigate = useNavigate();
 
   const [username, setUsername] =
-    useState("admin");
+    useState("");
 
   const [password, setPassword] =
-    useState("admin123");
+    useState("");
 
   const [showPassword, setShowPassword] =
     useState(false);
