@@ -196,6 +196,10 @@ export function DashboardPage() {
     hasPermission(ERP_PERMISSIONS.companyView) ||
     hasPermission(ERP_PERMISSIONS.companyManage);
 
+  const canAccessInventory =
+    hasPermission(ERP_PERMISSIONS.inventoryView) ||
+    hasPermission(ERP_PERMISSIONS.inventoryManage);
+
   const canViewFinancialDashboard =
     dashboardContext?.canViewFinancialDashboard ?? false;
   const overdueInvoices =
@@ -345,6 +349,26 @@ export function DashboardPage() {
               <ShoppingBasket size={17} />
               <span>Productos</span>
             </button>
+
+            {canAccessInventory ? (
+              <>
+                <button
+                  type="button"
+                  onClick={() => navigate("/admin/inventory/overview")}
+                >
+                  <Boxes size={17} />
+                  <span>Inventario</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => navigate("/admin/inventory/kardex")}
+                >
+                  <PackageCheck size={17} />
+                  <span>Kardex</span>
+                </button>
+              </>
+            ) : null}
           </div>
 
           <div className="dashboard-v2__nav-group">
