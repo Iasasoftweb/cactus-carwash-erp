@@ -6,10 +6,15 @@ import {
   DollarSign,
   Download,
   House,
+  PackageSearch,
   Printer,
   ReceiptText,
+  ShieldAlert,
   Store,
+  TrendingUp,
+  UsersRound,
   WalletCards,
+  X,
 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -543,6 +548,27 @@ function ListPagination({
   );
 }
 
+type PosReportView =
+  | "summary"
+  | "transactions"
+  | "products"
+  | "operations"
+  | "shift-items"
+  | "comparisons"
+  | "trends"
+  | "controls";
+
+const POS_REPORT_VIEW_TITLES: Record<PosReportView, string> = {
+  summary: "Resumen de ventas",
+  transactions: "Ventas y transacciones",
+  products: "Productos y rentabilidad",
+  operations: "Cajeros y turnos",
+  "shift-items": "Artículos por turno",
+  comparisons: "Comparativos",
+  trends: "Tendencias",
+  controls: "Control y alertas",
+};
+
 export function PosSalesReportPage() {
   const navigate = useNavigate();
 
@@ -591,6 +617,7 @@ export function PosSalesReportPage() {
   const [loading, setLoading] = useState(true);
   const [consulting, setConsulting] = useState(false);
   const [error, setError] = useState("");
+  const [activeReport, setActiveReport] = useState<PosReportView | null>(null);
 
   async function loadReport(
     nextPointOfSaleId: string,
@@ -1816,10 +1843,244 @@ export function PosSalesReportPage() {
         <section className="settings-card">Cargando reporte...</section>
       ) : null}
 
-      {!loading && report ? (
-        <>
+      {!loading && report && !activeReport ? (
+        <section className="pos-report-center" aria-label="Centro de reportes POS">
+          <div className="pos-report-center__heading">
+            <div>
+              <p className="eyebrow">CENTRO DE REPORTES</p>
+              <h2>Selecciona qué deseas analizar</h2>
+              <p>
+                Todos los reportes utilizan el punto de venta y período
+                seleccionados arriba.
+              </p>
+            </div>
+          </div>
+
+          <div className="pos-report-center__grid">
+            <button
+              type="button"
+              className="pos-report-center__card"
+              data-tone="blue"
+              onClick={() => setActiveReport("summary")}
+            >
+              <div className="pos-report-center__icon">
+                <BarChart3 size={19} />
+              </div>
+              <div className="pos-report-center__content">
+                <strong>Resumen de ventas</strong>
+                <span>KPIs, cobros y modalidades de venta.</span>
+                <small>
+                  Abrir reporte
+                  <span className="pos-report-center__arrow">→</span>
+                </small>
+              </div>
+            </button>
+
+            <button
+              type="button"
+              className="pos-report-center__card"
+              data-tone="green"
+              onClick={() => setActiveReport("transactions")}
+            >
+              <div className="pos-report-center__icon">
+                <ReceiptText size={19} />
+              </div>
+              <div className="pos-report-center__content">
+                <strong>Ventas y transacciones</strong>
+                <span>Auditoría y detalle de operaciones.</span>
+                <small>
+                  Abrir reporte
+                  <span className="pos-report-center__arrow">→</span>
+                </small>
+              </div>
+            </button>
+
+            <button
+              type="button"
+              className="pos-report-center__card"
+              data-tone="purple"
+              onClick={() => setActiveReport("products")}
+            >
+              <div className="pos-report-center__icon">
+                <PackageSearch size={19} />
+              </div>
+              <div className="pos-report-center__content">
+                <strong>Productos y rentabilidad</strong>
+                <span>Categorías, productos, costos y margen.</span>
+                <small>
+                  Abrir reporte
+                  <span className="pos-report-center__arrow">→</span>
+                </small>
+              </div>
+            </button>
+
+            <button
+              type="button"
+              className="pos-report-center__card"
+              data-tone="amber"
+              onClick={() => setActiveReport("operations")}
+            >
+              <div className="pos-report-center__icon">
+                <UsersRound size={19} />
+              </div>
+              <div className="pos-report-center__content">
+                <strong>Cajeros y turnos</strong>
+                <span>Desempeño operativo y sesiones de caja.</span>
+                <small>
+                  Abrir reporte
+                  <span className="pos-report-center__arrow">→</span>
+                </small>
+              </div>
+            </button>
+
+            <button
+              type="button"
+              className="pos-report-center__card"
+              data-tone="red"
+              onClick={() => setActiveReport("shift-items")}
+            >
+              <div className="pos-report-center__icon">
+                <Store size={19} />
+              </div>
+              <div className="pos-report-center__content">
+                <strong>Artículos por turno</strong>
+                <span>Qué productos se vendieron en cada sesión.</span>
+                <small>
+                  Abrir reporte
+                  <span className="pos-report-center__arrow">→</span>
+                </small>
+              </div>
+            </button>
+
+            <button
+              type="button"
+              className="pos-report-center__card"
+              data-tone="cyan"
+              onClick={() => setActiveReport("comparisons")}
+            >
+              <div className="pos-report-center__icon">
+                <CreditCard size={19} />
+              </div>
+              <div className="pos-report-center__content">
+                <strong>Comparativos</strong>
+                <span>Períodos y puntos de venta.</span>
+                <small>
+                  Abrir reporte
+                  <span className="pos-report-center__arrow">→</span>
+                </small>
+              </div>
+            </button>
+
+            <button
+              type="button"
+              className="pos-report-center__card"
+              data-tone="indigo"
+              onClick={() => setActiveReport("trends")}
+            >
+              <div className="pos-report-center__icon">
+                <TrendingUp size={19} />
+              </div>
+              <div className="pos-report-center__content">
+                <strong>Tendencias</strong>
+                <span>Evolución diaria de ventas y rentabilidad.</span>
+                <small>
+                  Abrir reporte
+                  <span className="pos-report-center__arrow">→</span>
+                </small>
+              </div>
+            </button>
+
+            <button
+              type="button"
+              className="pos-report-center__card"
+              data-tone="pink"
+              onClick={() => setActiveReport("controls")}
+            >
+              <div className="pos-report-center__icon">
+                <ShieldAlert size={19} />
+              </div>
+              <div className="pos-report-center__content">
+                <strong>Control y alertas</strong>
+                <span>Políticas, umbrales, insights y calidad de datos.</span>
+                <small>
+                  Abrir reporte
+                  <span className="pos-report-center__arrow">→</span>
+                </small>
+              </div>
+            </button>
+          </div>
+        </section>
+      ) : null}
+
+      {!loading && report && activeReport ? (
+        <div
+          className="pos-report-modal-backdrop"
+          role="presentation"
+          onMouseDown={(event) => {
+            if (event.target === event.currentTarget) {
+              setActiveReport(null);
+            }
+          }}
+        >
+          <section
+            className="pos-report-modal"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="pos-report-modal-title"
+          >
+            <header
+              className="pos-report-modal__header"
+              data-report-tone={activeReport}
+            >
+              <div className="pos-report-modal__heading">
+                <div className="pos-report-modal__icon">
+                  {activeReport === "summary" ? <BarChart3 size={19} /> : null}
+                  {activeReport === "transactions" ? (
+                    <ReceiptText size={19} />
+                  ) : null}
+                  {activeReport === "products" ? (
+                    <PackageSearch size={19} />
+                  ) : null}
+                  {activeReport === "operations" ? (
+                    <UsersRound size={19} />
+                  ) : null}
+                  {activeReport === "shift-items" ? <Store size={19} /> : null}
+                  {activeReport === "comparisons" ? (
+                    <CreditCard size={19} />
+                  ) : null}
+                  {activeReport === "trends" ? <TrendingUp size={19} /> : null}
+                  {activeReport === "controls" ? (
+                    <ShieldAlert size={19} />
+                  ) : null}
+                </div>
+
+                <div>
+                  <p className="eyebrow">REPORTE POS</p>
+                  <h2 id="pos-report-modal-title">
+                    {POS_REPORT_VIEW_TITLES[activeReport]}
+                  </h2>
+                  <span>
+                    Datos del punto de venta y período seleccionados.
+                  </span>
+                </div>
+              </div>
+
+              <button
+                type="button"
+                className="pos-report-modal__close"
+                onClick={() => setActiveReport(null)}
+                aria-label="Cerrar reporte"
+              >
+                <X size={18} />
+              </button>
+            </header>
+
+            <div
+              className="pos-report-modal__body"
+              data-active-report={activeReport}
+            >
           {comparison ? (
-            <section className="settings-card pos-sales-comparison">
+            <section className="settings-card pos-sales-comparison" data-report-view="comparisons">
               <div className="pos-sales-report-section-title">
                 <BarChart3 size={20} />
                 <div>
@@ -1907,7 +2168,7 @@ export function PosSalesReportPage() {
             </section>
           ) : null}
 
-          <section className="pos-sales-report-kpis">
+          <section className="pos-sales-report-kpis" data-report-view="summary">
             <article>
               <div>
                 <ReceiptText size={20} />
@@ -1959,7 +2220,7 @@ export function PosSalesReportPage() {
             </article>
           </section>
 
-          <section className="pos-sales-report-grid">
+          <section className="pos-sales-report-grid" data-report-view="summary">
             <article className="settings-card">
               <div className="pos-sales-report-section-title">
                 <CreditCard size={20} />
@@ -2060,7 +2321,7 @@ export function PosSalesReportPage() {
           </section>
 
           {profitability ? (
-            <section className="settings-card pos-profitability">
+            <section className="settings-card pos-profitability" data-report-view="products">
               <div className="pos-sales-report-section-title">
                 <DollarSign size={20} />
                 <div>
@@ -2271,7 +2532,7 @@ export function PosSalesReportPage() {
             </section>
           ) : null}
 
-          <section className="settings-card pos-point-profitability">
+          <section className="settings-card pos-point-profitability" data-report-view="comparisons">
             <div className="pos-point-profitability__heading">
               <div className="pos-sales-report-section-title">
                 <Store size={20} />
@@ -2547,7 +2808,7 @@ export function PosSalesReportPage() {
           </section>
 
           {operationalProfitability ? (
-            <section className="settings-card pos-operational-profitability">
+            <section className="settings-card pos-operational-profitability" data-report-view="operations">
               <div className="pos-operational-profitability__heading">
                 <div className="pos-sales-report-section-title">
                   <WalletCards size={20} />
@@ -2809,7 +3070,7 @@ export function PosSalesReportPage() {
           ) : null}
 
           {profitabilityEvaluation ? (
-            <section className="settings-card pos-profitability-policy">
+            <section className="settings-card pos-profitability-policy" data-report-view="controls">
               <div className="pos-sales-report-section-title">
                 <DollarSign size={20} />
                 <div>
@@ -3021,7 +3282,7 @@ export function PosSalesReportPage() {
           ) : null}
 
           {profitability ? (
-            <section className="settings-card pos-profitability-insights">
+            <section className="settings-card pos-profitability-insights" data-report-view="controls">
               <div className="pos-sales-report-section-title">
                 <DollarSign size={20} />
                 <div>
@@ -3170,7 +3431,7 @@ export function PosSalesReportPage() {
           ) : null}
 
           {profitabilityTrend ? (
-            <section className="settings-card pos-profitability-trend">
+            <section className="settings-card pos-profitability-trend" data-report-view="trends">
               <div className="pos-sales-report-section-title">
                 <BarChart3 size={20} />
                 <div>
@@ -3373,7 +3634,7 @@ export function PosSalesReportPage() {
           ) : null}
 
           {trend ? (
-            <section className="settings-card pos-sales-charts">
+            <section className="settings-card pos-sales-charts" data-report-view="trends">
               <div className="pos-sales-report-section-title">
                 <BarChart3 size={20} />
                 <div>
@@ -3404,7 +3665,7 @@ export function PosSalesReportPage() {
           ) : null}
 
           {trend ? (
-            <section className="settings-card pos-sales-trend">
+            <section className="settings-card pos-sales-trend" data-report-view="trends">
               <div className="pos-sales-report-section-title">
                 <BarChart3 size={20} />
                 <div>
@@ -3466,7 +3727,7 @@ export function PosSalesReportPage() {
             </section>
           ) : null}
 
-          <section className="settings-card pos-sales-transactions">
+          <section className="settings-card pos-sales-transactions" data-report-view="transactions">
             <div className="pos-sales-report-section-title">
               <ReceiptText size={20} />
               <div>
@@ -3626,10 +3887,111 @@ export function PosSalesReportPage() {
             ) : null}
           </section>
 
+          {activeReport === "shift-items" ? (
+            <section
+              className="settings-card pos-shift-items-report"
+              data-report-view="shift-items"
+            >
+              <div className="pos-sales-report-section-title">
+                <PackageSearch size={20} />
+                <div>
+                  <p className="eyebrow">ARTÍCULOS POR TURNO</p>
+                  <h2>Productos vendidos por sesión de caja</h2>
+                  <p className="settings-note">
+                    La atribución utiliza la sesión de caja que procesó el pago.
+                  </p>
+                </div>
+              </div>
+
+              {!operationalProfitability ||
+              operationalProfitability.byShift.length === 0 ? (
+                <div className="operations-empty">
+                  No hay turnos con ventas atribuidas en este período.
+                </div>
+              ) : (
+                <div className="pos-shift-items-report__list">
+                  {operationalProfitability.byShift.map((shift) => (
+                    <article
+                      className="pos-shift-items-report__shift"
+                      key={shift.cashSessionId}
+                    >
+                      <header>
+                        <div>
+                          <strong>{shift.employeeName}</strong>
+                          <span>
+                            {shift.cashRegisterName} · {shift.employeeNo}
+                          </span>
+                        </div>
+
+                        <div>
+                          <strong>{money(shift.netRevenue)}</strong>
+                          <span>
+                            {new Date(shift.openedAt).toLocaleString("es-DO")}
+                          </span>
+                        </div>
+                      </header>
+
+                      {shift.items.length === 0 ? (
+                        <div className="operations-empty">
+                          No hay artículos asociados a este turno.
+                        </div>
+                      ) : (
+                        <div className="pos-shift-items-report__table-wrap">
+                          <table>
+                            <thead>
+                              <tr>
+                                <th>Artículo</th>
+                                <th>SKU</th>
+                                <th>Cantidad</th>
+                                <th>Ingreso</th>
+                                <th>Costo</th>
+                                <th>Margen</th>
+                                <th>Margen %</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {shift.items.map((item) => (
+                                <tr key={item.productId}>
+                                  <td>
+                                    <strong>{item.productName}</strong>
+                                  </td>
+                                  <td>{item.sku}</td>
+                                  <td>{item.quantity}</td>
+                                  <td>{money(item.netRevenue)}</td>
+                                  <td>
+                                    {item.costOfGoodsSold === null
+                                      ? "—"
+                                      : money(item.costOfGoodsSold)}
+                                  </td>
+                                  <td>
+                                    {item.grossMargin === null
+                                      ? "—"
+                                      : money(item.grossMargin)}
+                                  </td>
+                                  <td>
+                                    {item.grossMarginPercent === null
+                                      ? "—"
+                                      : `${item.grossMarginPercent.toFixed(1)}%`}
+                                  </td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
+                      )}
+                    </article>
+                  ))}
+                </div>
+              )}
+            </section>
+          ) : null}
+
           <p className="pos-sales-report-generated">
             Generado: {new Date(report.generatedAt).toLocaleString("es-DO")}
           </p>
-        </>
+            </div>
+          </section>
+        </div>
       ) : null}
     </main>
   );

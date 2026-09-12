@@ -51132,3 +51132,877 @@ html body .desktop-pos-v1
     width: 100%;
   }
 }
+
+/* =========================================================
+   CACTUS POS — REPORT CENTER 2026
+   ========================================================= */
+
+.pos-report-center {
+  width: 100%;
+  padding: 22px;
+  border: 1px solid rgba(15, 69, 54, 0.12);
+  border-radius: 20px;
+  background: #fff;
+  box-shadow: 0 12px 32px rgba(15, 69, 54, 0.06);
+}
+
+.pos-report-center__heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 18px;
+}
+
+.pos-report-center__heading h2 {
+  margin: 2px 0 4px;
+}
+
+.pos-report-center__heading p:last-child {
+  margin: 0;
+  opacity: 0.7;
+}
+
+.pos-report-center__grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.pos-sales-report-page .pos-report-center__card {
+  min-height: 142px;
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  gap: 7px;
+  text-align: left;
+  border-radius: 16px;
+  border: 1px solid rgba(15, 69, 54, 0.12);
+  background: linear-gradient(180deg, #ffffff 0%, #f7faf8 100%);
+  color: inherit;
+  box-shadow: none;
+  transition:
+    transform 140ms ease,
+    box-shadow 140ms ease,
+    border-color 140ms ease;
+}
+
+.pos-sales-report-page .pos-report-center__card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(24, 126, 91, 0.35);
+  box-shadow: 0 10px 24px rgba(15, 69, 54, 0.09);
+}
+
+.pos-report-center__card > svg {
+  color: #187e5b;
+}
+
+.pos-report-center__card strong {
+  font-size: 15px;
+}
+
+.pos-report-center__card span {
+  font-size: 12px;
+  line-height: 1.45;
+  opacity: 0.7;
+}
+
+.pos-report-center__card small {
+  margin-top: auto;
+  font-weight: 700;
+  color: #187e5b;
+}
+
+.pos-report-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  padding: 4vh 5vw;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(7, 23, 18, 0.58);
+  backdrop-filter: blur(4px);
+}
+
+.pos-report-modal {
+  width: min(1440px, 90vw);
+  height: 88vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border-radius: 22px;
+  background: #f6f8f7;
+  box-shadow: 0 32px 90px rgba(0, 0, 0, 0.28);
+}
+
+.pos-report-modal__header {
+  flex: 0 0 auto;
+  min-height: 82px;
+  padding: 18px 22px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  border-bottom: 1px solid rgba(15, 69, 54, 0.11);
+  background: #fff;
+}
+
+.pos-report-modal__header h2 {
+  margin: 1px 0 3px;
+}
+
+.pos-report-modal__header span {
+  font-size: 12px;
+  opacity: 0.65;
+}
+
+.pos-sales-report-page .pos-report-modal__close {
+  width: 42px;
+  height: 42px;
+  min-width: 42px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+}
+
+.pos-report-modal__body {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: auto;
+  padding: 20px;
+}
+
+@media (max-width: 1180px) {
+  .pos-report-center__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 720px) {
+  .pos-report-center {
+    padding: 14px;
+  }
+
+  .pos-report-center__grid {
+    grid-template-columns: 1fr;
+  }
+
+  .pos-report-modal-backdrop {
+    padding: 0;
+  }
+
+  .pos-report-modal {
+    width: 100vw;
+    height: 100vh;
+    border-radius: 0;
+  }
+
+  .pos-report-modal__body {
+    padding: 12px;
+  }
+}
+
+/* END CACTUS POS — REPORT CENTER 2026 */
+
+/* CACTUS POS — REPORT CENTER VIEW ROUTING */
+
+.pos-report-modal__body > [data-report-view] {
+  display: none;
+}
+
+.pos-report-modal__body[data-active-report="summary"]
+  > [data-report-view="summary"],
+.pos-report-modal__body[data-active-report="transactions"]
+  > [data-report-view="transactions"],
+.pos-report-modal__body[data-active-report="products"]
+  > [data-report-view="products"],
+.pos-report-modal__body[data-active-report="operations"]
+  > [data-report-view="operations"],
+.pos-report-modal__body[data-active-report="comparisons"]
+  > [data-report-view="comparisons"],
+.pos-report-modal__body[data-active-report="trends"]
+  > [data-report-view="trends"],
+.pos-report-modal__body[data-active-report="controls"]
+  > [data-report-view="controls"] {
+  display: block;
+}
+
+.pos-report-modal__body[data-active-report="summary"]
+  > .pos-sales-report-grid {
+  display: grid;
+}
+
+/* END CACTUS POS — REPORT CENTER VIEW ROUTING */
+
+/* CACTUS POS — SHIFT ITEMS REPORT */
+
+.pos-report-modal__body[data-active-report="shift-items"]
+  > [data-report-view="shift-items"] {
+  display: block;
+}
+
+.pos-shift-items-report__list {
+  display: grid;
+  gap: 16px;
+  margin-top: 18px;
+}
+
+.pos-shift-items-report__shift {
+  overflow: hidden;
+  border: 1px solid rgba(15, 69, 54, 0.12);
+  border-radius: 14px;
+  background: #fff;
+}
+
+.pos-shift-items-report__shift > header {
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  border-bottom: 1px solid rgba(15, 69, 54, 0.1);
+  background: #f7faf8;
+}
+
+.pos-shift-items-report__shift > header > div {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.pos-shift-items-report__shift > header > div:last-child {
+  text-align: right;
+}
+
+.pos-shift-items-report__shift header span {
+  font-size: 12px;
+  opacity: 0.7;
+}
+
+.pos-shift-items-report__table-wrap {
+  overflow-x: auto;
+}
+
+.pos-shift-items-report table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.pos-shift-items-report th,
+.pos-shift-items-report td {
+  padding: 11px 14px;
+  text-align: left;
+  white-space: nowrap;
+  border-bottom: 1px solid rgba(15, 69, 54, 0.08);
+}
+
+.pos-shift-items-report th {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  background: #fbfcfb;
+}
+
+@media (max-width: 720px) {
+  .pos-shift-items-report__shift > header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .pos-shift-items-report__shift > header > div:last-child {
+    text-align: left;
+  }
+}
+
+/* END CACTUS POS — SHIFT ITEMS REPORT */
+
+/* =========================================================
+   CACTUS POS — MODERN REPORT CENTER UI
+   ========================================================= */
+
+.pos-sales-report-page {
+  --report-blue: #1677ff;
+  --report-green: #159b68;
+  --report-purple: #7c3aed;
+  --report-amber: #d89a00;
+  --report-red: #ed174c;
+  --report-cyan: #0aa6b5;
+  --report-indigo: #2563eb;
+  --report-pink: #d80b78;
+  --report-ink: #14273d;
+  --report-muted: #718399;
+  --report-border: #dce5ec;
+}
+
+/* CABECERA */
+
+.pos-sales-report-page.maintenance-page {
+  background:
+    radial-gradient(circle at 10% 10%, rgba(20, 120, 95, 0.035), transparent 25%),
+    #f6f9fa;
+}
+
+.pos-sales-report-page > .pos-sales-report-header {
+  border: 1px solid #e1e9ef;
+  border-radius: 18px;
+  background: #ffffff;
+  box-shadow: 0 4px 14px rgba(20, 39, 61, 0.045);
+}
+
+.pos-sales-report-page .pos-sales-report-header .maintenance-header__icon {
+  width: 46px;
+  height: 46px;
+  border-radius: 12px;
+  background: linear-gradient(145deg, #edf6ff, #e5f1fb);
+  color: #1768b7;
+}
+
+.pos-sales-report-page .pos-sales-report-header .maintenance-header__icon svg {
+  width: 20px;
+  height: 20px;
+}
+
+.pos-sales-report-page .pos-sales-report-header h1 {
+  color: var(--report-ink);
+  letter-spacing: -0.025em;
+}
+
+.pos-sales-report-page .pos-sales-report-header p {
+  color: var(--report-muted);
+}
+
+/* FILTROS */
+
+.pos-sales-report-page .pos-sales-report-filters {
+  border: 1px solid rgba(21, 155, 104, 0.22);
+  border-radius: 16px;
+  background:
+    linear-gradient(
+      100deg,
+      rgba(21, 155, 104, 0.025),
+      rgba(255, 255, 255, 0.98) 30%
+    );
+  box-shadow: 0 5px 18px rgba(20, 39, 61, 0.045);
+}
+
+.pos-sales-report-page .pos-sales-report-filters
+  .pos-sales-report-section-title > svg {
+  width: 18px;
+  height: 18px;
+  color: #159b68;
+}
+
+.pos-sales-report-page .pos-sales-report-filter-grid label {
+  color: #3e5b72;
+  font-weight: 700;
+}
+
+.pos-sales-report-page .pos-sales-report-filter-grid select,
+.pos-sales-report-page .pos-sales-report-filter-grid input {
+  min-height: 42px;
+  border: 1px solid #cfdce7;
+  border-radius: 10px;
+  background: #ffffff;
+  box-shadow: inset 0 1px 2px rgba(20, 39, 61, 0.025);
+}
+
+.pos-sales-report-page .pos-sales-report-filter-grid select:focus,
+.pos-sales-report-page .pos-sales-report-filter-grid input:focus {
+  border-color: #159b68;
+  box-shadow: 0 0 0 3px rgba(21, 155, 104, 0.1);
+}
+
+.pos-sales-report-page .pos-sales-report-filter-grid > button {
+  min-height: 42px;
+  border: 0;
+  border-radius: 10px;
+  color: #fff;
+  background: linear-gradient(135deg, #159b68, #008b59);
+  box-shadow: 0 5px 13px rgba(21, 155, 104, 0.18);
+}
+
+.pos-sales-report-page .pos-sales-report-filter-grid > button:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 7px 18px rgba(21, 155, 104, 0.25);
+}
+
+/* CENTRO DE REPORTES */
+
+.pos-report-center {
+  position: relative;
+  overflow: hidden;
+  padding: 20px 22px 22px;
+  border: 1px solid #e0e8ee;
+  border-radius: 20px;
+  background: #ffffff;
+  box-shadow: 0 8px 26px rgba(20, 39, 61, 0.055);
+}
+
+.pos-report-center::after {
+  content: "";
+  position: absolute;
+  right: -90px;
+  top: -110px;
+  width: 260px;
+  height: 260px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(21, 155, 104, 0.045),
+    rgba(21, 155, 104, 0)
+  );
+  pointer-events: none;
+}
+
+.pos-report-center__heading {
+  position: relative;
+  z-index: 1;
+  margin-bottom: 17px;
+}
+
+.pos-report-center__heading .eyebrow {
+  color: #7087a1;
+  letter-spacing: 0.13em;
+}
+
+.pos-report-center__heading h2 {
+  margin: 3px 0 3px;
+  color: var(--report-ink);
+  font-size: clamp(21px, 1.65vw, 27px);
+  letter-spacing: -0.025em;
+}
+
+.pos-report-center__heading p:last-child {
+  color: #65798f;
+}
+
+/* TARJETAS */
+
+.pos-report-center__grid {
+  position: relative;
+  z-index: 1;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.pos-sales-report-page .pos-report-center__card {
+  --card-accent: var(--report-blue);
+  --card-soft: rgba(22, 119, 255, 0.10);
+
+  position: relative;
+  min-height: 132px;
+  padding: 17px 17px 15px 22px;
+  display: grid;
+  grid-template-columns: 50px minmax(0, 1fr);
+  align-items: flex-start;
+  gap: 14px;
+  overflow: hidden;
+
+  text-align: left;
+  color: var(--report-ink);
+
+  border: 1px solid #dce5ec;
+  border-radius: 14px;
+  background:
+    linear-gradient(125deg, #ffffff 0%, #ffffff 72%, var(--card-soft) 150%);
+  box-shadow: 0 4px 12px rgba(20, 39, 61, 0.055);
+
+  transition:
+    transform 150ms ease,
+    border-color 150ms ease,
+    box-shadow 150ms ease;
+}
+
+.pos-sales-report-page .pos-report-center__card::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 5px;
+  background: var(--card-accent);
+}
+
+.pos-sales-report-page .pos-report-center__card:hover {
+  transform: translateY(-2px);
+  border-color: color-mix(in srgb, var(--card-accent) 32%, #dce5ec);
+  box-shadow: 0 10px 24px rgba(20, 39, 61, 0.09);
+}
+
+.pos-report-center__icon {
+  width: 48px;
+  height: 48px;
+  display: grid;
+  place-items: center;
+  border-radius: 12px;
+  color: var(--card-accent);
+  background: var(--card-soft);
+}
+
+.pos-report-center__icon svg {
+  width: 19px !important;
+  height: 19px !important;
+  stroke-width: 2;
+}
+
+.pos-report-center__content {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.pos-report-center__content > strong {
+  margin-top: 3px;
+  color: #203b54;
+  font-size: 15px;
+  line-height: 1.2;
+}
+
+.pos-report-center__content > span {
+  min-height: 34px;
+  margin-top: 5px;
+  color: #718399;
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.pos-report-center__content > small {
+  margin-top: 8px;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  color: var(--card-accent);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.pos-report-center__arrow {
+  width: 25px;
+  height: 25px;
+  display: inline-grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--card-soft);
+  font-size: 17px;
+  line-height: 1;
+}
+
+.pos-report-center__card[data-tone="blue"] {
+  --card-accent: #1677ff;
+  --card-soft: rgba(22, 119, 255, 0.10);
+}
+
+.pos-report-center__card[data-tone="green"] {
+  --card-accent: #159b68;
+  --card-soft: rgba(21, 155, 104, 0.11);
+}
+
+.pos-report-center__card[data-tone="purple"] {
+  --card-accent: #7c3aed;
+  --card-soft: rgba(124, 58, 237, 0.10);
+}
+
+.pos-report-center__card[data-tone="amber"] {
+  --card-accent: #d99a00;
+  --card-soft: rgba(217, 154, 0, 0.12);
+}
+
+.pos-report-center__card[data-tone="red"] {
+  --card-accent: #ed174c;
+  --card-soft: rgba(237, 23, 76, 0.10);
+}
+
+.pos-report-center__card[data-tone="cyan"] {
+  --card-accent: #0aa6b5;
+  --card-soft: rgba(10, 166, 181, 0.11);
+}
+
+.pos-report-center__card[data-tone="indigo"] {
+  --card-accent: #2563eb;
+  --card-soft: rgba(37, 99, 235, 0.10);
+}
+
+.pos-report-center__card[data-tone="pink"] {
+  --card-accent: #d80b78;
+  --card-soft: rgba(216, 11, 120, 0.10);
+}
+
+/* =========================================================
+   MODALES — MISMO SISTEMA VISUAL
+   ========================================================= */
+
+.pos-report-modal-backdrop {
+  background: rgba(13, 30, 43, 0.52);
+  backdrop-filter: blur(7px);
+}
+
+.pos-report-modal {
+  width: min(1460px, 92vw);
+  height: min(900px, 90vh);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  border-radius: 20px;
+  background: #f5f8fa;
+  box-shadow:
+    0 32px 85px rgba(13, 30, 43, 0.28),
+    0 4px 14px rgba(13, 30, 43, 0.10);
+}
+
+.pos-report-modal__header {
+  position: relative;
+  min-height: 84px;
+  padding: 17px 20px;
+  border-bottom: 1px solid #dde6ec;
+  background:
+    linear-gradient(
+      100deg,
+      var(--modal-soft, rgba(22, 119, 255, 0.045)),
+      #ffffff 28%
+    );
+}
+
+.pos-report-modal__header::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 5px;
+  background: var(--modal-accent, #1677ff);
+}
+
+.pos-report-modal__heading {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.pos-report-modal__icon {
+  width: 44px;
+  height: 44px;
+  flex: 0 0 44px;
+  display: grid;
+  place-items: center;
+  border-radius: 12px;
+  color: var(--modal-accent, #1677ff);
+  background: var(--modal-soft, rgba(22, 119, 255, 0.10));
+}
+
+.pos-report-modal__icon svg {
+  width: 19px;
+  height: 19px;
+}
+
+.pos-report-modal__header h2 {
+  margin: 1px 0 2px;
+  color: var(--report-ink);
+  font-size: 22px;
+  letter-spacing: -0.02em;
+}
+
+.pos-report-modal__header .eyebrow {
+  color: var(--modal-accent, #1677ff);
+}
+
+.pos-report-modal__header span {
+  color: #718399;
+  font-size: 12px;
+}
+
+.pos-sales-report-page .pos-report-modal__close {
+  width: 38px;
+  height: 38px;
+  min-width: 38px;
+  border: 1px solid #dce5ec;
+  border-radius: 10px;
+  color: #50677c;
+  background: #ffffff;
+  box-shadow: 0 2px 6px rgba(20, 39, 61, 0.04);
+}
+
+.pos-sales-report-page .pos-report-modal__close:hover {
+  border-color: var(--modal-accent, #1677ff);
+  color: var(--modal-accent, #1677ff);
+  background: var(--modal-soft, rgba(22, 119, 255, 0.06));
+}
+
+.pos-report-modal__body {
+  padding: 18px;
+  background:
+    radial-gradient(
+      circle at 95% 5%,
+      var(--modal-soft, rgba(22, 119, 255, 0.035)),
+      transparent 22%
+    ),
+    #f5f8fa;
+}
+
+/* TONOS POR MODAL */
+
+.pos-report-modal__header[data-report-tone="summary"],
+.pos-report-modal:has(.pos-report-modal__body[data-active-report="summary"]) {
+  --modal-accent: #1677ff;
+  --modal-soft: rgba(22, 119, 255, 0.10);
+}
+
+.pos-report-modal__header[data-report-tone="transactions"],
+.pos-report-modal:has(.pos-report-modal__body[data-active-report="transactions"]) {
+  --modal-accent: #159b68;
+  --modal-soft: rgba(21, 155, 104, 0.10);
+}
+
+.pos-report-modal__header[data-report-tone="products"],
+.pos-report-modal:has(.pos-report-modal__body[data-active-report="products"]) {
+  --modal-accent: #7c3aed;
+  --modal-soft: rgba(124, 58, 237, 0.10);
+}
+
+.pos-report-modal__header[data-report-tone="operations"],
+.pos-report-modal:has(.pos-report-modal__body[data-active-report="operations"]) {
+  --modal-accent: #d99a00;
+  --modal-soft: rgba(217, 154, 0, 0.11);
+}
+
+.pos-report-modal__header[data-report-tone="shift-items"],
+.pos-report-modal:has(.pos-report-modal__body[data-active-report="shift-items"]) {
+  --modal-accent: #ed174c;
+  --modal-soft: rgba(237, 23, 76, 0.09);
+}
+
+.pos-report-modal__header[data-report-tone="comparisons"],
+.pos-report-modal:has(.pos-report-modal__body[data-active-report="comparisons"]) {
+  --modal-accent: #0aa6b5;
+  --modal-soft: rgba(10, 166, 181, 0.10);
+}
+
+.pos-report-modal__header[data-report-tone="trends"],
+.pos-report-modal:has(.pos-report-modal__body[data-active-report="trends"]) {
+  --modal-accent: #2563eb;
+  --modal-soft: rgba(37, 99, 235, 0.10);
+}
+
+.pos-report-modal__header[data-report-tone="controls"],
+.pos-report-modal:has(.pos-report-modal__body[data-active-report="controls"]) {
+  --modal-accent: #d80b78;
+  --modal-soft: rgba(216, 11, 120, 0.09);
+}
+
+/* CONTENIDO INTERNO DE TODOS LOS MODALES */
+
+.pos-report-modal__body .settings-card,
+.pos-report-modal__body .pos-sales-report-kpis > article,
+.pos-report-modal__body .pos-sales-chart-card,
+.pos-report-modal__body .pos-profitability__panel,
+.pos-report-modal__body .pos-operational-profitability__panel,
+.pos-report-modal__body .pos-profitability-insights__panel,
+.pos-report-modal__body .pos-profitability-trend__panel {
+  border: 1px solid #dde6ec;
+  border-radius: 14px;
+  background: #ffffff;
+  box-shadow: 0 4px 12px rgba(20, 39, 61, 0.045);
+}
+
+.pos-report-modal__body .pos-sales-report-section-title > svg {
+  width: 18px;
+  height: 18px;
+  color: var(--modal-accent, #1677ff);
+}
+
+.pos-report-modal__body .pos-sales-report-section-title h2,
+.pos-report-modal__body h3 {
+  color: #203b54;
+}
+
+.pos-report-modal__body .eyebrow {
+  color: var(--modal-accent, #1677ff);
+}
+
+.pos-report-modal__body table {
+  overflow: hidden;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.pos-report-modal__body table thead th {
+  color: #526d83;
+  background: #f7fafb;
+  border-bottom: 1px solid #dce5ec;
+}
+
+.pos-report-modal__body table tbody tr {
+  transition: background 120ms ease;
+}
+
+.pos-report-modal__body table tbody tr:hover {
+  background: var(--modal-soft, rgba(22, 119, 255, 0.035));
+}
+
+.pos-report-modal__body input,
+.pos-report-modal__body select {
+  border-radius: 9px;
+  border-color: #cfdce7;
+}
+
+.pos-report-modal__body button:not(.pos-report-modal__close) {
+  border-radius: 9px;
+}
+
+/* ARTÍCULOS POR TURNO */
+
+.pos-shift-items-report__shift {
+  border: 1px solid #dde6ec;
+  border-left: 4px solid var(--modal-accent, #ed174c);
+  border-radius: 13px;
+  box-shadow: 0 4px 12px rgba(20, 39, 61, 0.045);
+}
+
+.pos-shift-items-report__shift > header {
+  background:
+    linear-gradient(
+      100deg,
+      var(--modal-soft, rgba(237, 23, 76, 0.05)),
+      #ffffff 32%
+    );
+}
+
+.pos-shift-items-report th {
+  color: #526d83;
+  background: #f7fafb;
+}
+
+/* RESPONSIVE */
+
+@media (max-width: 1180px) {
+  .pos-report-center__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 720px) {
+  .pos-report-center__grid {
+    grid-template-columns: 1fr;
+  }
+
+  .pos-sales-report-page .pos-report-center__card {
+    min-height: 116px;
+  }
+
+  .pos-report-modal {
+    width: 100vw;
+    height: 100vh;
+    border-radius: 0;
+  }
+
+  .pos-report-modal__header {
+    min-height: 76px;
+    padding: 14px;
+  }
+
+  .pos-report-modal__body {
+    padding: 12px;
+  }
+}
+
+/* END CACTUS POS — MODERN REPORT CENTER UI */

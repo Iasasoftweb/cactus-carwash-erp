@@ -1351,10 +1351,17 @@ export class PosService {
           id: true,
           items: {
             select: {
+              productId: true,
               quantity: true,
               unitPrice: true,
               unitCost: true,
               costTotal: true,
+              product: {
+                select: {
+                  sku: true,
+                  name: true,
+                },
+              },
             },
           },
         },
@@ -1373,10 +1380,17 @@ export class PosService {
           id: true,
           items: {
             select: {
+              productId: true,
               quantity: true,
               unitPrice: true,
               unitCost: true,
               costTotal: true,
+              product: {
+                select: {
+                  sku: true,
+                  name: true,
+                },
+              },
             },
           },
         },
@@ -1563,6 +1577,10 @@ export class PosService {
     }
 
     type Line = {
+      productId: string;
+      productName: string;
+      sku: string;
+      quantity: number;
       netRevenue: number;
       costTotal: number | null;
     };
@@ -1576,6 +1594,10 @@ export class PosService {
       ...validDirectSales.map((sale) => ({
         sourceKey: `POS_DIRECT:${sale.id}`,
         lines: sale.items.map((item) => ({
+          productId: item.productId,
+          productName: item.product.name,
+          sku: item.product.sku,
+          quantity: Number(item.quantity),
           netRevenue: roundMoney(
             Number(item.quantity) * Number(item.unitPrice),
           ),
@@ -1589,6 +1611,10 @@ export class PosService {
       ...validAccountSales.map((sale) => ({
         sourceKey: `POS_ACCOUNT:${sale.id}`,
         lines: sale.items.map((item) => ({
+          productId: item.productId,
+          productName: item.product.name,
+          sku: item.product.sku,
+          quantity: Number(item.quantity),
           netRevenue: roundMoney(
             Number(item.quantity) * Number(item.unitPrice),
           ),
@@ -1657,6 +1683,76 @@ export class PosService {
       };
     };
 
+    const buildProductMetrics = (groupedSales: Sale[]) => {
+      const productMap = new Map<
+        string,
+        {
+          productId: string;
+          productName: string;
+          sku: string;
+          quantity: number;
+          netRevenue: number;
+          costOfGoodsSold: number;
+          hasUnknownCost: boolean;
+        }
+      >();
+
+      for (const sale of groupedSales) {
+        for (const line of sale.lines) {
+          const current = productMap.get(line.productId);
+
+          if (current) {
+            current.quantity += line.quantity;
+            current.netRevenue += line.netRevenue;
+
+            if (line.costTotal === null) {
+              current.hasUnknownCost = true;
+            } else {
+              current.costOfGoodsSold += line.costTotal;
+            }
+          } else {
+            productMap.set(line.productId, {
+              productId: line.productId,
+              productName: line.productName,
+              sku: line.sku,
+              quantity: line.quantity,
+              netRevenue: line.netRevenue,
+              costOfGoodsSold: line.costTotal ?? 0,
+              hasUnknownCost: line.costTotal === null,
+            });
+          }
+        }
+      }
+
+      return [...productMap.values()]
+        .map((row) => {
+          const netRevenue = roundMoney(row.netRevenue);
+          const costOfGoodsSold = roundMoney(row.costOfGoodsSold);
+          const grossMargin = row.hasUnknownCost
+            ? null
+            : roundMoney(netRevenue - costOfGoodsSold);
+
+          return {
+            productId: row.productId,
+            productName: row.productName,
+            sku: row.sku,
+            quantity: Math.round(row.quantity * 1000) / 1000,
+            netRevenue,
+            costOfGoodsSold: row.hasUnknownCost ? null : costOfGoodsSold,
+            grossMargin,
+            grossMarginPercent:
+              grossMargin !== null && netRevenue > 0
+                ? Math.round((grossMargin / netRevenue) * 1000) / 10
+                : null,
+          };
+        })
+        .sort(
+          (a, b) =>
+            b.netRevenue - a.netRevenue ||
+            a.productName.localeCompare(b.productName),
+        );
+    };
+
     const salesBySession = new Map<string, Sale[]>();
 
     let unattributedSalesCount = 0;
@@ -1704,6 +1800,7 @@ export class PosService {
           openedAt: session.openedAt.toISOString(),
           closedAt: session.closedAt?.toISOString() ?? null,
           status: session.status,
+          items: buildProductMetrics(groupedSales),
           ...buildMetrics(groupedSales),
         };
       })

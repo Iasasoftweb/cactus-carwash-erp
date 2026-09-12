@@ -844,6 +844,17 @@ export type PosProfitabilityByEmployeeResponse =
     sessionsCount: number;
   };
 
+export type PosProfitabilityByShiftItemResponse = {
+  productId: string;
+  productName: string;
+  sku: string;
+  quantity: number;
+  netRevenue: number;
+  costOfGoodsSold: number | null;
+  grossMargin: number | null;
+  grossMarginPercent: number | null;
+};
+
 export type PosProfitabilityByShiftResponse =
   PosOperationalProfitabilityMetricsResponse & {
     cashSessionId: string;
@@ -855,6 +866,7 @@ export type PosProfitabilityByShiftResponse =
     openedAt: string;
     closedAt: string | null;
     status: 'OPEN' | 'CLOSED';
+    items: PosProfitabilityByShiftItemResponse[];
   };
 
 export type PosOperationalProfitabilityReportResponse = {
