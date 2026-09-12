@@ -52006,3 +52006,1489 @@ html body .desktop-pos-v1
 }
 
 /* END CACTUS POS — MODERN REPORT CENTER UI */
+
+
+/* CACTUS POS — DASHBOARD STYLE HOMOLOGATION START */
+
+/*
+ * Reportes POS
+ * Homologación visual con Dashboard principal.
+ * Solo presentación: no modifica comportamiento, datos ni permisos.
+ */
+
+.pos-sales-report-page {
+  --dashboard-bg: #f5f8f9;
+  --dashboard-surface: #ffffff;
+  --dashboard-border: #d8e1e6;
+  --dashboard-border-soft: #e5ebef;
+  --dashboard-ink: #24323d;
+  --dashboard-muted: #6f8190;
+  --dashboard-muted-soft: #8c9baa;
+  --dashboard-green: #19734f;
+  --dashboard-green-strong: #126442;
+  --dashboard-green-soft: #edf7f2;
+  --dashboard-blue-soft: #edf4f7;
+  --dashboard-blue: #5e7c8e;
+  --dashboard-warning-soft: #fff6e5;
+  --dashboard-warning: #c77d00;
+  --dashboard-danger-soft: #fff0f0;
+  --dashboard-danger: #d64c45;
+
+  background: var(--dashboard-bg) !important;
+  color: var(--dashboard-ink);
+}
+
+
+/* =========================================================
+   HEADER
+   ========================================================= */
+
+.pos-sales-report-page > .pos-sales-report-header,
+.pos-sales-report-page .pos-sales-report-header {
+  border: 1px solid var(--dashboard-border) !important;
+  border-radius: 14px !important;
+  background: var(--dashboard-surface) !important;
+  box-shadow: 0 1px 3px rgba(31, 49, 61, 0.035) !important;
+}
+
+.pos-sales-report-page .pos-sales-report-header .maintenance-header__icon {
+  width: 42px !important;
+  height: 42px !important;
+  border-radius: 11px !important;
+  color: var(--dashboard-blue) !important;
+  background: var(--dashboard-blue-soft) !important;
+  border: 1px solid #d6e3e9 !important;
+  box-shadow: none !important;
+}
+
+.pos-sales-report-page .pos-sales-report-header .maintenance-header__icon svg {
+  width: 17px !important;
+  height: 17px !important;
+  stroke-width: 1.8 !important;
+}
+
+.pos-sales-report-page .pos-sales-report-header h1 {
+  color: #1f2d38 !important;
+  font-weight: 800 !important;
+  letter-spacing: -0.025em !important;
+}
+
+.pos-sales-report-page .pos-sales-report-header p {
+  color: var(--dashboard-muted) !important;
+}
+
+
+/* =========================================================
+   BOTONES SUPERIORES
+   ========================================================= */
+
+.pos-sales-report-page .pos-sales-report-header button,
+.pos-sales-report-page .pos-sales-report-header a {
+  border-radius: 9px !important;
+  border-color: #cdd9df !important;
+  box-shadow: none !important;
+}
+
+.pos-sales-report-page .pos-sales-report-header button svg,
+.pos-sales-report-page .pos-sales-report-header a svg {
+  width: 15px !important;
+  height: 15px !important;
+}
+
+
+/* =========================================================
+   FILTROS
+   ========================================================= */
+
+.pos-sales-report-page .pos-sales-report-filters {
+  border: 1px solid var(--dashboard-border) !important;
+  border-radius: 13px !important;
+  background: var(--dashboard-surface) !important;
+  box-shadow: 0 1px 3px rgba(31, 49, 61, 0.03) !important;
+}
+
+.pos-sales-report-page .pos-sales-report-filters::before,
+.pos-sales-report-page .pos-sales-report-filters::after {
+  display: none !important;
+}
+
+.pos-sales-report-page .pos-sales-report-filters .eyebrow,
+.pos-sales-report-page .pos-sales-report-section-title .eyebrow {
+  color: var(--dashboard-green) !important;
+  font-size: 10px !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.12em !important;
+}
+
+.pos-sales-report-page .pos-sales-report-filters
+  .pos-sales-report-section-title > svg {
+  width: 16px !important;
+  height: 16px !important;
+  color: var(--dashboard-green) !important;
+}
+
+.pos-sales-report-page .pos-sales-report-filters h2 {
+  color: var(--dashboard-ink) !important;
+  font-size: 20px !important;
+}
+
+.pos-sales-report-page .pos-sales-report-filter-grid label {
+  color: #506879 !important;
+  font-size: 12px !important;
+  font-weight: 700 !important;
+}
+
+.pos-sales-report-page .pos-sales-report-filter-grid input,
+.pos-sales-report-page .pos-sales-report-filter-grid select {
+  min-height: 36px !important;
+  border: 1px solid #cad7df !important;
+  border-radius: 8px !important;
+  background: #fff !important;
+  color: var(--dashboard-ink) !important;
+  box-shadow: none !important;
+}
+
+.pos-sales-report-page .pos-sales-report-filter-grid input:focus,
+.pos-sales-report-page .pos-sales-report-filter-grid select:focus {
+  border-color: #7fae99 !important;
+  box-shadow: 0 0 0 2px rgba(25, 115, 79, 0.08) !important;
+}
+
+.pos-sales-report-page .pos-sales-report-filter-grid > button {
+  min-height: 36px !important;
+  border: 1px solid var(--dashboard-green) !important;
+  border-radius: 8px !important;
+  color: #ffffff !important;
+  background: var(--dashboard-green) !important;
+  box-shadow: none !important;
+  font-weight: 700 !important;
+}
+
+.pos-sales-report-page
+  .pos-sales-report-filter-grid
+  > button:hover:not(:disabled) {
+  transform: none !important;
+  background: var(--dashboard-green-strong) !important;
+  border-color: var(--dashboard-green-strong) !important;
+  box-shadow: none !important;
+}
+
+
+/* =========================================================
+   CENTRO DE REPORTES
+   ========================================================= */
+
+.pos-sales-report-page .pos-report-center {
+  padding: 18px 20px 20px !important;
+  overflow: hidden !important;
+  border: 1px solid var(--dashboard-border) !important;
+  border-radius: 14px !important;
+  background: var(--dashboard-surface) !important;
+  box-shadow: 0 1px 3px rgba(31, 49, 61, 0.03) !important;
+}
+
+.pos-sales-report-page .pos-report-center::before,
+.pos-sales-report-page .pos-report-center::after {
+  display: none !important;
+}
+
+.pos-sales-report-page .pos-report-center__heading {
+  margin-bottom: 16px !important;
+}
+
+.pos-sales-report-page .pos-report-center__heading .eyebrow {
+  margin-bottom: 3px !important;
+  color: var(--dashboard-green) !important;
+  font-size: 10px !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.12em !important;
+}
+
+.pos-sales-report-page .pos-report-center__heading h2 {
+  margin: 0 0 4px !important;
+  color: var(--dashboard-ink) !important;
+  font-size: 20px !important;
+  font-weight: 800 !important;
+  letter-spacing: -0.015em !important;
+}
+
+.pos-sales-report-page .pos-report-center__heading p {
+  color: var(--dashboard-muted) !important;
+  font-size: 13px !important;
+}
+
+
+/* =========================================================
+   GRID DE MÓDULOS
+   ========================================================= */
+
+.pos-sales-report-page .pos-report-center__grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  gap: 9px !important;
+}
+
+
+/* =========================================================
+   TARJETAS — MISMO LENGUAJE DEL DASHBOARD
+   ========================================================= */
+
+.pos-sales-report-page .pos-report-center__card {
+  --card-accent: var(--dashboard-green) !important;
+  --card-soft: var(--dashboard-blue-soft) !important;
+
+  position: relative !important;
+
+  min-height: 96px !important;
+  padding: 12px !important;
+
+  display: grid !important;
+  grid-template-columns: 40px minmax(0, 1fr) !important;
+  gap: 11px !important;
+  align-items: center !important;
+
+  border: 1px solid var(--dashboard-border) !important;
+  border-radius: 9px !important;
+
+  background: #ffffff !important;
+  color: var(--dashboard-ink) !important;
+
+  box-shadow: none !important;
+
+  transform: none !important;
+  transition:
+    border-color 140ms ease,
+    background 140ms ease !important;
+}
+
+.pos-sales-report-page .pos-report-center__card::before,
+.pos-sales-report-page .pos-report-center__card::after {
+  display: none !important;
+}
+
+.pos-sales-report-page .pos-report-center__card:hover {
+  transform: none !important;
+  border-color: #b7c7d0 !important;
+  background: #fbfcfc !important;
+  box-shadow: 0 2px 5px rgba(31, 49, 61, 0.04) !important;
+}
+
+
+/* =========================================================
+   TONOS SUTILES
+   ========================================================= */
+
+.pos-sales-report-page
+  .pos-report-center__card[data-tone="blue"],
+.pos-sales-report-page
+  .pos-report-center__card[data-tone="indigo"] {
+  --card-accent: #607f91 !important;
+  --card-soft: #edf4f7 !important;
+}
+
+.pos-sales-report-page
+  .pos-report-center__card[data-tone="green"],
+.pos-sales-report-page
+  .pos-report-center__card[data-tone="cyan"] {
+  --card-accent: #19734f !important;
+  --card-soft: #edf7f2 !important;
+}
+
+.pos-sales-report-page
+  .pos-report-center__card[data-tone="purple"] {
+  --card-accent: #6c718e !important;
+  --card-soft: #f1f1f6 !important;
+}
+
+.pos-sales-report-page
+  .pos-report-center__card[data-tone="amber"] {
+  --card-accent: #b77912 !important;
+  --card-soft: #fff5e4 !important;
+}
+
+.pos-sales-report-page
+  .pos-report-center__card[data-tone="red"],
+.pos-sales-report-page
+  .pos-report-center__card[data-tone="pink"] {
+  --card-accent: #b95656 !important;
+  --card-soft: #fff0f0 !important;
+}
+
+
+/* =========================================================
+   ICONOS COMPACTOS
+   ========================================================= */
+
+.pos-sales-report-page .pos-report-center__icon {
+  width: 40px !important;
+  height: 40px !important;
+  display: grid !important;
+  place-items: center !important;
+
+  border-radius: 9px !important;
+
+  color: var(--card-accent) !important;
+  background: var(--card-soft) !important;
+
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+.pos-sales-report-page .pos-report-center__icon svg {
+  width: 16px !important;
+  height: 16px !important;
+  stroke-width: 1.8 !important;
+}
+
+
+/* =========================================================
+   CONTENIDO DE TARJETA
+   ========================================================= */
+
+.pos-sales-report-page .pos-report-center__content {
+  min-width: 0 !important;
+  align-items: flex-start !important;
+}
+
+.pos-sales-report-page .pos-report-center__content > strong {
+  margin: 0 !important;
+  color: #2d3e49 !important;
+  font-size: 13px !important;
+  font-weight: 800 !important;
+  line-height: 1.2 !important;
+}
+
+.pos-sales-report-page .pos-report-center__content > span {
+  min-height: 0 !important;
+  margin-top: 3px !important;
+
+  color: var(--dashboard-muted) !important;
+
+  font-size: 10.5px !important;
+  font-weight: 500 !important;
+  line-height: 1.3 !important;
+}
+
+.pos-sales-report-page .pos-report-center__content > small {
+  margin-top: 7px !important;
+
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 5px !important;
+
+  color: var(--dashboard-green) !important;
+
+  font-size: 10.5px !important;
+  font-weight: 800 !important;
+}
+
+.pos-sales-report-page .pos-report-center__arrow {
+  width: auto !important;
+  height: auto !important;
+
+  display: inline !important;
+
+  border-radius: 0 !important;
+  background: transparent !important;
+
+  color: #7f929f !important;
+
+  font-size: 14px !important;
+}
+
+
+/* =========================================================
+   MODAL
+   ========================================================= */
+
+.pos-sales-report-page .pos-report-modal-backdrop {
+  background: rgba(31, 45, 55, 0.42) !important;
+  backdrop-filter: blur(3px) !important;
+}
+
+.pos-sales-report-page .pos-report-modal {
+  width: min(1460px, 92vw) !important;
+  height: min(900px, 90vh) !important;
+
+  overflow: hidden !important;
+
+  border: 1px solid #cfdbe1 !important;
+  border-radius: 14px !important;
+
+  background: var(--dashboard-bg) !important;
+
+  box-shadow:
+    0 20px 55px rgba(22, 39, 49, 0.18),
+    0 2px 7px rgba(22, 39, 49, 0.06) !important;
+}
+
+
+/* =========================================================
+   MODAL HEADER
+   ========================================================= */
+
+.pos-sales-report-page .pos-report-modal__header {
+  min-height: 70px !important;
+  padding: 14px 16px !important;
+
+  border-bottom: 1px solid var(--dashboard-border) !important;
+
+  background: #ffffff !important;
+}
+
+.pos-sales-report-page .pos-report-modal__header::before,
+.pos-sales-report-page .pos-report-modal__header::after {
+  display: none !important;
+}
+
+.pos-sales-report-page .pos-report-modal__heading {
+  gap: 11px !important;
+}
+
+.pos-sales-report-page .pos-report-modal__icon {
+  width: 38px !important;
+  height: 38px !important;
+  flex: 0 0 38px !important;
+
+  border-radius: 9px !important;
+
+  color: var(--dashboard-green) !important;
+  background: var(--dashboard-green-soft) !important;
+
+  box-shadow: none !important;
+}
+
+.pos-sales-report-page .pos-report-modal__icon svg {
+  width: 16px !important;
+  height: 16px !important;
+  stroke-width: 1.8 !important;
+}
+
+.pos-sales-report-page .pos-report-modal__header .eyebrow {
+  color: var(--dashboard-green) !important;
+  font-size: 9px !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.12em !important;
+}
+
+.pos-sales-report-page .pos-report-modal__header h2 {
+  margin: 1px 0 1px !important;
+
+  color: var(--dashboard-ink) !important;
+
+  font-size: 18px !important;
+  font-weight: 800 !important;
+}
+
+.pos-sales-report-page .pos-report-modal__header span {
+  color: var(--dashboard-muted) !important;
+  font-size: 10.5px !important;
+}
+
+
+/* =========================================================
+   CERRAR MODAL
+   ========================================================= */
+
+.pos-sales-report-page .pos-report-modal__close {
+  width: 34px !important;
+  height: 34px !important;
+  min-width: 34px !important;
+
+  border: 1px solid var(--dashboard-border) !important;
+  border-radius: 8px !important;
+
+  background: #ffffff !important;
+  color: #657a88 !important;
+
+  box-shadow: none !important;
+}
+
+.pos-sales-report-page .pos-report-modal__close:hover {
+  color: var(--dashboard-green) !important;
+  border-color: #9db9aa !important;
+  background: var(--dashboard-green-soft) !important;
+}
+
+
+/* =========================================================
+   CUERPO MODAL
+   ========================================================= */
+
+.pos-sales-report-page .pos-report-modal__body {
+  padding: 14px !important;
+
+  background: var(--dashboard-bg) !important;
+}
+
+
+/* =========================================================
+   SECCIONES INTERNAS
+   ========================================================= */
+
+.pos-sales-report-page .pos-report-modal__body .settings-card,
+.pos-sales-report-page .pos-report-modal__body .pos-sales-report-kpis > article,
+.pos-sales-report-page .pos-report-modal__body .pos-sales-chart-card,
+.pos-sales-report-page .pos-report-modal__body .pos-profitability__panel,
+.pos-sales-report-page .pos-report-modal__body .pos-operational-profitability__panel,
+.pos-sales-report-page .pos-report-modal__body .pos-profitability-insights__panel,
+.pos-sales-report-page .pos-report-modal__body .pos-profitability-trend__panel {
+  border: 1px solid var(--dashboard-border) !important;
+  border-radius: 11px !important;
+
+  background: #ffffff !important;
+
+  box-shadow: none !important;
+}
+
+.pos-sales-report-page
+  .pos-report-modal__body
+  .pos-sales-report-section-title
+  > svg {
+  width: 16px !important;
+  height: 16px !important;
+  color: var(--dashboard-green) !important;
+}
+
+.pos-sales-report-page .pos-report-modal__body .eyebrow {
+  color: var(--dashboard-green) !important;
+}
+
+.pos-sales-report-page .pos-report-modal__body h2,
+.pos-sales-report-page .pos-report-modal__body h3 {
+  color: var(--dashboard-ink) !important;
+}
+
+
+/* =========================================================
+   TABLAS
+   ========================================================= */
+
+.pos-sales-report-page .pos-report-modal__body table {
+  border-collapse: separate !important;
+  border-spacing: 0 !important;
+}
+
+.pos-sales-report-page .pos-report-modal__body table thead th {
+  color: #536a79 !important;
+  background: #f5f8f9 !important;
+  border-bottom: 1px solid var(--dashboard-border) !important;
+
+  font-size: 10.5px !important;
+  font-weight: 800 !important;
+}
+
+.pos-sales-report-page .pos-report-modal__body table tbody td {
+  color: #334651 !important;
+}
+
+.pos-sales-report-page .pos-report-modal__body table tbody tr:hover {
+  background: #f8fafb !important;
+}
+
+
+/* =========================================================
+   ARTÍCULOS POR TURNO
+   ========================================================= */
+
+.pos-sales-report-page .pos-shift-items-report__shift {
+  border: 1px solid var(--dashboard-border) !important;
+  border-left: 1px solid var(--dashboard-border) !important;
+  border-radius: 10px !important;
+
+  background: #ffffff !important;
+
+  box-shadow: none !important;
+}
+
+.pos-sales-report-page .pos-shift-items-report__shift > header {
+  border-bottom: 1px solid var(--dashboard-border-soft) !important;
+  background: #f8fafb !important;
+}
+
+
+/* =========================================================
+   BOTONES INTERNOS
+   ========================================================= */
+
+.pos-sales-report-page
+  .pos-report-modal__body
+  button:not(.pos-report-modal__close) {
+  border-radius: 8px !important;
+  box-shadow: none !important;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 1180px) {
+  .pos-sales-report-page .pos-report-center__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+}
+
+@media (max-width: 720px) {
+  .pos-sales-report-page .pos-report-center {
+    padding: 14px !important;
+  }
+
+  .pos-sales-report-page .pos-report-center__grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .pos-sales-report-page .pos-report-center__card {
+    min-height: 86px !important;
+  }
+
+  .pos-sales-report-page .pos-report-modal {
+    width: 100vw !important;
+    height: 100vh !important;
+
+    border: 0 !important;
+    border-radius: 0 !important;
+  }
+
+  .pos-sales-report-page .pos-report-modal__header {
+    min-height: 66px !important;
+    padding: 12px !important;
+  }
+
+  .pos-sales-report-page .pos-report-modal__body {
+    padding: 10px !important;
+  }
+}
+
+/* CACTUS POS — DASHBOARD STYLE HOMOLOGATION END */
+
+
+/* CACTUS POS — REPORT CARDS ICON LEFT ALIGNMENT */
+
+.pos-sales-report-page .pos-report-center__card {
+  display: grid !important;
+  grid-template-columns: 40px minmax(0, 1fr) !important;
+  grid-template-rows: auto !important;
+  align-items: center !important;
+  column-gap: 12px !important;
+  padding: 12px 14px !important;
+  text-align: left !important;
+}
+
+.pos-sales-report-page .pos-report-center__icon {
+  grid-column: 1 !important;
+  grid-row: 1 !important;
+
+  width: 40px !important;
+  height: 40px !important;
+
+  align-self: center !important;
+  justify-self: start !important;
+
+  margin: 0 !important;
+
+  display: grid !important;
+  place-items: center !important;
+}
+
+.pos-sales-report-page .pos-report-center__icon svg {
+  width: 16px !important;
+  height: 16px !important;
+}
+
+.pos-sales-report-page .pos-report-center__content {
+  grid-column: 2 !important;
+  grid-row: 1 !important;
+
+  min-width: 0 !important;
+  width: 100% !important;
+
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: flex-start !important;
+
+  margin: 0 !important;
+  text-align: left !important;
+}
+
+.pos-sales-report-page .pos-report-center__content > strong {
+  width: 100% !important;
+  margin: 0 !important;
+  text-align: left !important;
+}
+
+.pos-sales-report-page .pos-report-center__content > span {
+  width: 100% !important;
+  margin: 3px 0 0 !important;
+  text-align: left !important;
+}
+
+.pos-sales-report-page .pos-report-center__content > small {
+  margin: 7px 0 0 !important;
+  text-align: left !important;
+}
+
+/* CACTUS POS — END REPORT CARDS ICON LEFT ALIGNMENT */
+
+
+/* CACTUS POS — SUMMARY KPI HORIZONTAL START */
+
+/*
+ * Resumen de ventas:
+ * Ventas / Subtotal / ITBIS / Servicio / Total
+ * Distribución horizontal homologada con Dashboard.
+ */
+
+.pos-sales-report-page
+.pos-report-modal__body[data-active-report="summary"]
+.pos-sales-report-kpis {
+  display: grid !important;
+  grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+  gap: 10px !important;
+  width: 100% !important;
+  margin: 0 0 12px !important;
+  align-items: stretch !important;
+}
+
+.pos-sales-report-page
+.pos-report-modal__body[data-active-report="summary"]
+.pos-sales-report-kpis > article {
+  min-width: 0 !important;
+  min-height: 116px !important;
+
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: flex-start !important;
+  justify-content: flex-start !important;
+
+  padding: 14px 15px !important;
+
+  border: 1px solid #d8e1e6 !important;
+  border-radius: 11px !important;
+
+  background: #ffffff !important;
+
+  box-shadow: none !important;
+}
+
+
+/* Quitar cualquier estructura vertical heredada */
+
+.pos-sales-report-page
+.pos-report-modal__body[data-active-report="summary"]
+.pos-sales-report-kpis > article::before,
+.pos-sales-report-page
+.pos-report-modal__body[data-active-report="summary"]
+.pos-sales-report-kpis > article::after {
+  box-shadow: none !important;
+}
+
+
+/* Primera línea: icono + etiqueta */
+
+.pos-sales-report-page
+.pos-report-modal__body[data-active-report="summary"]
+.pos-sales-report-kpis > article > :first-child {
+  margin-top: 0 !important;
+}
+
+
+/* Iconos pequeños, igual al lenguaje del Dashboard */
+
+.pos-sales-report-page
+.pos-report-modal__body[data-active-report="summary"]
+.pos-sales-report-kpis svg {
+  width: 16px !important;
+  height: 16px !important;
+  stroke-width: 1.8 !important;
+  color: #19734f !important;
+}
+
+
+/* Títulos / etiquetas pequeñas */
+
+.pos-sales-report-page
+.pos-report-modal__body[data-active-report="summary"]
+.pos-sales-report-kpis small,
+.pos-sales-report-page
+.pos-report-modal__body[data-active-report="summary"]
+.pos-sales-report-kpis .eyebrow {
+  color: #748693 !important;
+  font-size: 10px !important;
+  font-weight: 700 !important;
+}
+
+
+/* Valores principales */
+
+.pos-sales-report-page
+.pos-report-modal__body[data-active-report="summary"]
+.pos-sales-report-kpis strong {
+  color: #315f50 !important;
+  font-size: 18px !important;
+  font-weight: 800 !important;
+  line-height: 1.15 !important;
+}
+
+
+/* Textos secundarios */
+
+.pos-sales-report-page
+.pos-report-modal__body[data-active-report="summary"]
+.pos-sales-report-kpis p {
+  color: #8a9aa5 !important;
+  font-size: 9.5px !important;
+  line-height: 1.3 !important;
+}
+
+
+/* Hover muy sutil */
+
+.pos-sales-report-page
+.pos-report-modal__body[data-active-report="summary"]
+.pos-sales-report-kpis > article:hover {
+  border-color: #c1d0d7 !important;
+  background: #fbfcfc !important;
+}
+
+
+/* Métodos de pago / modalidad debajo, dos columnas */
+
+.pos-sales-report-page
+.pos-report-modal__body[data-active-report="summary"]
+.pos-sales-report-grid {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 10px !important;
+  width: 100% !important;
+}
+
+
+/* Responsive */
+
+@media (max-width: 1250px) {
+  .pos-sales-report-page
+  .pos-report-modal__body[data-active-report="summary"]
+  .pos-sales-report-kpis {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  }
+}
+
+@media (max-width: 850px) {
+  .pos-sales-report-page
+  .pos-report-modal__body[data-active-report="summary"]
+  .pos-sales-report-kpis {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  .pos-sales-report-page
+  .pos-report-modal__body[data-active-report="summary"]
+  .pos-sales-report-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+@media (max-width: 520px) {
+  .pos-sales-report-page
+  .pos-report-modal__body[data-active-report="summary"]
+  .pos-sales-report-kpis {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* CACTUS POS — SUMMARY KPI HORIZONTAL END */
+
+
+/* CACTUS POS — SUMMARY SECONDARY CARDS COMPACT TEXT */
+
+/* COBROS / OPERACIÓN */
+.pos-sales-report-page
+.pos-report-modal__body[data-active-report="summary"]
+.pos-sales-report-grid .eyebrow {
+  font-size: 9px !important;
+  line-height: 1.15 !important;
+  letter-spacing: 0.10em !important;
+  font-weight: 800 !important;
+}
+
+/* Por método de pago / Por modalidad de venta */
+.pos-sales-report-page
+.pos-report-modal__body[data-active-report="summary"]
+.pos-sales-report-grid h2 {
+  font-size: 16px !important;
+  line-height: 1.2 !important;
+  letter-spacing: -0.01em !important;
+  margin-top: 3px !important;
+}
+
+/* Iconos de esos encabezados */
+.pos-sales-report-page
+.pos-report-modal__body[data-active-report="summary"]
+.pos-sales-report-grid .pos-sales-report-section-title > svg {
+  width: 14px !important;
+  height: 14px !important;
+}
+
+/* CACTUS POS — END SUMMARY SECONDARY CARDS COMPACT TEXT */
+
+/* CACTUS POS — SUMMARY PAYMENT/MODE COMPACT CONTENT */
+
+/* Texto general dentro de las dos tarjetas */
+.pos-sales-report-page
+.pos-report-modal__body[data-active-report="summary"]
+.pos-sales-report-grid {
+  font-size: 12px !important;
+}
+
+/* Encabezados de tabla: MÉTODO / TRANSACCIONES / MONTO */
+.pos-sales-report-page
+.pos-report-modal__body[data-active-report="summary"]
+.pos-sales-report-grid table thead th {
+  font-size: 10px !important;
+  line-height: 1.2 !important;
+  font-weight: 800 !important;
+  padding: 9px 12px !important;
+  letter-spacing: 0.03em !important;
+}
+
+/* Filas: Efectivo / cantidad / RD$ */
+.pos-sales-report-page
+.pos-report-modal__body[data-active-report="summary"]
+.pos-sales-report-grid table tbody td {
+  font-size: 12px !important;
+  line-height: 1.25 !important;
+  padding: 10px 12px !important;
+}
+
+/* Negritas dentro de la tabla */
+.pos-sales-report-page
+.pos-report-modal__body[data-active-report="summary"]
+.pos-sales-report-grid table tbody td strong {
+  font-size: 12px !important;
+  line-height: 1.25 !important;
+}
+
+/* Total cobrado */
+.pos-sales-report-page
+.pos-report-modal__body[data-active-report="summary"]
+.pos-sales-report-grid table tfoot th,
+.pos-sales-report-page
+.pos-report-modal__body[data-active-report="summary"]
+.pos-sales-report-grid table tfoot td {
+  font-size: 12px !important;
+  line-height: 1.25 !important;
+  padding: 10px 12px !important;
+}
+
+
+/* MODALIDAD DE VENTA */
+
+/* Venta directa */
+.pos-sales-report-page
+.pos-report-modal__body[data-active-report="summary"]
+.pos-sales-report-grid article h3 {
+  font-size: 13px !important;
+  line-height: 1.25 !important;
+  font-weight: 800 !important;
+}
+
+/* Textos normales de la modalidad */
+.pos-sales-report-page
+.pos-report-modal__body[data-active-report="summary"]
+.pos-sales-report-grid article p,
+.pos-sales-report-page
+.pos-report-modal__body[data-active-report="summary"]
+.pos-sales-report-grid article span {
+  font-size: 11px !important;
+  line-height: 1.3 !important;
+}
+
+/* Valores monetarios y cantidades */
+.pos-sales-report-page
+.pos-report-modal__body[data-active-report="summary"]
+.pos-sales-report-grid article strong {
+  font-size: 12px !important;
+  line-height: 1.25 !important;
+  font-weight: 800 !important;
+}
+
+/* Compactar filas internas */
+.pos-sales-report-page
+.pos-report-modal__body[data-active-report="summary"]
+.pos-sales-report-grid article {
+  line-height: 1.3 !important;
+}
+
+/* END CACTUS POS — SUMMARY PAYMENT/MODE COMPACT CONTENT */
+
+
+/* CACTUS POS — ALL REPORT MODALS COMPACT START */
+
+/*
+ * Densidad visual común para todas las modales de Reporte POS.
+ * Homologada con Dashboard principal.
+ */
+
+
+/* =========================================================
+   BASE DEL CONTENIDO
+   ========================================================= */
+
+.pos-sales-report-page .pos-report-modal__body {
+  font-size: 11px !important;
+  line-height: 1.35 !important;
+}
+
+
+/* =========================================================
+   ENCABEZADOS DE SECCIONES
+   ========================================================= */
+
+.pos-sales-report-page
+.pos-report-modal__body
+.pos-sales-report-section-title {
+  gap: 7px !important;
+}
+
+.pos-sales-report-page
+.pos-report-modal__body
+.pos-sales-report-section-title > svg {
+  width: 14px !important;
+  height: 14px !important;
+  stroke-width: 1.8 !important;
+}
+
+.pos-sales-report-page
+.pos-report-modal__body
+.eyebrow {
+  font-size: 9px !important;
+  line-height: 1.15 !important;
+  letter-spacing: 0.1em !important;
+  font-weight: 800 !important;
+}
+
+
+/* Títulos principales de cada bloque */
+
+.pos-sales-report-page
+.pos-report-modal__body
+.pos-sales-report-section-title h2,
+.pos-sales-report-page
+.pos-report-modal__body
+.settings-card > header h2,
+.pos-sales-report-page
+.pos-report-modal__body
+.settings-card > header h3 {
+  font-size: 14px !important;
+  line-height: 1.2 !important;
+  letter-spacing: -0.01em !important;
+  font-weight: 800 !important;
+}
+
+
+/* Títulos secundarios */
+
+.pos-sales-report-page
+.pos-report-modal__body h3 {
+  font-size: 13px !important;
+  line-height: 1.25 !important;
+  font-weight: 800 !important;
+}
+
+
+/* =========================================================
+   TEXTO GENERAL
+   ========================================================= */
+
+.pos-sales-report-page
+.pos-report-modal__body p,
+.pos-sales-report-page
+.pos-report-modal__body span,
+.pos-sales-report-page
+.pos-report-modal__body label {
+  font-size: 11px !important;
+  line-height: 1.35 !important;
+}
+
+
+/* Textos descriptivos */
+
+.pos-sales-report-page
+.pos-report-modal__body small,
+.pos-sales-report-page
+.pos-report-modal__body .muted,
+.pos-sales-report-page
+.pos-report-modal__body .helper-text {
+  font-size: 9.5px !important;
+  line-height: 1.3 !important;
+}
+
+
+/* =========================================================
+   VALORES DESTACADOS
+   ========================================================= */
+
+.pos-sales-report-page
+.pos-report-modal__body strong {
+  font-size: 12px !important;
+  line-height: 1.25 !important;
+}
+
+
+/* Valores KPI principales */
+
+.pos-sales-report-page
+.pos-report-modal__body
+.pos-sales-report-kpis strong {
+  font-size: 17px !important;
+  font-weight: 800 !important;
+}
+
+
+/* =========================================================
+   TARJETAS INTERNAS
+   ========================================================= */
+
+.pos-sales-report-page
+.pos-report-modal__body .settings-card,
+.pos-sales-report-page
+.pos-report-modal__body .pos-sales-chart-card,
+.pos-sales-report-page
+.pos-report-modal__body .pos-profitability__panel,
+.pos-sales-report-page
+.pos-report-modal__body .pos-operational-profitability__panel,
+.pos-sales-report-page
+.pos-report-modal__body .pos-profitability-insights__panel,
+.pos-sales-report-page
+.pos-report-modal__body .pos-profitability-trend__panel {
+  padding: 12px !important;
+}
+
+
+/* =========================================================
+   TABLAS — TODAS LAS MODALES
+   ========================================================= */
+
+.pos-sales-report-page
+.pos-report-modal__body table {
+  font-size: 11px !important;
+}
+
+
+/* Encabezados */
+
+.pos-sales-report-page
+.pos-report-modal__body table thead th {
+  padding: 8px 10px !important;
+
+  font-size: 9.5px !important;
+  line-height: 1.2 !important;
+  font-weight: 800 !important;
+
+  letter-spacing: 0.025em !important;
+}
+
+
+/* Celdas */
+
+.pos-sales-report-page
+.pos-report-modal__body table tbody td {
+  padding: 8px 10px !important;
+
+  font-size: 11px !important;
+  line-height: 1.25 !important;
+}
+
+
+/* Negritas de tabla */
+
+.pos-sales-report-page
+.pos-report-modal__body table tbody td strong {
+  font-size: 11px !important;
+}
+
+
+/* Footer de tablas */
+
+.pos-sales-report-page
+.pos-report-modal__body table tfoot th,
+.pos-sales-report-page
+.pos-report-modal__body table tfoot td {
+  padding: 9px 10px !important;
+
+  font-size: 11px !important;
+  line-height: 1.25 !important;
+  font-weight: 800 !important;
+}
+
+
+/* =========================================================
+   INPUTS / SELECTS
+   ========================================================= */
+
+.pos-sales-report-page
+.pos-report-modal__body input,
+.pos-sales-report-page
+.pos-report-modal__body select,
+.pos-sales-report-page
+.pos-report-modal__body textarea {
+  min-height: 34px !important;
+
+  padding: 6px 9px !important;
+
+  font-size: 11px !important;
+  line-height: 1.25 !important;
+
+  border-radius: 7px !important;
+}
+
+
+/* =========================================================
+   BOTONES INTERNOS
+   ========================================================= */
+
+.pos-sales-report-page
+.pos-report-modal__body
+button:not(.pos-report-modal__close) {
+  min-height: 32px !important;
+
+  padding: 6px 10px !important;
+
+  font-size: 10.5px !important;
+  line-height: 1.2 !important;
+
+  border-radius: 7px !important;
+}
+
+.pos-sales-report-page
+.pos-report-modal__body
+button:not(.pos-report-modal__close) svg {
+  width: 14px !important;
+  height: 14px !important;
+}
+
+
+/* =========================================================
+   PRODUCTOS Y RENTABILIDAD
+   ========================================================= */
+
+.pos-sales-report-page
+.pos-report-modal__body[data-active-report="products"]
+.pos-profitability h3,
+.pos-sales-report-page
+.pos-report-modal__body[data-active-report="products"]
+.pos-profitability__panel h3 {
+  font-size: 13px !important;
+}
+
+.pos-sales-report-page
+.pos-report-modal__body[data-active-report="products"]
+.pos-profitability p,
+.pos-sales-report-page
+.pos-report-modal__body[data-active-report="products"]
+.pos-profitability span {
+  font-size: 10.5px !important;
+}
+
+
+/* =========================================================
+   CAJEROS Y TURNOS
+   ========================================================= */
+
+.pos-sales-report-page
+.pos-report-modal__body[data-active-report="operations"]
+.pos-operational-profitability h3 {
+  font-size: 13px !important;
+}
+
+.pos-sales-report-page
+.pos-report-modal__body[data-active-report="operations"]
+.pos-operational-profitability p,
+.pos-sales-report-page
+.pos-report-modal__body[data-active-report="operations"]
+.pos-operational-profitability span {
+  font-size: 10.5px !important;
+}
+
+
+/* =========================================================
+   ARTÍCULOS POR TURNO
+   ========================================================= */
+
+.pos-sales-report-page
+.pos-report-modal__body[data-active-report="shift-items"]
+.pos-shift-items-report__shift {
+  margin-bottom: 9px !important;
+}
+
+.pos-sales-report-page
+.pos-report-modal__body[data-active-report="shift-items"]
+.pos-shift-items-report__shift > header {
+  padding: 9px 11px !important;
+}
+
+.pos-sales-report-page
+.pos-report-modal__body[data-active-report="shift-items"]
+.pos-shift-items-report__shift h3 {
+  font-size: 12.5px !important;
+}
+
+.pos-sales-report-page
+.pos-report-modal__body[data-active-report="shift-items"]
+.pos-shift-items-report__shift header span,
+.pos-sales-report-page
+.pos-report-modal__body[data-active-report="shift-items"]
+.pos-shift-items-report__shift header small {
+  font-size: 9.5px !important;
+}
+
+
+/* =========================================================
+   COMPARATIVOS
+   ========================================================= */
+
+.pos-sales-report-page
+.pos-report-modal__body[data-active-report="comparisons"]
+.settings-card h3 {
+  font-size: 13px !important;
+}
+
+.pos-sales-report-page
+.pos-report-modal__body[data-active-report="comparisons"]
+.settings-card p,
+.pos-sales-report-page
+.pos-report-modal__body[data-active-report="comparisons"]
+.settings-card span {
+  font-size: 10.5px !important;
+}
+
+
+/* =========================================================
+   TENDENCIAS
+   ========================================================= */
+
+.pos-sales-report-page
+.pos-report-modal__body[data-active-report="trends"]
+.pos-sales-chart-card h3,
+.pos-sales-report-page
+.pos-report-modal__body[data-active-report="trends"]
+.pos-profitability-trend__panel h3 {
+  font-size: 13px !important;
+}
+
+.pos-sales-report-page
+.pos-report-modal__body[data-active-report="trends"]
+.pos-sales-chart-card p,
+.pos-sales-report-page
+.pos-report-modal__body[data-active-report="trends"]
+.pos-profitability-trend__panel p {
+  font-size: 10px !important;
+}
+
+
+/* No reducir texto interno de SVG/charts de forma indiscriminada */
+
+.pos-sales-report-page
+.pos-report-modal__body[data-active-report="trends"] svg text {
+  font-size: inherit;
+}
+
+
+/* =========================================================
+   CONTROL Y ALERTAS
+   ========================================================= */
+
+.pos-sales-report-page
+.pos-report-modal__body[data-active-report="controls"]
+.pos-profitability-policy h3,
+.pos-sales-report-page
+.pos-report-modal__body[data-active-report="controls"]
+.pos-profitability-insights h3 {
+  font-size: 13px !important;
+}
+
+.pos-sales-report-page
+.pos-report-modal__body[data-active-report="controls"]
+.pos-profitability-policy p,
+.pos-sales-report-page
+.pos-report-modal__body[data-active-report="controls"]
+.pos-profitability-insights p,
+.pos-sales-report-page
+.pos-report-modal__body[data-active-report="controls"]
+.pos-profitability-insights span {
+  font-size: 10.5px !important;
+}
+
+
+/* =========================================================
+   TRANSACCIONES
+   ========================================================= */
+
+.pos-sales-report-page
+.pos-report-modal__body[data-active-report="transactions"]
+.pos-sales-transactions h3 {
+  font-size: 13px !important;
+}
+
+.pos-sales-report-page
+.pos-report-modal__body[data-active-report="transactions"]
+.pos-sales-transactions p,
+.pos-sales-report-page
+.pos-report-modal__body[data-active-report="transactions"]
+.pos-sales-transactions span {
+  font-size: 10.5px !important;
+}
+
+
+/* =========================================================
+   EMPTY STATES
+   ========================================================= */
+
+.pos-sales-report-page
+.pos-report-modal__body [class*="empty"] {
+  font-size: 11px !important;
+}
+
+.pos-sales-report-page
+.pos-report-modal__body [class*="empty"] strong {
+  font-size: 12px !important;
+}
+
+
+/* =========================================================
+   TEXTO DE GENERACIÓN DEL REPORTE
+   ========================================================= */
+
+.pos-sales-report-page
+.pos-report-modal__body
+.pos-sales-report-generated {
+  margin-top: 10px !important;
+
+  color: #7c8d97 !important;
+
+  font-size: 9.5px !important;
+  line-height: 1.25 !important;
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 720px) {
+  .pos-sales-report-page .pos-report-modal__body {
+    font-size: 10.5px !important;
+  }
+
+  .pos-sales-report-page
+  .pos-report-modal__body table thead th {
+    font-size: 9px !important;
+  }
+
+  .pos-sales-report-page
+  .pos-report-modal__body table tbody td {
+    font-size: 10.5px !important;
+  }
+}
+
+/* CACTUS POS — ALL REPORT MODALS COMPACT END */
+

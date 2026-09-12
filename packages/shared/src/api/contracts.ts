@@ -423,7 +423,7 @@ export type CreateProductRequest = {
   pointOfSaleId: string;
   categoryId: string;
   preparationStationId?: string | null;
-  sku: string;
+  sku?: string;
   barcode?: string;
   name: string;
   description?: string;

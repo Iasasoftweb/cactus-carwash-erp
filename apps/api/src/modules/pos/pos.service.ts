@@ -9071,8 +9071,13 @@ async updateProductCategory(
         }
       }
 
-      const sku = dto.sku.trim();
+      const sku =
+        dto.sku?.trim().toUpperCase() ||
+        `PRD-${randomUUID().replace(/-/g, "").slice(0, 8).toUpperCase()}`;
+
       const barcode = dto.barcode?.trim() || null;
+      const name = dto.name.trim().toUpperCase();
+      const description = dto.description?.trim().toUpperCase() || null;
 
       const existingSku = await tx.product.findUnique({
         where: {
@@ -9084,7 +9089,9 @@ async updateProductCategory(
       });
 
       if (existingSku) {
-        throw new BadRequestException("Ya existe un producto con ese SKU.");
+        throw new BadRequestException(
+          "No fue posible generar un código único para el producto. Intenta nuevamente.",
+        );
       }
 
       if (barcode) {
@@ -9111,8 +9118,8 @@ async updateProductCategory(
           preparationStationId: preparationStation?.id ?? null,
           sku,
           barcode,
-          name: dto.name.trim(),
-          description: dto.description?.trim() || null,
+          name,
+          description,
           type: dto.type,
           saleUnit: dto.saleUnit,
           price: dto.price,
@@ -9272,22 +9279,10 @@ async updateProductCategory(
         }
       }
 
-      const sku = dto.sku.trim();
+      const sku = existing.sku;
       const barcode = dto.barcode?.trim() || null;
-
-      const duplicatedSku = await tx.product.findFirst({
-        where: {
-          companyId: actor.companyId,
-          sku,
-          id: {
-            not: id,
-          },
-        },
-      });
-
-      if (duplicatedSku) {
-        throw new BadRequestException("Ya existe otro producto con ese SKU.");
-      }
+      const name = dto.name.trim().toUpperCase();
+      const description = dto.description?.trim().toUpperCase() || null;
 
       if (barcode) {
         const duplicatedBarcode = await tx.product.findFirst({
@@ -9319,8 +9314,8 @@ async updateProductCategory(
           preparationStationId: preparationStation?.id ?? null,
           sku,
           barcode,
-          name: dto.name.trim(),
-          description: dto.description?.trim() || null,
+          name,
+          description,
           type: dto.type,
           saleUnit: dto.saleUnit,
           price: dto.price,

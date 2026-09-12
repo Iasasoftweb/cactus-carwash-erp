@@ -36,8 +36,9 @@ export class CreateProductDto {
   @IsString()
   preparationStationId?: string | null;
 
+  @IsOptional()
   @IsString()
-  sku!: string;
+  sku?: string;
 
   @IsOptional()
   @IsString()

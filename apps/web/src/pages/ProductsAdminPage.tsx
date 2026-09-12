@@ -855,8 +855,8 @@ export function ProductsAdminPage() {
       return;
     }
 
-    if (!form.sku.trim() || !form.name.trim()) {
-      setError("SKU y nombre son obligatorios.");
+    if (!form.name.trim()) {
+      setError("El nombre del producto es obligatorio.");
 
       return;
     }
@@ -902,13 +902,13 @@ export function ProductsAdminPage() {
           ? form.preparationStationId || null
           : null,
 
-        sku: form.sku.trim(),
+        ...(selectedProduct ? { sku: selectedProduct.sku } : {}),
 
         barcode: form.barcode.trim() || undefined,
 
-        name: form.name.trim(),
+        name: form.name.trim().toUpperCase(),
 
-        description: form.description.trim() || undefined,
+        description: form.description.trim().toUpperCase() || undefined,
 
         type: form.type,
 
@@ -1601,18 +1601,20 @@ export function ProductsAdminPage() {
                     <label>
                       SKU / código
                       <input
-                        required
-                        value={form.sku}
-                        onChange={(event) =>
-                          setField(
-                            "sku",
-
-                            event.target.value,
-                          )
+                        value={selectedProduct ? form.sku : "AUTOMÁTICO"}
+                        readOnly
+                        aria-readonly="true"
+                        title={
+                          selectedProduct
+                            ? "El código del producto permanece estable."
+                            : "Se generará automáticamente al crear el producto."
                         }
-                        placeholder="Ej. CAFE-001"
-                        disabled={saving}
                       />
+                      <small className="field-hint">
+                        {selectedProduct
+                          ? "Código asignado automáticamente y no editable."
+                          : "Se generará automáticamente al guardar."}
+                      </small>
                     </label>
 
                     <label>
@@ -1685,11 +1687,12 @@ export function ProductsAdminPage() {
                         onChange={(event) =>
                           setField(
                             "name",
-
-                            event.target.value,
+                            event.target.value.toLocaleUpperCase("es"),
                           )
                         }
-                        placeholder="Nombre visible en Punto de Venta"
+                        style={{ textTransform: "uppercase" }}
+                        autoComplete="off"
+                        placeholder="NOMBRE VISIBLE EN PUNTO DE VENTA"
                         disabled={saving}
                       />
                     </label>
@@ -1732,12 +1735,12 @@ export function ProductsAdminPage() {
                       onChange={(event) =>
                         setField(
                           "description",
-
-                          event.target.value,
+                          event.target.value.toLocaleUpperCase("es"),
                         )
                       }
+                      style={{ textTransform: "uppercase" }}
                       rows={2}
-                      placeholder="Descripción opcional"
+                      placeholder="DESCRIPCIÓN OPCIONAL"
                       disabled={saving}
                     />
                   </label>
